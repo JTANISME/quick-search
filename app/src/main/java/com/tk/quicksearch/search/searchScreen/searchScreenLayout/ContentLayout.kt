@@ -124,7 +124,12 @@ fun ContentLayout(
             predictedTarget = predictedTarget,
             expandedCardMaxHeight = expandedCardMaxHeight,
         )
-    val effectiveAppsParams = appsParams.copy(predictedTarget = predictedTarget)
+    var appGridHasAppeared by remember { mutableStateOf(false) }
+    val effectiveAppsParams = appsParams.copy(
+        predictedTarget = predictedTarget,
+        onGridAppeared = { appGridHasAppeared = true },
+        suppressSuggestionsEnterAnimation = appGridHasAppeared,
+    )
 
     // 1. Determine Layout Order based on ItemPriorityConfig
     val hasQuery = state.query.isNotBlank()
@@ -244,10 +249,27 @@ fun ContentLayout(
     val activeAliasSection = state.detectedAliasSearchSection
     val isSectionAliasMode = activeAliasSection != null
     val showAliasRecentItems = isSectionAliasMode && !hasQuery && state.aliasRecentItems.isNotEmpty()
+    val canDeferOtherContentForSuggestions =
+        state.appSuggestionsEnabled &&
+            !hasQuery &&
+            !hideResults &&
+            !isSectionAliasMode &&
+            renderingState.shouldShowApps &&
+            renderingState.expandedSection == ExpandedSection.NONE
     val deferNonAppContentUntilAppsReady =
         hasQuery &&
             state.isAppSearchInProgress &&
             !renderingState.hasAppResults
+    val waitingForSuggestions =
+        canDeferOtherContentForSuggestions &&
+            state.isInitializing &&
+            state.recentApps.isEmpty() &&
+            state.pinnedApps.isEmpty()
+    val holdingForAppGridAnimation =
+        canDeferOtherContentForSuggestions &&
+            !appGridHasAppeared &&
+            (state.recentApps.isNotEmpty() || state.pinnedApps.isNotEmpty())
+    val hideOtherContent = waitingForSuggestions || holdingForAppGridAnimation
     val topMatches =
         rememberTopMatches(
             query = state.query,
@@ -325,6 +347,7 @@ fun ContentLayout(
                 if (!shouldRenderSection(section)) return@forEach
                 if (section == SearchSection.APPS && isUrlQuery) return@forEach
                 if (deferNonAppContentUntilAppsReady && section != SearchSection.APPS) return@forEach
+                if (hideOtherContent && section != SearchSection.APPS) return@forEach
 
                 val showAliasRecentForSection =
                     showAliasRecentItems && section in ALIAS_RECENT_ELIGIBLE_SECTIONS
@@ -372,6 +395,7 @@ fun ContentLayout(
             ) {
                 return@forEach
             }
+            if (hideOtherContent) return@forEach
 
             when (itemType) {
                 ItemPriorityConfig.ItemType.ERROR_BANNER -> {

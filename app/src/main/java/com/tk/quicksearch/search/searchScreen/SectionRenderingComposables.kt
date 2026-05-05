@@ -172,6 +172,8 @@ private fun renderAppsSection(
             predictedTarget = appsParams.predictedTarget,
             suppressTopResultIndicator = appsParams.suppressTopResultIndicator,
             showWallpaperBackground = appsParams.showWallpaperBackground,
+            onGridAppeared = appsParams.onGridAppeared,
+            suppressSuggestionsEnterAnimation = appsParams.suppressSuggestionsEnterAnimation,
         )
     }
 }

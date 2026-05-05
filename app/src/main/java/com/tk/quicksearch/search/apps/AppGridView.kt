@@ -143,6 +143,8 @@ fun AppGridView(
         appIconShape: AppIconShape = AppIconShape.DEFAULT,
         themedIconsEnabled: Boolean = true,
         showWallpaperBackground: Boolean = false,
+        onGridAppeared: (() -> Unit)? = null,
+        suppressSuggestionsEnterAnimation: Boolean = false,
 ) {
     val context = LocalContext.current
     val shortcutsByPackage =
@@ -177,8 +179,10 @@ fun AppGridView(
 
     // Animate the suggestions grid (empty query) when it first appears. Search results should
     // appear immediately without animation.
-    val suggestionsAlpha = remember { Animatable(0f) }
-    val suggestionsTranslationYDp = remember { Animatable(SuggestionsEnterOffsetDp) }
+    val initialSuggestionsAlpha = if (suppressSuggestionsEnterAnimation) 1f else 0f
+    val initialSuggestionsOffset = if (suppressSuggestionsEnterAnimation) 0f else SuggestionsEnterOffsetDp
+    val suggestionsAlpha = remember { Animatable(initialSuggestionsAlpha) }
+    val suggestionsTranslationYDp = remember { Animatable(initialSuggestionsOffset) }
     val density = LocalDensity.current
 
     Column(
@@ -190,7 +194,7 @@ fun AppGridView(
 
         LaunchedEffect(showAppGrid, isSearching) {
             if (!showAppGrid) return@LaunchedEffect
-            if (isSearching) {
+            if (isSearching || suppressSuggestionsEnterAnimation) {
                 suggestionsAlpha.snapTo(1f)
                 suggestionsTranslationYDp.snapTo(0f)
             } else if (suggestionsAlpha.value < 1f) {
@@ -199,9 +203,12 @@ fun AppGridView(
                         animationSpec = tween(durationMillis = SuggestionsEnterDurationMillis),
                 )
             }
+            if (!isSearching) {
+                onGridAppeared?.invoke()
+            }
         }
         LaunchedEffect(showAppGrid, isSearching) {
-            if (!showAppGrid || isSearching) return@LaunchedEffect
+            if (!showAppGrid || isSearching || suppressSuggestionsEnterAnimation) return@LaunchedEffect
             if (suggestionsTranslationYDp.value != 0f) {
                 suggestionsTranslationYDp.animateTo(
                         targetValue = 0f,

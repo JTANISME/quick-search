@@ -316,6 +316,8 @@ data class AppsSectionParams(
     val predictedTarget: PredictedSubmitTarget? = null,
     val suppressTopResultIndicator: Boolean = false,
     val showWallpaperBackground: Boolean = false,
+    val onGridAppeared: (() -> Unit)? = null,
+    val suppressSuggestionsEnterAnimation: Boolean = false,
 )
 
 /** Data class for Calendar section parameters */

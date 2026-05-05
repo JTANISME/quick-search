@@ -117,6 +117,7 @@ private const val LeadingIconEnterInitialScale = 0.88f
 private const val LeadingIconExitTargetScale = 0.88f
 private const val PlaceholderHintTransitionDurationMs = 700
 private const val PlaceholderHintTransitionDelayMs = 120
+private const val StartupKeyboardDelayMs = 220L
 private const val LightSearchBarShadowAmbientAlpha = 0.38f
 private const val LightSearchBarShadowSpotAlpha = 0.62f
 private val AliasMorphTextStartPadding = DesignTokens.Spacing48 + DesignTokens.SpacingXSmall
@@ -227,6 +228,7 @@ internal fun PersistentSearchBar(
     val aliasMorphProgress = remember { Animatable(1f) }
     var aliasMorphText by remember { mutableStateOf<String?>(null) }
     var previousLeadingIconState by remember { mutableStateOf(leadingIconState) }
+    var hasCompletedStartupAutoFocus by remember { mutableStateOf(!autoFocusOnStart) }
 
     LaunchedEffect(query, leadingIconState) {
         val previousText = textFieldValue.text
@@ -275,11 +277,18 @@ internal fun PersistentSearchBar(
     }
 
     LaunchedEffect(autoFocusOnStart, hasLaidOutSearchField) {
+        if (!autoFocusOnStart) {
+            hasCompletedStartupAutoFocus = true
+            return@LaunchedEffect
+        }
         if (autoFocusOnStart && hasLaidOutSearchField) {
-            // Wait for a rendered frame before focusing to avoid startup contention.
+            // Let first layout and startup state restoration settle before starting IME animation.
+            withFrameNanos { }
+            delay(StartupKeyboardDelayMs)
             withFrameNanos { }
             focusRequester.requestFocus()
             keyboardController?.show()
+            hasCompletedStartupAutoFocus = true
         }
     }
     if (autoFocusOnStart) {
@@ -287,6 +296,9 @@ internal fun PersistentSearchBar(
             val observer =
                 LifecycleEventObserver { _, event ->
                     if (event == Lifecycle.Event.ON_RESUME) {
+                        if (!hasCompletedStartupAutoFocus) {
+                            return@LifecycleEventObserver
+                        }
                         focusRequester.requestFocus()
                         keyboardController?.show()
                     }
