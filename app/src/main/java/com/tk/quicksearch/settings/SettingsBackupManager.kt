@@ -56,10 +56,13 @@ object SettingsBackupManager {
     private const val TYPE_FLOAT = "float"
     private const val TYPE_STRING_SET = "string_set"
 
+    private const val STARTUP_SURFACE_PREFS_NAME = "startup_surface_store"
+
     private val excludedPreferenceFiles =
         setOf(
             BasePreferences.FIRST_LAUNCH_PREFS_NAME,
             BasePreferences.TIMING_PREFS_NAME,
+            STARTUP_SURFACE_PREFS_NAME,
             "app_cache",
             BasePreferences.ENCRYPTED_PREFS_NAME,
             "app_launch_counts",
@@ -158,6 +161,7 @@ object SettingsBackupManager {
             val sharedPreferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
             val prefEntries = preferencesJson.optJSONObject(prefName)
             if (prefEntries == null && selectedExportItems != null) return@forEach
+            val importOptions = selectedExportItems?.let { ExportOptions(it) }
 
             val editor =
                 sharedPreferences
@@ -171,6 +175,12 @@ object SettingsBackupManager {
             if (prefEntries != null) {
                 prefEntries.keys().forEach { key ->
                     if (shouldExcludeKey(prefName, key)) return@forEach
+                    if (
+                        importOptions != null &&
+                            !shouldIncludeKeyForExport(prefName, key, importOptions)
+                    ) {
+                        return@forEach
+                    }
                     val valueObject = prefEntries.optJSONObject(key) ?: return@forEach
                     when (valueObject.optString(FIELD_TYPE)) {
                         TYPE_STRING -> editor.putString(key, valueObject.optString(FIELD_VALUE))
@@ -306,6 +316,9 @@ object SettingsBackupManager {
         }
         if (prefName == "app_shortcut_cache") {
             return options.includes(ExportItem.SHORTCUTS)
+        }
+        if (prefName != BasePreferences.PREFS_NAME) {
+            return false
         }
         return options.includes(ExportItem.SETTINGS)
     }

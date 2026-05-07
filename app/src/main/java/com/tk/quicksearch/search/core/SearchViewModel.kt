@@ -236,7 +236,28 @@ class SearchViewModel(
         }
     private val uiStateMutationLock = ReentrantLock()
     private fun updateResultsState(updater: (SearchResultsState) -> SearchResultsState) {
-        uiStateMutationLock.withLock { _resultsState.update(updater) }
+        uiStateMutationLock.withLock {
+            val currentResults = _resultsState.value
+            val updatedResults = updater(currentResults)
+            val nextResults =
+                    if (isStartupComplete) {
+                        val visibleState =
+                                applyVisibilityStates(
+                                        SearchUiState(
+                                                results = updatedResults,
+                                                permissions = _permissionState.value,
+                                                features = _featureState.value,
+                                                config = _configState.value,
+                                        ),
+                                )
+                        SearchStateExtractor.extractResultsState(visibleState)
+                    } else {
+                        updatedResults
+                    }
+            if (nextResults != currentResults) {
+                _resultsState.value = nextResults
+            }
+        }
     }
     private fun updatePermissionState(updater: (SearchPermissionState) -> SearchPermissionState) {
         uiStateMutationLock.withLock { _permissionState.update(updater) }

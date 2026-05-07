@@ -43,7 +43,17 @@ internal class SearchDerivedStateDelegate(
             getAppGridColumns(applicationProvider(), configStateProvider().phoneAppGridColumns)
 
     fun getSearchableAppsSnapshot(): List<AppInfo> {
-        return cachedAllSearchableAppsProvider()
+        val cachedApps = cachedAllSearchableAppsProvider()
+        if (cachedApps.isNotEmpty()) return cachedApps
+
+        val loadedApps = appSearchManager.cachedApps
+        if (loadedApps.isEmpty()) return emptyList()
+
+        return buildSearchableApps(
+            apps = loadedApps,
+            resultHiddenPackages = userPreferences.getResultHiddenPackages(),
+            pinnedPackages = userPreferences.getPinnedPackages(),
+        ).also(setCachedAllSearchableApps)
     }
 
     fun warmSearchableAppsSnapshot(apps: List<AppInfo> = appSearchManager.cachedApps) {

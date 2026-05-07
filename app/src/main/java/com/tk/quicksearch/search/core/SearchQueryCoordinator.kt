@@ -613,14 +613,15 @@ internal class SearchQueryCoordinator(
         if (
             shouldRunAppSearch
         ) {
-            val appsSnapshot = getSearchableAppsSnapshot()
-            val gridLimit = getGridItemCount()
             val currentVersion = appSearchQueryVersion.incrementAndGet()
 
             appSearchJob =
                 scope.launch(workerDispatcher) {
                     delay(appSearchDebounceMs)
                     if (currentVersion != appSearchQueryVersion.get()) return@launch
+
+                    val appsSnapshot = getSearchableAppsSnapshot()
+                    val gridLimit = getGridItemCount()
 
                     val results =
                         appSearchManager.deriveMatches(
