@@ -9,7 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import com.tk.quicksearch.R
 import com.tk.quicksearch.search.core.AiSearchState
 import com.tk.quicksearch.search.core.AiSearchStatus
@@ -30,6 +32,8 @@ fun AiSearchResult(
 ) {
     if (aiSearchState.status == AiSearchStatus.Idle) return
 
+    @Suppress("DEPRECATION")
+    val clipboardManager = LocalClipboardManager.current
     val showAttribution =
             aiSearchState.status == AiSearchStatus.Success &&
                     !aiSearchState.answer.isNullOrBlank()
@@ -62,6 +66,9 @@ fun AiSearchResult(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         onPhoneNumberClick = onPhoneNumberClick,
                                         onEmailClick = onEmailClick,
+                                        onLongClick = {
+                                            clipboardManager.setText(AnnotatedString(answer))
+                                        },
                                 )
                             }
                         }
@@ -89,6 +96,7 @@ private fun ClickableAiSearchText(
         color: Color,
         onPhoneNumberClick: (String) -> Unit,
         onEmailClick: (String) -> Unit,
+        onLongClick: () -> Unit,
 ) {
     PhoneEmailLinkifiedText(
             text = text,
@@ -97,5 +105,6 @@ private fun ClickableAiSearchText(
             linkColor = MaterialTheme.colorScheme.primary,
             onPhoneNumberClick = onPhoneNumberClick,
             onEmailClick = onEmailClick,
+            onLongClick = onLongClick,
     )
 }

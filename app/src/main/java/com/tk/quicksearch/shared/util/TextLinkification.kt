@@ -1,10 +1,18 @@
 package com.tk.quicksearch.shared.util
 
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
@@ -94,27 +102,42 @@ fun buildPhoneEmailLinkifiedText(
 @Composable
 fun PhoneEmailLinkifiedText(
     text: String,
+    modifier: Modifier = Modifier,
     style: TextStyle,
     color: Color,
     linkColor: Color,
     onPhoneNumberClick: (String) -> Unit,
     onEmailClick: (String) -> Unit,
+    onLongClick: (() -> Unit)? = null,
 ) {
-    val annotatedText = buildPhoneEmailLinkifiedText(text = text, linkColor = linkColor)
-    @Suppress("DEPRECATION")
-    ClickableText(
+    val annotatedText = remember(text, linkColor) {
+        buildPhoneEmailLinkifiedText(text = text, linkColor = linkColor)
+    }
+    var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+
+    BasicText(
         text = annotatedText,
         style = style.copy(color = color),
-        onClick = { offset ->
-            annotatedText
-                .getStringAnnotations(start = offset, end = offset)
-                .firstOrNull()
-                ?.let { annotation ->
-                    when (annotation.tag) {
-                        PHONE_ANNOTATION_TAG -> onPhoneNumberClick(annotation.item)
-                        EMAIL_ANNOTATION_TAG -> onEmailClick(annotation.item)
+        modifier =
+            modifier.pointerInput(annotatedText, onLongClick) {
+                detectTapGestures(
+                    onTap = { position ->
+                        val offset = textLayoutResult?.getOffsetForPosition(position) ?: return@detectTapGestures
+                        annotatedText
+                            .getStringAnnotations(start = offset, end = offset)
+                            .firstOrNull()
+                            ?.let { annotation ->
+                                when (annotation.tag) {
+                                    PHONE_ANNOTATION_TAG -> onPhoneNumberClick(annotation.item)
+                                    EMAIL_ANNOTATION_TAG -> onEmailClick(annotation.item)
+                                }
+                            }
+                    },
+                    onLongPress = {
+                        onLongClick?.invoke()
                     }
-                }
-        },
+                )
+            },
+        onTextLayout = { textLayoutResult = it },
     )
 }
