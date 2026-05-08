@@ -2,6 +2,7 @@ package com.tk.quicksearch.app.navigation
 
 import android.Manifest
 import android.content.Context
+import android.os.Environment
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -14,10 +15,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.tk.quicksearch.onboarding.FinalSetupScreen
 import com.tk.quicksearch.onboarding.ImportSettingsScreen
 import com.tk.quicksearch.onboarding.SearchEngineSetupScreen
@@ -74,6 +80,31 @@ private fun directionalNavigationTransition(
             )
 }
 
+private fun findQuicksearchFilesOnDevice(context: Context): List<File> {
+    val searchDirs = listOfNotNull(
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
+        context.getExternalFilesDir(null),
+    )
+    return searchDirs
+        .filter { it.exists() && it.canRead() }
+        .flatMap { dir ->
+            dir.walkTopDown()
+                .maxDepth(3)
+                .filter { it.isFile && it.extension == "quicksearch" }
+                .toList()
+        }
+        .distinctBy { it.absolutePath }
+}
+
+private fun hasFilesPermission(context: Context): Boolean =
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+        Environment.isExternalStorageManager()
+    } else {
+        context.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) ==
+            android.content.pm.PackageManager.PERMISSION_GRANTED
+    }
+
 data class NavigationRequest(
     val destination: RootDestination,
     val settingsDetailType: SettingsDetailType? = null,
@@ -108,6 +139,8 @@ fun MainContent(
             },
         )
     }
+    val coroutineScope = rememberCoroutineScope()
+    var foundQuicksearchFiles by remember { mutableStateOf<List<File>>(emptyList()) }
     val initialDestination = navigationRequest?.destination ?: RootDestination.Search
     val initialSettingsDetailType = navigationRequest?.settingsDetailType
     var destination by rememberSaveable { mutableStateOf(initialDestination) }
@@ -201,8 +234,22 @@ fun MainContent(
                         if (hasCalendarPermission) {
                             searchViewModel.setSectionEnabled(SearchSection.CALENDAR, true)
                         }
-                        currentScreen = AppScreen.ImportSettings
                         searchViewModel.handleOptionalPermissionChange()
+                        if (hasFilesPermission(context)) {
+                            coroutineScope.launch {
+                                val files = withContext(Dispatchers.IO) {
+                                    findQuicksearchFilesOnDevice(context)
+                                }
+                                foundQuicksearchFiles = files
+                                currentScreen = if (files.isNotEmpty()) {
+                                    AppScreen.ImportSettings
+                                } else {
+                                    AppScreen.SearchEngineSetup
+                                }
+                            }
+                        } else {
+                            currentScreen = AppScreen.SearchEngineSetup
+                        }
                     },
                 )
                 }
@@ -248,13 +295,20 @@ fun MainContent(
                         },
                         onSettingsImported = searchViewModel::onSettingsImported,
                         onSkip = { currentScreen = AppScreen.SearchEngineSetup },
+                        preFoundFiles = foundQuicksearchFiles,
                     )
                 }
             }
 
             AppScreen.SearchEngineSetup -> {
                 val uiState by searchViewModel.uiState.collectAsStateWithLifecycle()
-                BackHandler { currentScreen = AppScreen.ImportSettings }
+                BackHandler {
+                    currentScreen = if (foundQuicksearchFiles.isNotEmpty()) {
+                        AppScreen.ImportSettings
+                    } else {
+                        AppScreen.Permissions
+                    }
+                }
                 val hasContactsPermission =
                     context.checkSelfPermission(android.Manifest.permission.READ_CONTACTS) ==
                         android.content.pm.PackageManager.PERMISSION_GRANTED

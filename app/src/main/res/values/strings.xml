@@ -768,6 +768,9 @@
     <string name="setup_import_error_subtitle">Could not read the backup file. Please try again.</string>
     <string name="setup_import_error_title">Import Failed</string>
     <string name="setup_import_importing">Importing settings…</string>
+    <string name="setup_import_backup_found_subtitle">Do you want to restore your settings from this file?</string>
+    <string name="setup_import_backup_found_title">Backup File Found</string>
+    <string name="setup_import_restore_button">Restore</string>
     <string name="setup_import_skip">Skip</string>
     <string name="setup_import_success_subtitle">Your settings have been imported. Tap below to start searching.</string>
     <string name="setup_import_success_title">Settings Restored</string>

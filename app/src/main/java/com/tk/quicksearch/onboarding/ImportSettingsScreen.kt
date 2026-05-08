@@ -1,5 +1,6 @@
 package com.tk.quicksearch.onboarding
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -56,6 +57,7 @@ import com.tk.quicksearch.settings.settingsScreen.SettingsBackupManager
 import com.tk.quicksearch.settings.shared.SettingsScreenBackground
 import com.tk.quicksearch.shared.ui.theme.AppColors
 import com.tk.quicksearch.shared.ui.theme.DesignTokens
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -74,16 +76,15 @@ fun ImportSettingsScreen(
     onImportSuccess: () -> Unit,
     onSettingsImported: () -> Unit = {},
     onSkip: () -> Unit,
+    preFoundFiles: List<File> = emptyList(),
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var screenState by remember { mutableStateOf(ImportScreenState.Idle) }
+    val singlePreFoundFile = preFoundFiles.singleOrNull()
 
-    val importLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(),
-    ) { uri ->
-        if (uri == null) return@rememberLauncherForActivityResult
+    fun importFromUri(uri: Uri) {
         screenState = ImportScreenState.Importing
         coroutineScope.launch(Dispatchers.IO) {
             val isSuccess = runCatching {
@@ -96,6 +97,13 @@ fun ImportSettingsScreen(
                 screenState = if (isSuccess) ImportScreenState.Success else ImportScreenState.Error
             }
         }
+    }
+
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        importFromUri(uri)
     }
 
     SettingsScreenBackground(
@@ -189,7 +197,11 @@ fun ImportSettingsScreen(
                     ) {
                         Text(
                             text = when (state) {
-                                ImportScreenState.Idle -> stringResource(R.string.setup_import_description_title)
+                                ImportScreenState.Idle -> if (singlePreFoundFile != null) {
+                                    stringResource(R.string.setup_import_backup_found_title)
+                                } else {
+                                    stringResource(R.string.setup_import_description_title)
+                                }
                                 ImportScreenState.Importing -> stringResource(R.string.setup_import_importing)
                                 ImportScreenState.Success -> stringResource(R.string.setup_import_success_title)
                                 ImportScreenState.Error -> stringResource(R.string.setup_import_error_title)
@@ -200,7 +212,11 @@ fun ImportSettingsScreen(
                             textAlign = TextAlign.Center,
                         )
                         val subtitleText = when (state) {
-                            ImportScreenState.Idle -> stringResource(R.string.setup_import_description_subtitle)
+                            ImportScreenState.Idle -> if (singlePreFoundFile != null) {
+                                stringResource(R.string.setup_import_backup_found_subtitle)
+                            } else {
+                                stringResource(R.string.setup_import_description_subtitle)
+                            }
                             ImportScreenState.Importing -> ""
                             ImportScreenState.Success -> stringResource(R.string.setup_import_success_subtitle)
                             ImportScreenState.Error -> stringResource(R.string.setup_import_error_subtitle)
@@ -219,35 +235,65 @@ fun ImportSettingsScreen(
                 Spacer(modifier = Modifier.height(DesignTokens.OnboardingSectionSpacing))
 
                 // Import / Retry button — hidden while importing or after success
+                // In single-file mode, "Restore" button imports the pre-found file directly.
+                // Otherwise, "Import Settings" opens the system file picker.
                 AnimatedVisibility(
                     visible = screenState == ImportScreenState.Idle || screenState == ImportScreenState.Error,
                     enter = fadeIn(tween(DesignTokens.AnimationDurationShort)),
                     exit = fadeOut(tween(DesignTokens.AnimationDurationShort)),
                 ) {
-                    Button(
-                        onClick = { importLauncher.launch(arrayOf("*/*")) },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(DesignTokens.OnboardingButtonCornerRadius),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = AppColors.Accent,
-                            contentColor = AppColors.OnAccent,
-                        ),
-                        contentPadding = PaddingValues(
-                            horizontal = DesignTokens.OnboardingButtonHorizontalPadding,
-                            vertical = DesignTokens.OnboardingButtonVerticalPadding,
-                        ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.FileDownload,
-                            contentDescription = null,
-                            modifier = Modifier.size(DesignTokens.IconSize),
-                        )
-                        Spacer(modifier = Modifier.width(DesignTokens.SpacingSmall))
-                        Text(
-                            text = stringResource(R.string.setup_import_button),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium,
-                        )
+                    if (singlePreFoundFile != null) {
+                        Button(
+                            onClick = { importFromUri(Uri.fromFile(singlePreFoundFile)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(DesignTokens.OnboardingButtonCornerRadius),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = AppColors.Accent,
+                                contentColor = AppColors.OnAccent,
+                            ),
+                            contentPadding = PaddingValues(
+                                horizontal = DesignTokens.OnboardingButtonHorizontalPadding,
+                                vertical = DesignTokens.OnboardingButtonVerticalPadding,
+                            ),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.FileDownload,
+                                contentDescription = null,
+                                modifier = Modifier.size(DesignTokens.IconSize),
+                            )
+                            Spacer(modifier = Modifier.width(DesignTokens.SpacingSmall))
+                            Text(
+                                text = stringResource(R.string.setup_import_restore_button),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium,
+                            )
+                        }
+                    } else {
+                        Button(
+                            onClick = { importLauncher.launch(arrayOf("*/*")) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(DesignTokens.OnboardingButtonCornerRadius),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = AppColors.Accent,
+                                contentColor = AppColors.OnAccent,
+                            ),
+                            contentPadding = PaddingValues(
+                                horizontal = DesignTokens.OnboardingButtonHorizontalPadding,
+                                vertical = DesignTokens.OnboardingButtonVerticalPadding,
+                            ),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.FileDownload,
+                                contentDescription = null,
+                                modifier = Modifier.size(DesignTokens.IconSize),
+                            )
+                            Spacer(modifier = Modifier.width(DesignTokens.SpacingSmall))
+                            Text(
+                                text = stringResource(R.string.setup_import_button),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium,
+                            )
+                        }
                     }
                 }
 
