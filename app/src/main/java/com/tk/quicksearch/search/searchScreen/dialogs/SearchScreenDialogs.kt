@@ -24,10 +24,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,13 +44,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
 import androidx.compose.runtime.snapshotFlow
-
-private const val RELEASE_NOTES_ASSET_FILE_NAME = "RELEASE_NOTES.md"
 
 @Composable
 internal fun ReleaseNotesDialog(
@@ -60,7 +54,6 @@ internal fun ReleaseNotesDialog(
     onAcknowledge: () -> Unit,
     onViewAllFeatures: () -> Unit,
 ) {
-    val context = LocalContext.current
     val scrollState = rememberScrollState()
     val title =
         if (versionName != null) {
@@ -68,6 +61,7 @@ internal fun ReleaseNotesDialog(
         } else {
             stringResource(R.string.release_notes_title_no_version)
         }
+    val releaseNotesMarkdown = stringResource(R.string.release_notes_markdown)
     val scrollBarAlpha = remember { Animatable(1f) }
     LaunchedEffect(scrollState) {
         val scope = this
@@ -82,17 +76,9 @@ internal fun ReleaseNotesDialog(
         }
     }
 
-    val bulletPoints by
-        produceState<List<String>>(initialValue = emptyList(), context) {
-            value =
-                withContext(Dispatchers.IO) {
-                    runCatching {
-                        context.assets.open(RELEASE_NOTES_ASSET_FILE_NAME).bufferedReader().use { reader ->
-                            parseReleaseNotesBulletPoints(reader.readText())
-                        }
-                    }.getOrDefault(emptyList())
-                }
-        }
+    val bulletPoints = remember(releaseNotesMarkdown) {
+        parseReleaseNotesBulletPoints(releaseNotesMarkdown)
+    }
 
     AppAlertDialog(
         onDismissRequest = onAcknowledge,
