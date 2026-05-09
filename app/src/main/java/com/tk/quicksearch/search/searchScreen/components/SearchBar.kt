@@ -74,6 +74,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
@@ -231,6 +232,20 @@ internal fun PersistentSearchBar(
     var aliasMorphText by remember { mutableStateOf<String?>(null) }
     var previousLeadingIconState by remember { mutableStateOf(leadingIconState) }
     var hasCompletedStartupAutoFocus by remember { mutableStateOf(!autoFocusOnStart) }
+    var pendingHardwareEnterSubmit by remember { mutableStateOf(false) }
+
+    fun submitSearchAction() {
+        val keepKeyboardFromAction = onSearchAction()
+        if (!keepKeyboardFromAction && query.isNotBlank()) {
+            val firstTarget = enabledTargets.firstOrNull()
+            val keepKeyboard =
+                (firstTarget as? SearchTarget.Engine)?.engine ==
+                    SearchEngine.DIRECT_SEARCH
+            if (!keepKeyboard) {
+                keyboardController?.hide()
+            }
+        }
+    }
 
     LaunchedEffect(query, leadingIconState) {
         val previousText = textFieldValue.text
@@ -526,19 +541,20 @@ internal fun PersistentSearchBar(
                                 onClearDetectedShortcut()
                                 true
                             }
+                            keyEvent.type == KeyEventType.KeyDown &&
+                                (keyEvent.key == Key.Enter || keyEvent.key == Key.NumPadEnter) -> {
+                                pendingHardwareEnterSubmit = !keyEvent.isShiftPressed
+                                pendingHardwareEnterSubmit
+                            }
                             keyEvent.type == KeyEventType.KeyUp &&
                                 (keyEvent.key == Key.Enter || keyEvent.key == Key.NumPadEnter) -> {
-                                val keepKeyboardFromAction = onSearchAction()
-                                if (!keepKeyboardFromAction && query.isNotBlank()) {
-                                    val firstTarget = enabledTargets.firstOrNull()
-                                    val keepKeyboard =
-                                        (firstTarget as? SearchTarget.Engine)?.engine ==
-                                            SearchEngine.DIRECT_SEARCH
-                                    if (!keepKeyboard) {
-                                        keyboardController?.hide()
-                                    }
+                                if (pendingHardwareEnterSubmit) {
+                                    pendingHardwareEnterSubmit = false
+                                    submitSearchAction()
+                                    true
+                                } else {
+                                    false
                                 }
-                                true
                             }
                             else -> false
                         }
@@ -720,23 +736,7 @@ internal fun PersistentSearchBar(
             keyboardActions =
                 KeyboardActions(
                     onSearch = {
-                        val keepKeyboardFromAction = onSearchAction()
-                        if (!keepKeyboardFromAction && query.isNotBlank()) {
-                            // Only hide keyboard if the first engine is
-                            // not
-                            // DIRECT_ANSWER
-                            val firstTarget =
-                                enabledTargets.firstOrNull()
-                            val keepKeyboard =
-                                (
-                                    firstTarget as?
-                                        SearchTarget.Engine
-                                )?.engine ==
-                                    SearchEngine.DIRECT_SEARCH
-                            if (!keepKeyboard) {
-                                keyboardController?.hide()
-                            }
-                        }
+                        submitSearchAction()
                     },
                 ),
             colors =
