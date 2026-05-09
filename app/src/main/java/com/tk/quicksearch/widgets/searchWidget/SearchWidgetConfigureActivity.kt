@@ -211,6 +211,7 @@ class SearchWidgetConfigureActivity : ComponentActivity() {
                 config =
                     config.copy(
                         backgroundColor = resolveDeviceThemeBackgroundColor(useDarkThemeForDeviceTheme),
+                        useDeviceThemeBackground = true,
                     )
             }
             isLoaded = true

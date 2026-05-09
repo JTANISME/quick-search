@@ -82,6 +82,7 @@ internal object WidgetDefaults {
     val MIC_ACTION = MicAction.DEFAULT_VOICE_SEARCH
     const val INTERNAL_HORIZONTAL_PADDING_DP = 0f
     const val INTERNAL_VERTICAL_PADDING_DP = 0f
+    const val USE_DEVICE_THEME_BACKGROUND = false
     val CUSTOM_BUTTONS: List<CustomWidgetButtonAction?> =
         List(WidgetButtonSlotConfig.STANDARD_COUNT) { null }
 }
@@ -118,6 +119,8 @@ private object WidgetKeys {
         floatPreferencesKey("quick_search_widget_internal_horizontal_padding")
     val INTERNAL_VERTICAL_PADDING =
         floatPreferencesKey("quick_search_widget_internal_vertical_padding")
+    val USE_DEVICE_THEME_BACKGROUND =
+        booleanPreferencesKey("quick_search_widget_use_device_theme_background")
     val CUSTOM_BUTTON_0 = stringPreferencesKey("quick_search_widget_custom_button_0")
     val CUSTOM_BUTTON_1 = stringPreferencesKey("quick_search_widget_custom_button_1")
     val CUSTOM_BUTTON_2 = stringPreferencesKey("quick_search_widget_custom_button_2")
@@ -152,6 +155,7 @@ data class WidgetPreferences(
     val textIconColorOverride: TextIconColorOverride = TextIconColorOverride.THEME,
     val internalHorizontalPaddingDp: Float = WidgetDefaults.INTERNAL_HORIZONTAL_PADDING_DP,
     val internalVerticalPaddingDp: Float = WidgetDefaults.INTERNAL_VERTICAL_PADDING_DP,
+    val useDeviceThemeBackground: Boolean = WidgetDefaults.USE_DEVICE_THEME_BACKGROUND,
     val customButtons: List<CustomWidgetButtonAction?> = WidgetDefaults.CUSTOM_BUTTONS,
 ) : Parcelable {
     companion object {
@@ -332,6 +336,9 @@ fun Preferences.toWidgetPreferences(): WidgetPreferences {
         internalVerticalPaddingDp =
             this[WidgetKeys.INTERNAL_VERTICAL_PADDING]
                 ?: WidgetDefaults.INTERNAL_VERTICAL_PADDING_DP,
+        useDeviceThemeBackground =
+            this[WidgetKeys.USE_DEVICE_THEME_BACKGROUND]
+                ?: WidgetDefaults.USE_DEVICE_THEME_BACKGROUND,
         customButtons = customButtons,
     ).coerceToValidRanges()
 }
@@ -354,6 +361,7 @@ fun MutablePreferences.applyWidgetPreferences(config: WidgetPreferences) {
     this[WidgetKeys.TEXT_ICON_COLOR_OVERRIDE] = validated.textIconColorOverride.value
     this[WidgetKeys.INTERNAL_HORIZONTAL_PADDING] = validated.internalHorizontalPaddingDp
     this[WidgetKeys.INTERNAL_VERTICAL_PADDING] = validated.internalVerticalPaddingDp
+    this[WidgetKeys.USE_DEVICE_THEME_BACKGROUND] = validated.useDeviceThemeBackground
     val customButtons = normalizeCustomButtons(validated.customButtons, WidgetButtonSlotConfig.MAX_COUNT)
     customButtons.getOrNull(0)?.let { action -> this[WidgetKeys.CUSTOM_BUTTON_0] = action.toJson() }
         ?: remove(WidgetKeys.CUSTOM_BUTTON_0)

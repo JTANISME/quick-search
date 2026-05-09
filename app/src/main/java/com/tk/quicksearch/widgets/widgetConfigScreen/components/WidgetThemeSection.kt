@@ -93,6 +93,7 @@ fun WidgetThemeSection(
                                         deviceSecondary,
                                     ),
                                 ),
+                            isDeviceTheme = true,
                         ),
                     )
                 }
@@ -141,7 +142,13 @@ fun WidgetThemeSection(
             selectedTheme = if (state.backgroundColor == null) state.theme else null,
             onSelectionChange = {
                 customBgHexValue = ""
-                onStateChange(state.copy(theme = it, backgroundColor = null))
+                onStateChange(
+                    state.copy(
+                        theme = it,
+                        backgroundColor = null,
+                        useDeviceThemeBackground = false,
+                    ),
+                )
             },
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -153,15 +160,27 @@ fun WidgetThemeSection(
                 ThemeColorOptionChip(
                     modifier = Modifier.weight(1f),
                     brush = option.brush,
-                    selected = state.backgroundColor == option.backgroundColorArgb,
+                    selected =
+                        if (option.isDeviceTheme) {
+                            state.useDeviceThemeBackground
+                        } else {
+                            !state.useDeviceThemeBackground &&
+                                state.backgroundColor == option.backgroundColorArgb
+                        },
                     label = stringResource(option.labelRes),
                     onClick = {
                         customBgHexValue = ""
-                        onStateChange(state.copy(backgroundColor = option.backgroundColorArgb))
+                        onStateChange(
+                            state.copy(
+                                backgroundColor = option.backgroundColorArgb,
+                                useDeviceThemeBackground = option.isDeviceTheme,
+                            ),
+                        )
                     },
                 )
             }
             val isCustomSelected =
+                !state.useDeviceThemeBackground &&
                 state.backgroundColor != null &&
                     themeOptions.none { option -> option.backgroundColorArgb == state.backgroundColor }
             ThemeColorOptionChip(
@@ -213,7 +232,12 @@ fun WidgetThemeSection(
             onDismiss = { showCustomBgColorDialog = false },
             onConfirm = { hex, color ->
                 customBgHexValue = hex
-                onStateChange(state.copy(backgroundColor = color.toArgb()))
+                onStateChange(
+                    state.copy(
+                        backgroundColor = color.toArgb(),
+                        useDeviceThemeBackground = false,
+                    ),
+                )
                 showCustomBgColorDialog = false
             },
         )
@@ -363,4 +387,5 @@ private data class WidgetBackgroundThemeOption(
     val backgroundColorArgb: Int,
     val labelRes: Int,
     val brush: Brush,
+    val isDeviceTheme: Boolean = false,
 )

@@ -1,5 +1,6 @@
 package com.tk.quicksearch.widgets.utils
 
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -290,6 +293,7 @@ private data class PreviewColors(
 @Composable
 private fun calculatePreviewColors(state: WidgetPreferences): PreviewColors {
     val isSystemInDarkTheme = isSystemInDarkTheme()
+    val context = LocalContext.current
 
     // Determine effective theme based on user selection
     val effectiveTheme =
@@ -299,8 +303,19 @@ private fun calculatePreviewColors(state: WidgetPreferences): PreviewColors {
         }
 
     val customBackgroundColor = state.backgroundColor?.let(::Color)
+    val deviceThemeBackgroundColor =
+        if (state.useDeviceThemeBackground && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (isSystemInDarkTheme) {
+                dynamicDarkColorScheme(context).primary
+            } else {
+                dynamicLightColorScheme(context).primary
+            }
+        } else {
+            null
+        }
+    val resolvedCustomBackgroundColor = deviceThemeBackgroundColor ?: customBackgroundColor
     val background =
-        customBackgroundColor?.copy(alpha = state.backgroundAlpha)
+        resolvedCustomBackgroundColor?.copy(alpha = state.backgroundAlpha)
             ?: WidgetColorUtils.getBackgroundColor(
                 effectiveTheme,
                 state.backgroundAlpha,
@@ -311,7 +326,7 @@ private fun calculatePreviewColors(state: WidgetPreferences): PreviewColors {
             state.theme,
             state.backgroundAlpha,
             state.textIconColorOverride,
-            customBackgroundColor = customBackgroundColor,
+            customBackgroundColor = resolvedCustomBackgroundColor,
             isSystemInDarkTheme,
         )
 

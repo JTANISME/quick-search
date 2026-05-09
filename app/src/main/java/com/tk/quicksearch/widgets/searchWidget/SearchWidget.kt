@@ -123,10 +123,12 @@ class SearchWidget(
         val useDynamicSystemBackground =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                 config.theme == WidgetTheme.SYSTEM &&
-                config.backgroundColor == null
+                config.backgroundColor == null &&
+                !config.useDeviceThemeBackground
+        val useResourceBackedBackground = useDynamicSystemBackground || config.useDeviceThemeBackground
 
         val backgroundBitmap =
-            if (!hasDefaultBackground && !useDynamicSystemBackground) {
+            if (!hasDefaultBackground && !useResourceBackedBackground) {
                 WidgetBitmapUtils.createWidgetBitmap(
                     widthPx = widthPx,
                     heightPx = heightPx,
@@ -248,7 +250,9 @@ class SearchWidget(
             borderColor = borderColor,
             textIconColor = textIconColor,
             backgroundColorProvider =
-                if (useDynamicSystemColors) {
+                if (config.useDeviceThemeBackground) {
+                    ColorProvider(R.color.quick_search_widget_device_primary)
+                } else if (useDynamicSystemColors) {
                     DayNightColorProvider(
                         day = WidgetColorUtils.getBackgroundColor(WidgetTheme.LIGHT, config.backgroundAlpha),
                         night = WidgetColorUtils.getBackgroundColor(WidgetTheme.DARK, config.backgroundAlpha),
@@ -770,6 +774,7 @@ private fun isDefaultBackgroundStyle(config: WidgetPreferences): Boolean =
         nearlyEqual(config.borderAlpha, WidgetDefaults.BORDER_ALPHA) &&
         config.theme == WidgetDefaults.THEME &&
         config.backgroundColor == WidgetDefaults.BACKGROUND_COLOR &&
+        config.useDeviceThemeBackground == WidgetDefaults.USE_DEVICE_THEME_BACKGROUND &&
         config.borderColor == WidgetDefaults.BORDER_COLOR_ARGB &&
         config.borderColorOption == WidgetDefaults.BORDER_COLOR_OPTION
 
