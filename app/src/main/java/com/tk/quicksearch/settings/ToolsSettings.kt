@@ -30,11 +30,12 @@ import com.tk.quicksearch.shared.ui.theme.DesignTokens
 @Composable
 fun ToolsSettingsSection(
         toolStates: Map<ToolSettingId, ToolSettingUiState>,
-        hasGeminiApiKey: Boolean,
+        hasApiKey: Boolean,
         existingShortcuts: Map<String, String>,
         onToolAliasChange: (ToolSettingId, String) -> Unit,
         onToolToggle: (ToolSettingId, Boolean) -> Unit,
         onToolInfoClick: (ToolSettingId) -> Unit,
+        onToolConfigureClick: (ToolSettingId) -> Unit = {},
         onNavigateToGeminiApiSetup: () -> Unit = {},
         customTools: List<CustomTool> = emptyList(),
         disabledCustomToolIds: Set<String> = emptySet(),
@@ -59,26 +60,24 @@ fun ToolsSettingsSection(
                                 .padding(horizontal = DesignTokens.SpacingSmall),
                 verticalArrangement = Arrangement.spacedBy(DesignTokens.SpacingSmall),
         ) {
-            if (!hasGeminiApiKey) {
-                SettingsCard(modifier = Modifier.fillMaxWidth()) {
-                    SettingsNavigationRow(
-                            item =
-                                    SettingsCardItem(
-                                            title = stringResource(R.string.settings_tools_gemini_api_title),
-                                            description =
-                                                    stringResource(
-                                                            R.string.settings_tools_gemini_api_desc
-                                                    ),
-                                            iconResId = R.drawable.direct_search,
-                                            actionOnPress = onNavigateToGeminiApiSetup,
-                                    ),
-                            contentPadding =
-                                    PaddingValues(
-                                            horizontal = DesignTokens.CardHorizontalPadding,
-                                            vertical = DesignTokens.CardVerticalPadding,
-                                    ),
-                    )
-                }
+            SettingsCard(modifier = Modifier.fillMaxWidth()) {
+                SettingsNavigationRow(
+                        item =
+                                SettingsCardItem(
+                                        title = stringResource(R.string.settings_tools_gemini_api_title),
+                                        description =
+                                                stringResource(
+                                                        R.string.settings_tools_gemini_api_desc
+                                                ),
+                                        iconResId = R.drawable.direct_search,
+                                        actionOnPress = onNavigateToGeminiApiSetup,
+                                ),
+                        contentPadding =
+                                PaddingValues(
+                                        horizontal = DesignTokens.CardHorizontalPadding,
+                                        vertical = DesignTokens.CardVerticalPadding,
+                                ),
+                )
             }
             ToolToggleRows(
                     tools =
@@ -90,7 +89,7 @@ fun ToolsSettingsSection(
                                                         aliasCode = "",
                                                 )
                                 val isAvailable =
-                                        !definition.requiresGeminiApiKey || hasGeminiApiKey
+                                        !definition.requiresGeminiApiKey || hasApiKey
                                 val subtitleResId =
                                         if (isAvailable) {
                                             definition.defaultDescriptionResId
@@ -119,12 +118,13 @@ fun ToolsSettingsSection(
                                         },
                                         existingShortcuts = existingShortcuts,
                                         aliasFeatureId = definition.aliasFeatureId,
-                                        onRowClick =
-                                                if (definition.infoDestination != null) {
-                                                    { onToolInfoClick(definition.id) }
-                                                } else {
-                                                    null
-                                                },
+                                        onRowClick = {
+                                            if (definition.aiBackedModelConfigurable) {
+                                                onToolConfigureClick(definition.id)
+                                            } else if (definition.infoDestination != null) {
+                                                onToolInfoClick(definition.id)
+                                            }
+                                        },
                                 )
                             },
             )

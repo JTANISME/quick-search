@@ -429,6 +429,9 @@
     <string name="settings_backup_export_option_pinned_items_title">Pinned items</string>
 
     <string name="settings_backup_export_option_gemini_title">AI Provider</string>
+    <string name="settings_ai_provider_title">AI Provider</string>
+    <string name="settings_api_key_setup_title">API Key Setup</string>
+    <string name="settings_configure_api_key_title">Configure API key</string>
     <string name="settings_backup_export_failed">Unable to export settings.</string>
     <string name="settings_backup_export_success">Settings exported successfully.</string>
     <string name="settings_backup_import_button">Import</string>
@@ -479,6 +482,15 @@
     <string name="settings_direct_dial_title">Direct Dial</string>
     <string name="settings_direct_search_desc_intro">Add an API key to enable AI-powered search and tools.</string>
     <string name="settings_direct_search_desc">Gemini, OpenAI, Claude and Groq API keys are supported</string>
+    <string name="settings_api_key_setup_desc">Configure API keys to access models from the respective AI provider.</string>
+    <string name="settings_api_key_setup_nav_desc">Add or remove provider API keys</string>
+    <string name="settings_api_key_input_label">API key</string>
+    <string name="settings_api_key_not_set">No API key set</string>
+    <string name="settings_api_key_saved_last4">Saved key ending in ****%1$s</string>
+    <string name="settings_api_key_paste_action">Paste from clipboard</string>
+    <string name="settings_ai_provider_openai">OpenAI</string>
+    <string name="settings_ai_provider_groq">Groq</string>
+    <string name="settings_model_picker_search_hint">Search models</string>
     <string name="settings_direct_search_grounding_label">Web Search</string>
     <string name="settings_direct_search_thinking_label">Thinking</string>
     <string name="settings_direct_search_how_to">Get Free API Key</string>
@@ -663,7 +675,7 @@
     <string name="settings_device_theme_blocked_toast">Disabled while Material You theme is enabled</string>
     <string name="settings_tools_desc">Calculator, Unit converter, Dictionary and more</string>
     <string name="settings_tools_gemini_api_desc">Adding an API key enables more tools.</string>
-    <string name="settings_tools_gemini_api_title">Set up AI provider</string>
+    <string name="settings_tools_gemini_api_title">Configure AI Provider</string>
     <string name="settings_tools_info_examples_header">Here are some examples of things you can ask in the search bar</string>
     <string name="settings_tools_title">Tools</string>
     <string name="settings_create_new_tool_button">Create New Tool</string>
@@ -672,7 +684,7 @@
     <string name="settings_custom_tool_prompt_label">System Prompt</string>
     <string name="settings_custom_tool_prompt_hint">Describe what this tool does. This prompt guides the AI when the tool is triggered.</string>
     <string name="settings_custom_tool_alias_label">Alias</string>
-    <string name="settings_custom_tool_alias_hint">Shortcut to trigger this tool (e.g. "tool").</string>
+    <string name="settings_custom_tool_alias_hint">A keyword to trigger this tool</string>
     <string name="settings_custom_tool_delete_button">Delete Tool</string>
     <string name="notes_create_note_cta">New Note</string>
     <string name="notes_quick_note_title">Quick Note</string>

@@ -633,6 +633,37 @@ class UiPreferences(
         return legacy
     }
 
+    fun setCurrencyConverterModel(modelId: String) {
+        val normalized = modelId.trim()
+        if (normalized.isEmpty()) return
+        prefs.edit()
+            .putString(UiPreferences.KEY_CURRENCY_CONVERTER_MODEL, normalized)
+            .remove(UiPreferences.LEGACY_KEY_CURRENCY_CONVERTER_MODEL_PREF)
+            .apply()
+    }
+
+    fun getWordClockModel(): String =
+        prefs.getString(UiPreferences.KEY_WORD_CLOCK_MODEL, null).orEmpty().ifBlank {
+            getCurrencyConverterModel()
+        }
+
+    fun setWordClockModel(modelId: String) {
+        val normalized = modelId.trim()
+        if (normalized.isEmpty()) return
+        prefs.edit().putString(UiPreferences.KEY_WORD_CLOCK_MODEL, normalized).apply()
+    }
+
+    fun getDictionaryModel(): String =
+        prefs.getString(UiPreferences.KEY_DICTIONARY_MODEL, null).orEmpty().ifBlank {
+            getCurrencyConverterModel()
+        }
+
+    fun setDictionaryModel(modelId: String) {
+        val normalized = modelId.trim()
+        if (normalized.isEmpty()) return
+        prefs.edit().putString(UiPreferences.KEY_DICTIONARY_MODEL, normalized).apply()
+    }
+
     // ============================================================================
     // Section Preferences
     // ============================================================================
@@ -877,6 +908,8 @@ class UiPreferences(
         const val KEY_WORD_CLOCK_ENABLED = "word_clock_enabled"
         const val KEY_DICTIONARY_ENABLED = "dictionary_enabled"
         const val KEY_CURRENCY_CONVERTER_MODEL = "currency_converter_model"
+        const val KEY_WORD_CLOCK_MODEL = "word_clock_model"
+        const val KEY_DICTIONARY_MODEL = "dictionary_model"
         /** Previous preference key; migrated automatically on read/write. */
         const val LEGACY_KEY_CURRENCY_CONVERTER_MODEL_PREF = "currency_converter_gemini_model"
 

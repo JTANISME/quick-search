@@ -38,8 +38,9 @@ internal fun SearchUiState.toSettingsScreenState(): SettingsScreenState {
         isSearchEngineAliasSuffixEnabled = searchEngines.isSearchEngineAliasSuffixEnabled,
         isAliasTriggerAfterSpaceEnabled = searchEngines.isAliasTriggerAfterSpaceEnabled,
         amazonDomain = searchEngines.amazonDomain,
-        hasGeminiApiKey = searchEngines.hasGeminiApiKey,
+        hasApiKey = searchEngines.hasApiKey,
         geminiApiKeyLast4 = searchEngines.geminiApiKeyLast4,
+        llmApiKeyLast4ByProvider = searchEngines.llmApiKeyLast4ByProvider,
         aiSearchLlmProviderId = searchEngines.aiSearchLlmProviderId,
         isSavingGeminiApiKey = searchEngines.isSavingGeminiApiKey,
         personalContext = searchEngines.personalContext,
@@ -47,6 +48,7 @@ internal fun SearchUiState.toSettingsScreenState(): SettingsScreenState {
         geminiGroundingEnabled = searchEngines.geminiGroundingEnabled,
         geminiThinkingEnabled = searchEngines.geminiThinkingEnabled,
         availableGeminiModels = searchEngines.availableGeminiModels,
+        availableLlmModelsByProvider = searchEngines.availableLlmModelsByProvider,
         enabledFileTypes = fileSearch.enabledFileTypes,
         showFolders = fileSearch.showFolders,
         showSystemFiles = fileSearch.showSystemFiles,
@@ -152,8 +154,9 @@ private data class SearchEngineMapperState(
     val isSearchEngineAliasSuffixEnabled: Boolean,
     val isAliasTriggerAfterSpaceEnabled: Boolean,
     val amazonDomain: String?,
-    val hasGeminiApiKey: Boolean,
+    val hasApiKey: Boolean,
     val geminiApiKeyLast4: String?,
+    val llmApiKeyLast4ByProvider: Map<AiSearchLlmProviderId, String>,
     val aiSearchLlmProviderId: AiSearchLlmProviderId,
     val isSavingGeminiApiKey: Boolean,
     val personalContext: String,
@@ -161,6 +164,7 @@ private data class SearchEngineMapperState(
     val geminiGroundingEnabled: Boolean,
     val geminiThinkingEnabled: Boolean,
     val availableGeminiModels: List<com.tk.quicksearch.tools.aiSearch.GeminiTextModel>,
+    val availableLlmModelsByProvider: Map<AiSearchLlmProviderId, List<com.tk.quicksearch.tools.aiSearch.GeminiTextModel>>,
 )
 
 private fun SearchUiState.toSearchEngineSettingsState() =
@@ -174,8 +178,9 @@ private fun SearchUiState.toSearchEngineSettingsState() =
         isSearchEngineAliasSuffixEnabled = isSearchEngineAliasSuffixEnabled,
         isAliasTriggerAfterSpaceEnabled = isAliasTriggerAfterSpaceEnabled,
         amazonDomain = amazonDomain,
-        hasGeminiApiKey = hasGeminiApiKey,
+        hasApiKey = hasApiKey,
         geminiApiKeyLast4 = geminiApiKeyLast4,
+        llmApiKeyLast4ByProvider = llmApiKeyLast4ByProvider,
         aiSearchLlmProviderId = aiSearchLlmProviderId,
         isSavingGeminiApiKey = isSavingGeminiApiKey,
         personalContext = personalContext,
@@ -183,6 +188,7 @@ private fun SearchUiState.toSearchEngineSettingsState() =
         geminiGroundingEnabled = geminiGroundingEnabled,
         geminiThinkingEnabled = geminiThinkingEnabled,
         availableGeminiModels = availableGeminiModels,
+        availableLlmModelsByProvider = availableLlmModelsByProvider,
     )
 
 private data class FileSearchMapperState(

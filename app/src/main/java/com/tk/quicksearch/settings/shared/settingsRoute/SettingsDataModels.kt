@@ -19,6 +19,7 @@ import com.tk.quicksearch.search.models.FileType
 import com.tk.quicksearch.search.core.IconPackInfo
 import com.tk.quicksearch.search.deviceSettings.DeviceSetting
 import com.tk.quicksearch.settings.AppShortcutsSettings.AppShortcutSource
+import com.tk.quicksearch.settings.settingsDetailScreen.AiBackedToolConfigId
 import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderId
 import com.tk.quicksearch.tools.aiSearch.GeminiTextModel
 
@@ -105,8 +106,9 @@ data class SettingsScreenState(
     val clearQueryOnLaunch: Boolean,
     val autoCloseOverlay: Boolean,
     val recentQueriesEnabled: Boolean,
-    val hasGeminiApiKey: Boolean = false,
+    val hasApiKey: Boolean = false,
     val geminiApiKeyLast4: String? = null,
+    val llmApiKeyLast4ByProvider: Map<AiSearchLlmProviderId, String> = emptyMap(),
     val aiSearchLlmProviderId: AiSearchLlmProviderId = AiSearchLlmProviderId.GEMINI,
     val isSavingGeminiApiKey: Boolean = false,
     val personalContext: String = "",
@@ -114,6 +116,7 @@ data class SettingsScreenState(
     val geminiGroundingEnabled: Boolean,
     val geminiThinkingEnabled: Boolean = false,
     val availableGeminiModels: List<GeminiTextModel>,
+    val availableLlmModelsByProvider: Map<AiSearchLlmProviderId, List<GeminiTextModel>> = emptyMap(),
 ) {
     val searchResults: SearchResultsSettingsState
         get() =
@@ -148,8 +151,9 @@ data class SettingsScreenState(
                 isSearchEngineAliasSuffixEnabled = isSearchEngineAliasSuffixEnabled,
                 isAliasTriggerAfterSpaceEnabled = isAliasTriggerAfterSpaceEnabled,
                 amazonDomain = amazonDomain,
-                hasGeminiApiKey = hasGeminiApiKey,
+                hasApiKey = hasApiKey,
                 geminiApiKeyLast4 = geminiApiKeyLast4,
+                llmApiKeyLast4ByProvider = llmApiKeyLast4ByProvider,
                 aiSearchLlmProviderId = aiSearchLlmProviderId,
                 isSavingGeminiApiKey = isSavingGeminiApiKey,
                 personalContext = personalContext,
@@ -157,6 +161,7 @@ data class SettingsScreenState(
                 geminiGroundingEnabled = geminiGroundingEnabled,
                 geminiThinkingEnabled = geminiThinkingEnabled,
                 availableGeminiModels = availableGeminiModels,
+                availableLlmModelsByProvider = availableLlmModelsByProvider,
             )
 
     val fileSearch: FileSearchSettingsState
@@ -315,8 +320,11 @@ data class SettingsScreenCallbacks(
     val onToggleWallpaperAccent: (Boolean) -> Unit,
     val onToggleRecentQueries: (Boolean) -> Unit,
     val onSetGeminiApiKey: (String?) -> Unit,
+    val onSetLlmApiKey: (AiSearchLlmProviderId, String?) -> Unit,
     val onSetPersonalContext: (String?) -> Unit,
     val onSetGeminiModel: (String?) -> Unit,
+    val onSetLlmModel: (AiSearchLlmProviderId, String?) -> Unit,
+    val onSetAiToolModel: (AiBackedToolConfigId, String) -> Unit,
     val onSetGeminiGroundingEnabled: (Boolean) -> Unit,
     val onSetGeminiThinkingEnabled: (Boolean) -> Unit,
     val onRefreshAvailableGeminiModels: () -> Unit,
@@ -395,8 +403,10 @@ data class SettingsScreenCallbacks(
                 onSetAmazonDomain = onSetAmazonDomain,
                 onSetSearchSectionAlias = onSetSearchSectionAlias,
                 onSetGeminiApiKey = onSetGeminiApiKey,
+                onSetLlmApiKey = onSetLlmApiKey,
                 onSetPersonalContext = onSetPersonalContext,
                 onSetGeminiModel = onSetGeminiModel,
+                onSetLlmModel = onSetLlmModel,
                 onSetGeminiGroundingEnabled = onSetGeminiGroundingEnabled,
                 onSetGeminiThinkingEnabled = onSetGeminiThinkingEnabled,
                 onRefreshAvailableGeminiModels = onRefreshAvailableGeminiModels,
@@ -466,8 +476,9 @@ data class SearchEngineSettingsState(
     val isSearchEngineAliasSuffixEnabled: Boolean,
     val isAliasTriggerAfterSpaceEnabled: Boolean,
     val amazonDomain: String?,
-    val hasGeminiApiKey: Boolean,
+    val hasApiKey: Boolean,
     val geminiApiKeyLast4: String?,
+    val llmApiKeyLast4ByProvider: Map<AiSearchLlmProviderId, String>,
     val aiSearchLlmProviderId: AiSearchLlmProviderId,
     val isSavingGeminiApiKey: Boolean,
     val personalContext: String,
@@ -475,6 +486,7 @@ data class SearchEngineSettingsState(
     val geminiGroundingEnabled: Boolean,
     val geminiThinkingEnabled: Boolean,
     val availableGeminiModels: List<GeminiTextModel>,
+    val availableLlmModelsByProvider: Map<AiSearchLlmProviderId, List<GeminiTextModel>>,
 )
 
 data class FileSearchSettingsState(
@@ -576,8 +588,10 @@ data class SearchEngineSettingsCallbacks(
     val onSetAmazonDomain: (String?) -> Unit,
     val onSetSearchSectionAlias: (String, String) -> Unit,
     val onSetGeminiApiKey: (String?) -> Unit,
+    val onSetLlmApiKey: (AiSearchLlmProviderId, String?) -> Unit,
     val onSetPersonalContext: (String?) -> Unit,
     val onSetGeminiModel: (String?) -> Unit,
+    val onSetLlmModel: (AiSearchLlmProviderId, String?) -> Unit,
     val onSetGeminiGroundingEnabled: (Boolean) -> Unit,
     val onSetGeminiThinkingEnabled: (Boolean) -> Unit,
     val onRefreshAvailableGeminiModels: () -> Unit,

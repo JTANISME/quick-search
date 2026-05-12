@@ -37,6 +37,7 @@ import com.tk.quicksearch.search.data.UserAppPreferences
 import com.tk.quicksearch.search.searchScreen.SearchRoute
 import com.tk.quicksearch.settings.settingsDetailScreen.CreateCalendarEventDialog
 import com.tk.quicksearch.settings.settingsDetailScreen.level
+import com.tk.quicksearch.settings.settingsDetailScreen.resolveBackDestination
 import com.tk.quicksearch.settings.navigation.SettingsDetailRoute
 import com.tk.quicksearch.R
 import com.tk.quicksearch.settings.settingsDetailScreen.SettingsDetailType
@@ -577,7 +578,13 @@ private fun NavigationContent(
                         navigateToSettings(SettingsDetailType.SEARCH_ENGINES)
                     },
                     onOpenAiSearchConfigure = {
-                        navigateToSettings(SettingsDetailType.GEMINI_API_CONFIG)
+                        navigateToSettings(
+                            if (viewModel.uiState.value.hasApiKey) {
+                                SettingsDetailType.GEMINI_API_CONFIG
+                            } else {
+                                SettingsDetailType.API_KEY_SETUP
+                            },
+                        )
                     },
                     onOpenToolsSettings = {
                         navigateToSettings(SettingsDetailType.TOOLS)
@@ -637,9 +644,27 @@ private fun SettingsNavigationContent(
     AnimatedContent(
         targetState = settingsDetailType,
         transitionSpec = {
-            val initialLevel = initialState?.level() ?: 0
-            val targetLevel = targetState?.level() ?: 0
-            val isForward = targetLevel > initialLevel
+            val isForward =
+                when {
+                    initialState == null && targetState != null -> true
+                    initialState != null && targetState == null -> false
+                    initialState != null && targetState != null -> {
+                        val initialDetailType = requireNotNull(initialState)
+                        val targetDetailType = requireNotNull(targetState)
+                        val targetBackDestination =
+                            targetDetailType.resolveBackDestination(initialDetailType)
+                        val initialBackDestination =
+                            initialDetailType.resolveBackDestination(targetDetailType)
+                        when {
+                            targetBackDestination == initialDetailType &&
+                                initialBackDestination != targetDetailType -> true
+                            initialBackDestination == targetDetailType &&
+                                targetBackDestination != initialDetailType -> false
+                            else -> targetDetailType.level() > initialDetailType.level()
+                        }
+                    }
+                    else -> false
+                }
             val animationDirection =
                 settingsDetailAnimationDirectionOverride
                     ?: if (isForward) {

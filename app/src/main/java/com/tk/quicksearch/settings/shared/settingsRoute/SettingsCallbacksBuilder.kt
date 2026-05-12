@@ -5,6 +5,7 @@ import com.tk.quicksearch.search.core.SearchTarget
 import com.tk.quicksearch.search.core.SearchViewModel
 import com.tk.quicksearch.search.data.AppShortcutRepository.SearchTargetShortcutMode
 import com.tk.quicksearch.searchEngines.AliasHandler
+import com.tk.quicksearch.settings.settingsDetailScreen.AiBackedToolConfigId
 import com.tk.quicksearch.settings.AppShortcutsSettings.AppShortcutSource
 
 internal data class SettingsRouteHandlers(
@@ -136,8 +137,11 @@ internal fun buildSettingsScreenCallbacks(
         onToggleWallpaperAccent = viewModel::setWallpaperAccentEnabled,
         onToggleRecentQueries = viewModel::setRecentQueriesEnabled,
         onSetGeminiApiKey = viewModel::setGeminiApiKey,
+        onSetLlmApiKey = viewModel::setLlmApiKey,
         onSetPersonalContext = viewModel::setPersonalContext,
         onSetGeminiModel = viewModel::setGeminiModel,
+        onSetLlmModel = viewModel::setLlmModel,
+        onSetAiToolModel = viewModel::setAiBackedToolModel,
         onSetGeminiGroundingEnabled = viewModel::setGeminiGroundingEnabled,
         onSetGeminiThinkingEnabled = viewModel::setGeminiThinkingEnabled,
         onRefreshAvailableGeminiModels = viewModel::refreshAvailableGeminiModels,

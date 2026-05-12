@@ -271,7 +271,13 @@ fun SettingsDetailRoute(
                                     onToggleDirectDial = viewModel::setDirectDialEnabled,
                                     onToggleSection = onToggleSection,
                                     onOpenAiSearchConfigure = {
-                                        onNavigateToDetail(SettingsDetailType.GEMINI_API_CONFIG)
+                                        onNavigateToDetail(
+                                            if (state.hasApiKey) {
+                                                SettingsDetailType.GEMINI_API_CONFIG
+                                            } else {
+                                                SettingsDetailType.API_KEY_SETUP
+                                            },
+                                        )
                                     },
                                     onOpenAddAppShortcutDialog = appShortcutSourceFlow.openSourcePicker,
                                     onAddAppShortcutFromSource = appShortcutSourceFlow.selectSource,

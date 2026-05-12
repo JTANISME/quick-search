@@ -344,7 +344,13 @@ fun SettingsScreen(
                             description = stringResource(R.string.settings_gemini_api_config_desc),
                             iconResId = R.drawable.direct_search,
                             actionOnPress = {
-                                onNavigateToDetail(SettingsDetailType.GEMINI_API_CONFIG)
+                                onNavigateToDetail(
+                                    if (state.hasApiKey) {
+                                        SettingsDetailType.GEMINI_API_CONFIG
+                                    } else {
+                                        SettingsDetailType.API_KEY_SETUP
+                                    },
+                                )
                             },
                         ),
                     )

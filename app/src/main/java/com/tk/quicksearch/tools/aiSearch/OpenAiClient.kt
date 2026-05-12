@@ -63,10 +63,14 @@ class OpenAiClient(
                             val item = data.optJSONObject(i) ?: continue
                             val id = item.optString("id").takeIf { it.isNotBlank() } ?: continue
                             if (!OpenAiModelCatalog.isModelPickerModel(id)) continue
+                            val displayName =
+                                item.optString("display_name").takeIf { it.isNotBlank() }
+                                    ?: item.optString("name").takeIf { it.isNotBlank() }
+                                    ?: OpenAiModelCatalog.displayNameFor(id)
                             models.add(
                                 LlmTextModel(
                                     id = id,
-                                    displayName = id,
+                                    displayName = displayName,
                                     supportsSystemInstructions = true,
                                     supportsGrounding = OpenAiModelCatalog.supportsWebSearch(id),
                                 ),
@@ -225,11 +229,6 @@ class OpenAiClient(
         val root = JSONObject()
         root.put("model", modelId.trim().ifBlank { OpenAiModelCatalog.DEFAULT_MODEL_ID })
         root.put("messages", messages)
-
-        // Search-preview models do not accept temperature.
-        if (!useGrounding) {
-            root.put("temperature", 0.2)
-        }
 
         if (useGrounding) {
             // Web search in Chat Completions requires the dedicated search-preview model variant

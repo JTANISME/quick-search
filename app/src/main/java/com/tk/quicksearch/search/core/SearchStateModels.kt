@@ -161,8 +161,9 @@ data class SearchFeatureState(
         // Section visibility preferences (which sections are enabled/disabled)
         val disabledSections: Set<SearchSection> = emptySet(),
         // AI Search
-        val hasGeminiApiKey: Boolean = false,
+        val hasApiKey: Boolean = false,
         val geminiApiKeyLast4: String? = null,
+        val llmApiKeyLast4ByProvider: Map<AiSearchLlmProviderId, String> = emptyMap(),
         val aiSearchLlmProviderId: AiSearchLlmProviderId = AiSearchLlmProviderId.GEMINI,
         val isSavingGeminiApiKey: Boolean = false,
         val personalContext: String = "",
@@ -170,6 +171,7 @@ data class SearchFeatureState(
         val geminiGroundingEnabled: Boolean = GeminiModelCatalog.DEFAULT_GROUNDING_ENABLED,
         val geminiThinkingEnabled: Boolean = false,
         val availableGeminiModels: List<GeminiTextModel> = GeminiModelCatalog.FALLBACK_TEXT_MODELS,
+        val availableLlmModelsByProvider: Map<AiSearchLlmProviderId, List<GeminiTextModel>> = emptyMap(),
         // Web suggestions
         val webSuggestionsEnabled: Boolean = true,
         val webSuggestionsCount: Int = 3,

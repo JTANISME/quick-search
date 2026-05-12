@@ -23,6 +23,7 @@ enum class SettingsDetailType {
     PERMISSIONS,
     TOOLS,
     GEMINI_API_CONFIG,
+    API_KEY_SETUP,
     FEATURES_LIST,
     OPEN_SOURCE_LICENSES,
     UNIT_CONVERTER_INFO,
@@ -133,7 +134,13 @@ internal object SettingsDestinationRegistry {
                 ),
             SettingsDetailType.GEMINI_API_CONFIG to
                 SettingsDestinationSpec(
-                    titleResId = R.string.settings_backup_export_option_gemini_title,
+                    titleResId = R.string.settings_ai_provider_title,
+                    level = 3,
+                    preferSourceBackDestination = true,
+                ),
+            SettingsDetailType.API_KEY_SETUP to
+                SettingsDestinationSpec(
+                    titleResId = R.string.settings_api_key_setup_title,
                     level = 3,
                     preferSourceBackDestination = true,
                 ),
@@ -195,7 +202,9 @@ internal object SettingsDestinationRegistry {
         if (
             spec.preferSourceBackDestination &&
                 sourceDetailType != null &&
-                sourceDetailType != detailType
+                sourceDetailType != detailType &&
+                !(detailType == SettingsDetailType.GEMINI_API_CONFIG &&
+                    sourceDetailType == SettingsDetailType.API_KEY_SETUP)
         ) {
             return sourceDetailType
         }

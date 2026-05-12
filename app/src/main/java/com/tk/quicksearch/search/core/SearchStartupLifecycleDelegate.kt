@@ -320,14 +320,17 @@ internal class SearchStartupLifecycleDelegate(
                     dictionaryEnabled = userPreferences.isDictionaryEnabled(),
                     customTools = customTools,
                     disabledCustomToolIds = userPreferences.getDisabledCustomTools(),
-                    hasGeminiApiKey = !aiSearchHandler.getGeminiApiKey().isNullOrBlank(),
+                    hasApiKey = userPreferences.hasAnyLlmApiKey(),
                     geminiApiKeyLast4 = aiSearchHandler.getGeminiApiKey()?.takeLast(4),
+                    llmApiKeyLast4ByProvider = userPreferences.getLlmApiKeyLast4ByProvider(),
                     aiSearchLlmProviderId = aiSearchHandler.getAiSearchProviderId(),
                     personalContext = aiSearchHandler.getPersonalContext(),
                     geminiModel = aiSearchHandler.getGeminiModel(),
                     geminiGroundingEnabled = aiSearchHandler.isGeminiGroundingEnabled(),
                     geminiThinkingEnabled = aiSearchHandler.isGeminiThinkingEnabled(),
                     availableGeminiModels = aiSearchHandler.getAvailableGeminiModels(),
+                    availableLlmModelsByProvider =
+                        mapOf(aiSearchHandler.getAiSearchProviderId() to aiSearchHandler.getAvailableGeminiModels()),
                 )
             }
             updateConfigState { state ->
@@ -365,7 +368,14 @@ internal class SearchStartupLifecycleDelegate(
                 launch(Dispatchers.IO) {
                     delay(DEFERRED_AI_SEARCH_MODELS_DELAY_MS)
                     val models = aiSearchHandler.refreshAvailableGeminiModels()
-                    updateFeatureState { state -> state.copy(availableGeminiModels = models) }
+                    updateFeatureState { state ->
+                        state.copy(
+                            availableGeminiModels = models,
+                            availableLlmModelsByProvider =
+                                state.availableLlmModelsByProvider +
+                                    (aiSearchHandler.getAiSearchProviderId() to models),
+                        )
+                    }
                 }
             }
 
@@ -621,7 +631,7 @@ internal class SearchStartupLifecycleDelegate(
             val geminiGroundingEnabled = aiSearchHandler.isGeminiGroundingEnabled()
             val geminiThinkingEnabled = aiSearchHandler.isGeminiThinkingEnabled()
             val availableGeminiModels = aiSearchHandler.getAvailableGeminiModels()
-            val hasGeminiApiKey = !geminiApiKey.isNullOrBlank()
+            val hasApiKey = userPreferences.hasAnyLlmApiKey()
             val customTools = normalizeCustomToolModels(userPreferences.getCustomTools())
 
             withContext(Dispatchers.Main) {
@@ -646,14 +656,17 @@ internal class SearchStartupLifecycleDelegate(
                         dictionaryEnabled = userPreferences.isDictionaryEnabled(),
                         customTools = customTools,
                         disabledCustomToolIds = userPreferences.getDisabledCustomTools(),
-                        hasGeminiApiKey = hasGeminiApiKey,
+                        hasApiKey = hasApiKey,
                         geminiApiKeyLast4 = geminiApiKey?.takeLast(4),
+                        llmApiKeyLast4ByProvider = userPreferences.getLlmApiKeyLast4ByProvider(),
                         aiSearchLlmProviderId = aiSearchHandler.getAiSearchProviderId(),
                         personalContext = personalContext,
                         geminiModel = geminiModel,
                         geminiGroundingEnabled = geminiGroundingEnabled,
                         geminiThinkingEnabled = geminiThinkingEnabled,
                         availableGeminiModels = availableGeminiModels,
+                        availableLlmModelsByProvider =
+                            mapOf(aiSearchHandler.getAiSearchProviderId() to availableGeminiModels),
                     )
                 }
                 updateConfigState { state ->

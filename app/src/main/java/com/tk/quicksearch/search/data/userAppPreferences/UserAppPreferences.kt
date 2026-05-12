@@ -789,6 +789,13 @@ class UserAppPreferences(
             !anthropicPreferences.getApiKey().isNullOrBlank() ||
             !groqPreferences.getApiKey().isNullOrBlank()
 
+    fun getLlmApiKeyLast4ByProvider(): Map<AiSearchLlmProviderId, String> =
+        AiSearchLlmProviderId.entries.mapNotNull { providerId ->
+            getLlmApiKey(providerId)?.trim()?.takeIf { it.isNotBlank() }?.takeLast(4)?.let { last4 ->
+                providerId to last4
+            }
+        }.toMap()
+
     // Backward-compatible Gemini facade methods kept for existing call sites.
     fun getGeminiApiKey(): String? = geminiPreferences.getGeminiApiKey()
 
@@ -1099,6 +1106,13 @@ class UserAppPreferences(
     fun setDictionaryEnabled(enabled: Boolean) = uiPreferences.setDictionaryEnabled(enabled)
 
     fun getCurrencyConverterModel(): String = uiPreferences.getCurrencyConverterModel()
+    fun setCurrencyConverterModel(modelId: String) = uiPreferences.setCurrencyConverterModel(modelId)
+
+    fun getWordClockModel(): String = uiPreferences.getWordClockModel()
+    fun setWordClockModel(modelId: String) = uiPreferences.setWordClockModel(modelId)
+
+    fun getDictionaryModel(): String = uiPreferences.getDictionaryModel()
+    fun setDictionaryModel(modelId: String) = uiPreferences.setDictionaryModel(modelId)
 
     // ============================================================================
     // Recent Queries Preferences

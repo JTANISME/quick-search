@@ -62,7 +62,7 @@ class DictionaryHandler(
             )
         }
         val modelId =
-                userPreferences.getCurrencyConverterModel().trim().ifBlank {
+                userPreferences.getDictionaryModel().trim().ifBlank {
                     provider.defaultModelId
                 }
         val userMessage =

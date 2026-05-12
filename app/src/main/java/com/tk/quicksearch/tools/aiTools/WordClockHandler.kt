@@ -73,7 +73,7 @@ class WordClockHandler(
             )
         }
         val modelId =
-                userPreferences.getCurrencyConverterModel().trim().ifBlank {
+                userPreferences.getWordClockModel().trim().ifBlank {
                     provider.defaultModelId
                 }
         val currentTimeGmt = gmtTimeFormatter.format(Instant.now())

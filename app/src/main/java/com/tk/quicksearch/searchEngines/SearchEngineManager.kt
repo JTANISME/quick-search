@@ -93,8 +93,8 @@ class SearchEngineManager(
                 target.engine == SearchEngine.DIRECT_SEARCH &&
                 enabled
             ) {
-                val hasGeminiApiKey = userPreferences.hasAnyLlmApiKey()
-                if (!hasGeminiApiKey) {
+                val hasApiKey = userPreferences.hasAnyLlmApiKey()
+                if (!hasApiKey) {
                     return@launch
                 }
             }

@@ -303,7 +303,13 @@ fun SettingsRoute(
                     onToggleDirectDial = onToggleDirectDial,
                     onToggleSection = onToggleSection,
                     onOpenAiSearchConfigure = {
-                        onNavigateToDetail(com.tk.quicksearch.settings.settingsDetailScreen.SettingsDetailType.GEMINI_API_CONFIG)
+                        onNavigateToDetail(
+                            if (state.hasApiKey) {
+                                com.tk.quicksearch.settings.settingsDetailScreen.SettingsDetailType.GEMINI_API_CONFIG
+                            } else {
+                                com.tk.quicksearch.settings.settingsDetailScreen.SettingsDetailType.API_KEY_SETUP
+                            },
+                        )
                     },
                     onOpenAddAppShortcutDialog = appShortcutSourceFlow.openSourcePicker,
                     onAddAppShortcutFromSource = appShortcutSourceFlow.selectSource,

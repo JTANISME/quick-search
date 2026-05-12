@@ -197,7 +197,7 @@ internal fun SearchScreenContent(
         state.hasContactPermission,
         state.hasCalendarPermission,
         state.hasFilePermission,
-        state.hasGeminiApiKey,
+        state.hasApiKey,
         state.calculatorEnabled,
         state.unitConverterEnabled,
         state.dateCalculatorEnabled,
@@ -212,12 +212,12 @@ internal fun SearchScreenContent(
             cycleHints[3] to (SearchSection.APPS !in state.disabledSections),
             cycleHints[4] to (SearchSection.APP_SHORTCUTS !in state.disabledSections),
             cycleHints[5] to (SearchSection.SETTINGS !in state.disabledSections),
-            cycleHints[6] to (state.currencyConverterEnabled && state.hasGeminiApiKey),
+            cycleHints[6] to (state.currencyConverterEnabled && state.hasApiKey),
             cycleHints[7] to state.unitConverterEnabled,
             cycleHints[8] to state.dateCalculatorEnabled,
             cycleHints[9] to state.calculatorEnabled,
-            cycleHints[10] to (state.wordClockEnabled && state.hasGeminiApiKey),
-            cycleHints[11] to (state.dictionaryEnabled && state.hasGeminiApiKey),
+            cycleHints[10] to (state.wordClockEnabled && state.hasApiKey),
+            cycleHints[11] to (state.dictionaryEnabled && state.hasApiKey),
         )
         listOf(hintSearchAnything) + gated.filter { it.second }.map { it.first }.shuffled()
     }
@@ -279,7 +279,7 @@ internal fun SearchScreenContent(
     val trimmedQuery = state.query.trim()
     val showCurrencyConverterSearchCard =
             (state.currencyConverterEnabled || isCurrencyConverterAliasMode) &&
-                    state.hasGeminiApiKey &&
+                    state.hasApiKey &&
                     !showCalculatorResult &&
                     !showCurrencyConverter &&
                     !showWordClock &&
@@ -292,7 +292,7 @@ internal fun SearchScreenContent(
                     }
     val showDictionarySearchCard =
             (state.dictionaryEnabled || isDictionaryAliasMode) &&
-                    state.hasGeminiApiKey &&
+                    state.hasApiKey &&
                     !showCalculatorResult &&
                     !showCurrencyConverter &&
                     !showWordClock &&
@@ -305,7 +305,7 @@ internal fun SearchScreenContent(
                     }
     val showWordClockSearchCard =
             (state.wordClockEnabled || isWordClockAliasMode) &&
-                    state.hasGeminiApiKey &&
+                    state.hasApiKey &&
                     !showCalculatorResult &&
                     !showCurrencyConverter &&
                     !showWordClock &&
@@ -318,7 +318,7 @@ internal fun SearchScreenContent(
                     }
     val showCustomToolSearchCard =
             activeCustomTool != null &&
-                    state.hasGeminiApiKey &&
+                    state.hasApiKey &&
                     !showCalculatorResult &&
                     state.AiSearchState.status == AiSearchStatus.Idle
     val isToolAliasMode =

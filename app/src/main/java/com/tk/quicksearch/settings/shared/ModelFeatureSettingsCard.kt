@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tk.quicksearch.shared.ui.theme.DesignTokens
+import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderId
 import com.tk.quicksearch.tools.aiSearch.GeminiModelCatalog
 import com.tk.quicksearch.tools.aiSearch.ModelPickerDialog
 import com.tk.quicksearch.tools.aiSearch.GeminiTextModel
@@ -28,7 +29,11 @@ import com.tk.quicksearch.tools.aiSearch.GeminiTextModel
 @Composable
 fun ModelFeatureSettingsCard(
     selectedModelId: String,
+    selectedProviderId: AiSearchLlmProviderId = AiSearchLlmProviderId.GEMINI,
     availableModels: List<GeminiTextModel>,
+    availableModelsByProvider: Map<AiSearchLlmProviderId, List<GeminiTextModel>> =
+        mapOf(selectedProviderId to availableModels),
+    configuredProviderIds: Set<AiSearchLlmProviderId> = setOf(selectedProviderId),
     modelLabel: String,
     thinkingLabel: String,
     webSearchLabel: String,
@@ -37,6 +42,9 @@ fun ModelFeatureSettingsCard(
     onModelSelected: (String) -> Unit,
     onThinkingChange: (Boolean) -> Unit,
     onGroundingChange: (Boolean) -> Unit,
+    onProviderModelSelected: (AiSearchLlmProviderId, String) -> Unit = { _, modelId ->
+        onModelSelected(modelId)
+    },
     modifier: Modifier = Modifier,
     showThinkingCheckbox: Boolean = true,
     showGroundingCheckbox: Boolean = true,
@@ -156,8 +164,20 @@ fun ModelFeatureSettingsCard(
                     onGroundingChange(false)
                 }
             },
+            onProviderModelSelected = { providerId, modelId ->
+                onProviderModelSelected(providerId, modelId)
+                val newModel =
+                    availableModelsByProvider[providerId]?.firstOrNull { it.id == modelId }
+                        ?: modelOptions.firstOrNull { it.id == modelId }
+                if (newModel?.supportsGrounding == false && groundingEnabled) {
+                    onGroundingChange(false)
+                }
+            },
             onDismiss = { showModelDialog = false },
             showGroundingToggle = false,
+            selectedProviderId = selectedProviderId,
+            modelsByProvider = availableModelsByProvider,
+            configuredProviderIds = configuredProviderIds,
         )
     }
 }

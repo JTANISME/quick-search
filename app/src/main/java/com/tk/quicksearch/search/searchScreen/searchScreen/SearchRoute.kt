@@ -582,7 +582,7 @@ fun SearchRoute(
                 val trimmedQuery = query.trim()
                 if (target is SearchTarget.Engine &&
                     target.engine == SearchEngine.DIRECT_SEARCH &&
-                    uiState.hasGeminiApiKey) {
+                    uiState.hasApiKey) {
                     when {
                         uiState.currencyConverterEnabled &&
                                 CurrencyConversionIntentParser.parseConfirmed(trimmedQuery) != null ->

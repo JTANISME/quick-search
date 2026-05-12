@@ -1,5 +1,8 @@
 package com.tk.quicksearch.search.core
 
+import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderId
+import com.tk.quicksearch.settings.settingsDetailScreen.AiBackedToolConfigId
+
 internal interface SearchViewModelPreferencesApi {
     val preferencesApiDelegate: SearchViewModelPreferencesApiDelegate
 
@@ -166,9 +169,24 @@ internal interface SearchViewModelPreferencesApi {
 
     fun setGeminiApiKey(apiKey: String?) = preferencesApiDelegate.setGeminiApiKey(apiKey)
 
+    fun setLlmApiKey(
+        providerId: AiSearchLlmProviderId,
+        apiKey: String?,
+    ) = preferencesApiDelegate.setLlmApiKey(providerId, apiKey)
+
     fun setPersonalContext(context: String?) = preferencesApiDelegate.setPersonalContext(context)
 
     fun setGeminiModel(modelId: String?) = preferencesApiDelegate.setGeminiModel(modelId)
+
+    fun setLlmModel(
+        providerId: AiSearchLlmProviderId,
+        modelId: String?,
+    ) = preferencesApiDelegate.setLlmModel(providerId, modelId)
+
+    fun setAiBackedToolModel(
+        toolId: AiBackedToolConfigId,
+        modelId: String,
+    ) = preferencesApiDelegate.setAiBackedToolModel(toolId, modelId)
 
     fun setGeminiGroundingEnabled(enabled: Boolean) =
         preferencesApiDelegate.setGeminiGroundingEnabled(enabled)
@@ -346,9 +364,24 @@ class SearchViewModelPreferencesApiDelegate internal constructor(
 
     fun setGeminiApiKey(apiKey: String?) = preferencesDelegate.setGeminiApiKey(apiKey)
 
+    fun setLlmApiKey(
+        providerId: AiSearchLlmProviderId,
+        apiKey: String?,
+    ) = preferencesDelegate.setLlmApiKey(providerId, apiKey)
+
     fun setPersonalContext(context: String?) = preferencesDelegate.setPersonalContext(context)
 
     fun setGeminiModel(modelId: String?) = preferencesDelegate.setGeminiModel(modelId)
+
+    fun setLlmModel(
+        providerId: AiSearchLlmProviderId,
+        modelId: String?,
+    ) = preferencesDelegate.setLlmModel(providerId, modelId)
+
+    fun setAiBackedToolModel(
+        toolId: AiBackedToolConfigId,
+        modelId: String,
+    ) = preferencesDelegate.setAiBackedToolModel(toolId, modelId)
 
     fun setGeminiGroundingEnabled(enabled: Boolean) =
         preferencesDelegate.setGeminiGroundingEnabled(enabled)

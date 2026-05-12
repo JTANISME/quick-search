@@ -20,6 +20,22 @@ object OpenAiModelCatalog {
             LlmTextModel(id = "gpt-5-mini", displayName = "GPT-5 Mini", supportsGrounding = false),
         )
 
+    fun displayNameFor(modelId: String): String =
+        modelId
+            .trim()
+            .replace('-', ' ')
+            .replace('_', ' ')
+            .split(' ')
+            .filter { it.isNotBlank() }
+            .joinToString(" ") { part ->
+                when {
+                    part.equals("gpt", ignoreCase = true) -> "GPT"
+                    part.equals("api", ignoreCase = true) -> "API"
+                    part.length <= 2 -> part.uppercase()
+                    else -> part.replaceFirstChar { char -> char.uppercaseChar() }
+                }
+            }
+
     /**
      * Maps a model ID to its search-preview variant used when grounding is enabled.
      * Returns null if the model has no search-preview variant.

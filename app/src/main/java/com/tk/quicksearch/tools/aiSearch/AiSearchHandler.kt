@@ -95,6 +95,37 @@ class AiSearchHandler(
         }
     }
 
+    fun setLlmApiKey(
+        providerId: AiSearchLlmProviderId,
+        apiKey: String?,
+    ) {
+        ensureInitialized()
+        val normalized = apiKey?.trim().takeUnless { it.isNullOrBlank() }
+        userPreferences.setLlmApiKey(providerId, normalized)
+
+        when {
+            normalized != null && (providerId == activeProviderId || llmApiKey.isNullOrBlank()) -> {
+                setAiSearchProviderId(providerId)
+                llmApiKey = normalized
+                hasLoadedGeminiModelsFromApi = false
+            }
+            providerId == activeProviderId && normalized == null -> {
+                val nextProvider =
+                    AiSearchLlmProviderId.entries.firstOrNull {
+                        !userPreferences.getLlmApiKey(it).isNullOrBlank()
+                    }
+                if (nextProvider != null) {
+                    setAiSearchProviderId(nextProvider)
+                } else {
+                    llmApiKey = null
+                    availableGeminiModels = ensureModelExists(activeProvider.fallbackTextModels)
+                    hasLoadedGeminiModelsFromApi = false
+                    clearAiSearchState()
+                }
+            }
+        }
+    }
+
     fun getSelectedModelId(): String {
         ensureInitialized()
         return selectedModelId
@@ -108,6 +139,17 @@ class AiSearchHandler(
         selectedModelId = normalized
         userPreferences.setLlmModel(activeProviderId, normalized)
         availableGeminiModels = ensureModelExists(availableGeminiModels)
+    }
+
+    fun setSelectedModelId(
+        providerId: AiSearchLlmProviderId,
+        modelId: String?,
+    ) {
+        ensureInitialized()
+        if (providerId != activeProviderId) {
+            setAiSearchProviderId(providerId)
+        }
+        setSelectedModelId(modelId)
     }
 
     fun isGroundingEnabled(): Boolean {

@@ -31,6 +31,7 @@ data class ToolSettingDefinition(
     val icon: ImageVector,
     val toggleKey: AppSettingsToggleKey? = null,
     val infoDestination: SettingsDetailType? = null,
+    val aiBackedModelConfigurable: Boolean = false,
 )
 
 data class ToolSettingUiState(
@@ -75,6 +76,7 @@ object ToolSettingsRegistry {
                 requiresGeminiApiKey = true,
                 requiresGeminiDescriptionResId = R.string.currency_converter_requires_gemini_key,
                 icon = Icons.Rounded.CurrencyExchange,
+                aiBackedModelConfigurable = true,
             ),
             ToolSettingDefinition(
                 id = ToolSettingId.WORD_CLOCK,
@@ -84,6 +86,7 @@ object ToolSettingsRegistry {
                 requiresGeminiApiKey = true,
                 requiresGeminiDescriptionResId = R.string.currency_converter_requires_gemini_key,
                 icon = Icons.Rounded.AccessTime,
+                aiBackedModelConfigurable = true,
             ),
             ToolSettingDefinition(
                 id = ToolSettingId.DICTIONARY,
@@ -94,6 +97,7 @@ object ToolSettingsRegistry {
                 requiresGeminiDescriptionResId = R.string.currency_converter_requires_gemini_key,
                 icon = Icons.AutoMirrored.Rounded.MenuBook,
                 toggleKey = AppSettingsToggleKey.DICTIONARY,
+                aiBackedModelConfigurable = true,
             ),
         )
 

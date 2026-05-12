@@ -41,7 +41,7 @@ internal class SearchToolCoordinator(
     private val wordClockHandler: WordClockHandler,
     private val dictionaryHandler: DictionaryHandler,
     private val toolAliasStateProvider: () -> ToolAliasState,
-    private val hasGeminiApiKeyProvider: () -> Boolean,
+    private val hasApiKeyProvider: () -> Boolean,
     private val currentQueryProvider: () -> String,
     private val clearInformationCardsExcept: (SearchViewModel.ActiveInformationCard) -> Unit,
     private val updateResultsState: ((SearchResultsState) -> SearchResultsState) -> Unit,
@@ -138,10 +138,10 @@ internal class SearchToolCoordinator(
         currencyConversionJob?.cancel()
         val aliasState = toolAliasStateProvider()
         val lockedCurrencyConverterAlias = aliasState.lockedCurrencyConverterAlias
-        val hasGeminiApiKey = hasGeminiApiKeyProvider()
+        val hasApiKey = hasApiKeyProvider()
 
         if ((!userPreferences.isCurrencyConverterEnabled() && !lockedCurrencyConverterAlias) ||
-            !hasGeminiApiKey
+            !hasApiKey
         ) {
             updateResultsState { s ->
                 if (s.currencyConverterState.status == CurrencyConverterStatus.Idle) {
@@ -186,7 +186,7 @@ internal class SearchToolCoordinator(
 
         val aliasState = toolAliasStateProvider()
         if ((!userPreferences.isCurrencyConverterEnabled() && !aliasState.lockedCurrencyConverterAlias) ||
-            !hasGeminiApiKeyProvider()
+            !hasApiKeyProvider()
         ) {
             return
         }
@@ -260,9 +260,9 @@ internal class SearchToolCoordinator(
         wordClockJob?.cancel()
         val aliasState = toolAliasStateProvider()
         val lockedWordClockAlias = aliasState.lockedWordClockAlias
-        val hasGeminiApiKey = hasGeminiApiKeyProvider()
+        val hasApiKey = hasApiKeyProvider()
 
-        if ((!userPreferences.isWordClockEnabled() && !lockedWordClockAlias) || !hasGeminiApiKey) {
+        if ((!userPreferences.isWordClockEnabled() && !lockedWordClockAlias) || !hasApiKey) {
             updateResultsState { s ->
                 if (s.wordClockState.status == WordClockStatus.Idle) {
                     s
@@ -306,7 +306,7 @@ internal class SearchToolCoordinator(
 
         val aliasState = toolAliasStateProvider()
         if ((!userPreferences.isWordClockEnabled() && !aliasState.lockedWordClockAlias) ||
-            !hasGeminiApiKeyProvider()
+            !hasApiKeyProvider()
         ) {
             return
         }
@@ -391,9 +391,9 @@ internal class SearchToolCoordinator(
         dictionaryJob?.cancel()
         val aliasState = toolAliasStateProvider()
         val lockedDictionaryAlias = aliasState.lockedDictionaryAlias
-        val hasGeminiApiKey = hasGeminiApiKeyProvider()
+        val hasApiKey = hasApiKeyProvider()
 
-        if ((!userPreferences.isDictionaryEnabled() && !lockedDictionaryAlias) || !hasGeminiApiKey) {
+        if ((!userPreferences.isDictionaryEnabled() && !lockedDictionaryAlias) || !hasApiKey) {
             updateResultsState { s ->
                 if (s.dictionaryState.status == DictionaryStatus.Idle) {
                     s
@@ -437,7 +437,7 @@ internal class SearchToolCoordinator(
 
         val aliasState = toolAliasStateProvider()
         if ((!userPreferences.isDictionaryEnabled() && !aliasState.lockedDictionaryAlias) ||
-            !hasGeminiApiKeyProvider()
+            !hasApiKeyProvider()
         ) {
             return
         }

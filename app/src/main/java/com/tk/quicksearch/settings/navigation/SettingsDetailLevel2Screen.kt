@@ -3,6 +3,7 @@ package com.tk.quicksearch.settings.settingsDetailScreen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,8 +12,6 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -39,20 +38,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.tk.quicksearch.R
 import com.tk.quicksearch.search.core.SearchSection
+import com.tk.quicksearch.search.core.CustomTool
 import com.tk.quicksearch.search.data.CustomCalendarEventRepository
 import com.tk.quicksearch.search.data.NotesRepository
 import com.tk.quicksearch.search.core.SearchTarget
+import com.tk.quicksearch.search.data.UserAppPreferences
+import com.tk.quicksearch.searchEngines.AliasHandler
 import com.tk.quicksearch.search.data.AppShortcutRepository.StaticShortcut
 import com.tk.quicksearch.shared.permissions.PermissionHelper
 import com.tk.quicksearch.settings.AppShortcutsSettings.AppShortcutSource
 import com.tk.quicksearch.settings.shared.SettingsCommand
+import com.tk.quicksearch.settings.shared.SettingsCard
+import com.tk.quicksearch.settings.shared.SettingsCardItem
+import com.tk.quicksearch.settings.shared.SettingsNavigationRow
 import com.tk.quicksearch.settings.shared.SettingsScreenCallbacks
 import com.tk.quicksearch.settings.shared.SettingsScreenBackground
 import com.tk.quicksearch.settings.shared.SettingsScreenState
 import com.tk.quicksearch.settings.shared.SettingsManagementSearchBar
 import com.tk.quicksearch.settings.shared.settingsContentWidth
 import com.tk.quicksearch.settings.AppShortcutsSettings.AppShortcutsSettingsSection
-import com.tk.quicksearch.settings.searchEnginesScreen.ApiKeySetupCard
 import com.tk.quicksearch.shared.ui.components.AppAlertDialog
 import com.tk.quicksearch.shared.ui.theme.DesignTokens
 import com.tk.quicksearch.settings.NoteDeleteConfirmationDialog
@@ -102,6 +106,14 @@ internal fun SettingsDetailLevel2Screen(
     var noteEditorCanDelete by remember { mutableStateOf(false) }
     var noteEditorOnConfirmedDelete by remember { mutableStateOf<(() -> Unit)?>(null) }
     var showNoteDeleteConfirm by remember { mutableStateOf(false) }
+    val pendingAiBackedToolForEditor =
+        remember(detailType) {
+            if (detailType == SettingsDetailType.CUSTOM_TOOL_EDITOR) {
+                CustomToolNavigationMemory.peekPendingAiBackedTool()
+            } else {
+                null
+            }
+        }
     val hideNoteEditorAppBar =
         remember(detailType) {
             if (detailType == SettingsDetailType.NOTE_EDITOR) {
@@ -148,7 +160,7 @@ internal fun SettingsDetailLevel2Screen(
         }
     }
     LaunchedEffect(detailType, imeBottom) {
-        if (detailType == SettingsDetailType.GEMINI_API_CONFIG && imeBottom > 0) {
+        if ((detailType == SettingsDetailType.GEMINI_API_CONFIG || detailType == SettingsDetailType.API_KEY_SETUP) && imeBottom > 0) {
             scrollState.scrollTo(scrollState.maxValue)
         }
     }
@@ -176,7 +188,18 @@ internal fun SettingsDetailLevel2Screen(
         Column(modifier = Modifier.fillMaxSize()) {
             if (!(detailType == SettingsDetailType.NOTE_EDITOR && hideNoteEditorAppBar)) {
                 SettingsDetailHeader(
-                    title = stringResource(detailType.titleResId()),
+                    title = stringResource(
+                        if (detailType == SettingsDetailType.CUSTOM_TOOL_EDITOR) {
+                            when (pendingAiBackedToolForEditor) {
+                                AiBackedToolConfigId.CURRENCY_CONVERTER -> R.string.currency_converter_toggle_title
+                                AiBackedToolConfigId.WORD_CLOCK -> R.string.word_clock_toggle_title
+                                AiBackedToolConfigId.DICTIONARY -> R.string.dictionary_toggle_title
+                                null -> detailType.titleResId()
+                            }
+                        } else {
+                            detailType.titleResId()
+                        }
+                    ),
                     onBack = {
                         if (detailType == SettingsDetailType.NOTES && notesMultiSelectActive) {
                             notesMultiSelectActive = false
@@ -197,7 +220,7 @@ internal fun SettingsDetailLevel2Screen(
                                     )
                                 }
                             }
-                        } else if (detailType == SettingsDetailType.CUSTOM_TOOL_EDITOR) {
+                        } else if (detailType == SettingsDetailType.CUSTOM_TOOL_EDITOR && pendingAiBackedToolForEditor == null) {
                             val pendingToolIdForHeader = remember { CustomToolNavigationMemory.peekPendingToolId() }
                             val existingToolForHeader = remember(pendingToolIdForHeader, state.customTools) {
                                 pendingToolIdForHeader?.let { id -> state.customTools.firstOrNull { it.id == id } }
@@ -312,7 +335,7 @@ internal fun SettingsDetailLevel2Screen(
                                                                         .orEmpty(),
                                                 )
                                     },
-                            hasGeminiApiKey = state.hasGeminiApiKey,
+                            hasApiKey = state.hasApiKey,
                             existingShortcuts = state.shortcutCodes,
                             onToolAliasChange = { toolId, code ->
                                 val definition =
@@ -322,7 +345,7 @@ internal fun SettingsDetailLevel2Screen(
                             onToolToggle = { toolId, enabled ->
                                 val requiresGeminiApiKey =
                                         ToolSettingsRegistry.definitionFor(toolId)?.requiresGeminiApiKey == true
-                                if (enabled && requiresGeminiApiKey && !state.hasGeminiApiKey) {
+                                if (enabled && requiresGeminiApiKey && !state.hasApiKey) {
                                     android.widget.Toast.makeText(
                                                     context,
                                                     context.getString(R.string.currency_converter_requires_gemini_key),
@@ -357,8 +380,31 @@ internal fun SettingsDetailLevel2Screen(
                                     onNavigateToDetail(destination)
                                 }
                             },
+                            onToolConfigureClick = { toolId ->
+                                when (toolId) {
+                                    ToolSettingId.CURRENCY_CONVERTER -> {
+                                        CustomToolNavigationMemory.setPendingAiBackedTool(AiBackedToolConfigId.CURRENCY_CONVERTER)
+                                        onNavigateToDetail(SettingsDetailType.CUSTOM_TOOL_EDITOR)
+                                    }
+                                    ToolSettingId.WORD_CLOCK -> {
+                                        CustomToolNavigationMemory.setPendingAiBackedTool(AiBackedToolConfigId.WORD_CLOCK)
+                                        onNavigateToDetail(SettingsDetailType.CUSTOM_TOOL_EDITOR)
+                                    }
+                                    ToolSettingId.DICTIONARY -> {
+                                        CustomToolNavigationMemory.setPendingAiBackedTool(AiBackedToolConfigId.DICTIONARY)
+                                        onNavigateToDetail(SettingsDetailType.CUSTOM_TOOL_EDITOR)
+                                    }
+                                    else -> Unit
+                                }
+                            },
                             onNavigateToGeminiApiSetup = {
-                                onNavigateToDetail(SettingsDetailType.GEMINI_API_CONFIG)
+                                onNavigateToDetail(
+                                    if (state.hasApiKey) {
+                                        SettingsDetailType.GEMINI_API_CONFIG
+                                    } else {
+                                        SettingsDetailType.API_KEY_SETUP
+                                    },
+                                )
                             },
                             customTools = state.customTools,
                             disabledCustomToolIds = state.disabledCustomToolIds,
@@ -382,26 +428,65 @@ internal fun SettingsDetailLevel2Screen(
                 }
             } else if (detailType == SettingsDetailType.CUSTOM_TOOL_EDITOR) {
                 val pendingToolId = remember { CustomToolNavigationMemory.consumePendingToolId() }
+                val pendingAiBackedTool = remember { CustomToolNavigationMemory.consumePendingAiBackedTool() }
                 val existingTool = remember(pendingToolId, state.customTools) {
                     pendingToolId?.let { id -> state.customTools.firstOrNull { it.id == id } }
                 }
-                val existingAlias = remember(existingTool?.id, state.shortcutCodes) {
-                    existingTool?.id?.let { state.shortcutCodes[it] }.orEmpty()
+                val builtInToolConfig = remember(pendingAiBackedTool, context) {
+                    pendingAiBackedTool?.let { tool ->
+                        val preferences = UserAppPreferences(context)
+                        when (tool) {
+                            AiBackedToolConfigId.CURRENCY_CONVERTER -> BuiltInToolConfig(
+                                toolId = tool,
+                                title = context.getString(R.string.currency_converter_toggle_title),
+                                modelId = preferences.getCurrencyConverterModel(),
+                                aliasFeatureId = AliasHandler.CURRENCY_CONVERTER_ALIAS_FEATURE_ID,
+                            )
+                            AiBackedToolConfigId.WORD_CLOCK -> BuiltInToolConfig(
+                                toolId = tool,
+                                title = context.getString(R.string.word_clock_toggle_title),
+                                modelId = preferences.getWordClockModel(),
+                                aliasFeatureId = AliasHandler.WORD_CLOCK_ALIAS_FEATURE_ID,
+                            )
+                            AiBackedToolConfigId.DICTIONARY -> BuiltInToolConfig(
+                                toolId = tool,
+                                title = context.getString(R.string.dictionary_toggle_title),
+                                modelId = preferences.getDictionaryModel(),
+                                aliasFeatureId = AliasHandler.DICTIONARY_ALIAS_FEATURE_ID,
+                            )
+                        }
+                    }
+                }
+                val editorTool = remember(existingTool, builtInToolConfig) {
+                    existingTool ?: builtInToolConfig?.toCustomTool()
+                }
+                val existingAlias = remember(existingTool?.id, builtInToolConfig?.aliasFeatureId, state.shortcutCodes) {
+                    when {
+                        existingTool != null -> existingTool.id.let { state.shortcutCodes[it] }.orEmpty()
+                        builtInToolConfig != null -> state.shortcutCodes[builtInToolConfig.aliasFeatureId].orEmpty()
+                        else -> ""
+                    }
                 }
                 val shouldAutoFocusTitle = remember(pendingToolId, existingTool?.name) {
                     pendingToolId == null || existingTool?.name?.trim().isNullOrEmpty()
                 }
                 com.tk.quicksearch.settings.customTools.CustomToolEditorScreen(
-                    existingTool = existingTool,
+                    existingTool = editorTool,
                     existingAlias = existingAlias,
+                    selectedProviderId = state.aiSearchLlmProviderId,
                     availableModels = state.availableGeminiModels,
-                    showThinkingToggle = state.aiSearchLlmProviderId != AiSearchLlmProviderId.OPENAI,
-                    showGroundingCheckbox =
-                        state.aiSearchLlmProviderId != AiSearchLlmProviderId.OPENAI &&
-                            state.aiSearchLlmProviderId != AiSearchLlmProviderId.GROQ,
-                    shouldAutoFocusTitle = shouldAutoFocusTitle,
+                    availableModelsByProvider = state.availableLlmModelsByProvider,
+                    configuredProviderIds = state.llmApiKeyLast4ByProvider.keys,
+                    onRefreshAvailableGeminiModels = callbacks.onRefreshAvailableGeminiModels,
+                    onProviderModelSelected = callbacks.onSetLlmModel,
+                    showNameInput = builtInToolConfig == null,
+                    showPromptInput = builtInToolConfig == null,
+                    showAliasInput = builtInToolConfig == null,
+                    shouldAutoFocusTitle = builtInToolConfig == null && shouldAutoFocusTitle,
                     onSave = { name, prompt, modelId, groundingEnabled, aliasCode, thinkingEnabled ->
-                        if (existingTool != null) {
+                        if (builtInToolConfig != null) {
+                            callbacks.onSetAiToolModel(builtInToolConfig.toolId, modelId)
+                        } else if (existingTool != null) {
                             callbacks.onUpdateCustomTool(existingTool.id, name, prompt, modelId, groundingEnabled, thinkingEnabled)
                             callbacks.onSetSearchSectionAlias(existingTool.id, aliasCode)
                         } else {
@@ -588,44 +673,42 @@ internal fun SettingsDetailLevel2Screen(
                         }
 
                         SettingsDetailType.GEMINI_API_CONFIG -> {
-                            if (state.hasGeminiApiKey) {
-                                val apiKeyDisplayFormatRes =
-                                    when (state.aiSearchLlmProviderId) {
-                                        AiSearchLlmProviderId.GEMINI -> R.string.settings_llm_api_key_display_gemini
-                                        AiSearchLlmProviderId.OPENAI -> R.string.settings_llm_api_key_display_openai
-                                        AiSearchLlmProviderId.ANTHROPIC -> R.string.settings_llm_api_key_display_claude
-                                        AiSearchLlmProviderId.GROQ -> R.string.settings_llm_api_key_display_groq
-                                    }
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(bottom = DesignTokens.SpacingLarge),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Text(
-                                        text = stringResource(apiKeyDisplayFormatRes, state.geminiApiKeyLast4 ?: ""),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(4.dp))
-                                    IconButton(
-                                        onClick = { callbacks.onSetGeminiApiKey(null) },
-                                        modifier = Modifier.size(32.dp),
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Delete,
-                                            contentDescription = stringResource(R.string.settings_gemini_api_key_reset),
-                                            modifier = Modifier.size(16.dp),
-                                            tint = MaterialTheme.colorScheme.error,
-                                        )
-                                    }
-                                }
+                            SettingsCard(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = DesignTokens.SpacingLarge),
+                            ) {
+                                SettingsNavigationRow(
+                                    item =
+                                        SettingsCardItem(
+                                            title = stringResource(R.string.settings_configure_api_key_title),
+                                            description = stringResource(R.string.settings_api_key_setup_nav_desc),
+                                            iconResId = R.drawable.direct_search,
+                                            actionOnPress = {
+                                                onNavigateToDetail(SettingsDetailType.API_KEY_SETUP)
+                                            },
+                                        ),
+                                    contentPadding = PaddingValues(
+                                        horizontal = DesignTokens.CardHorizontalPadding,
+                                        vertical = DesignTokens.CardVerticalPadding,
+                                    ),
+                                )
+                            }
+
+                            if (state.hasApiKey) {
                                 AiProviderSettingsSection(
                                     personalContext = state.personalContext,
+                                    aiSearchLlmProviderId = state.aiSearchLlmProviderId,
                                     geminiModel = state.geminiModel,
                                     geminiGroundingEnabled = state.geminiGroundingEnabled,
                                     geminiThinkingEnabled = state.geminiThinkingEnabled,
                                     availableGeminiModels = state.availableGeminiModels,
+                                    availableLlmModelsByProvider = state.availableLlmModelsByProvider,
+                                    apiKeyLast4ByProvider = state.llmApiKeyLast4ByProvider,
                                     onSetPersonalContext = callbacks.onSetPersonalContext,
                                     onSetGeminiModel = callbacks.onSetGeminiModel,
+                                    onSetLlmModel = callbacks.onSetLlmModel,
                                     onSetGeminiGroundingEnabled = callbacks.onSetGeminiGroundingEnabled,
                                     onSetGeminiThinkingEnabled = callbacks.onSetGeminiThinkingEnabled,
                                     onRefreshAvailableGeminiModels = callbacks.onRefreshAvailableGeminiModels,
@@ -640,14 +723,16 @@ internal fun SettingsDetailLevel2Screen(
                                     },
                                     modifier = Modifier.fillMaxWidth(),
                                 )
-                            } else {
-                                ApiKeySetupCard(
-                                    aiSearchEnabled = state.hasGeminiApiKey,
-                                    onSetGeminiApiKey = callbacks.onSetGeminiApiKey,
-                                    geminiApiKeyLast4 = state.geminiApiKeyLast4,
-                                    isSavingGeminiApiKey = state.isSavingGeminiApiKey,
-                                )
                             }
+                        }
+
+                        SettingsDetailType.API_KEY_SETUP -> {
+                            ApiKeySetupScreen(
+                                apiKeyLast4ByProvider = state.llmApiKeyLast4ByProvider,
+                                isSavingApiKey = state.isSavingGeminiApiKey,
+                                onSetApiKey = callbacks.onSetLlmApiKey,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
                         }
 
                         SettingsDetailType.TOOLS -> Unit
@@ -815,4 +900,21 @@ internal fun SettingsDetailLevel2Screen(
         }
     }
     }
+}
+
+private data class BuiltInToolConfig(
+    val toolId: AiBackedToolConfigId,
+    val title: String,
+    val modelId: String,
+    val aliasFeatureId: String,
+) {
+    fun toCustomTool(): CustomTool =
+        CustomTool(
+            id = "builtin:${toolId.name.lowercase()}",
+            name = title,
+            prompt = "builtin",
+            modelId = modelId,
+            groundingEnabled = false,
+            thinkingEnabled = false,
+        )
 }
