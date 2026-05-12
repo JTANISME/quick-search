@@ -111,7 +111,7 @@ class AiSearchHandler(
             }
             providerId == activeProviderId && normalized == null -> {
                 val nextProvider =
-                    AiSearchLlmProviderId.entries.firstOrNull {
+                    userPreferences.getConfiguredLlmProviderIds().firstOrNull {
                         !userPreferences.getLlmApiKey(it).isNullOrBlank()
                     }
                 if (nextProvider != null) {
@@ -167,13 +167,13 @@ class AiSearchHandler(
 
     fun isThinkingEnabled(): Boolean {
         ensureInitialized()
-        if (activeProviderId == AiSearchLlmProviderId.OPENAI) return false
+        if (activeProviderId == AiSearchLlmProviderId.OPENAI || activeProviderId.isCustom) return false
         return thinkingEnabled
     }
 
     fun setThinkingEnabled(enabled: Boolean) {
         ensureInitialized()
-        if (activeProviderId == AiSearchLlmProviderId.OPENAI) return
+        if (activeProviderId == AiSearchLlmProviderId.OPENAI || activeProviderId.isCustom) return
         if (enabled == thinkingEnabled) return
 
         thinkingEnabled = enabled
@@ -298,11 +298,13 @@ class AiSearchHandler(
                                 modelId = selectedModelId,
                                 useGroundingWithGoogleSearch =
                                     activeProviderId != AiSearchLlmProviderId.OPENAI &&
+                                        !activeProviderId.isCustom &&
                                         groundingEnabled &&
                                         (selectedModel?.supportsGrounding != false),
                                 thinkingEnabled =
                                     thinkingEnabled &&
-                                        activeProviderId != AiSearchLlmProviderId.OPENAI,
+                                        activeProviderId != AiSearchLlmProviderId.OPENAI &&
+                                        !activeProviderId.isCustom,
                                 useSystemInstruction =
                                     selectedModel?.supportsSystemInstructions != false,
                             ),
@@ -398,11 +400,13 @@ class AiSearchHandler(
                                 modelId = modelId,
                                 useGroundingWithGoogleSearch =
                                     activeProviderId != AiSearchLlmProviderId.OPENAI &&
+                                        !activeProviderId.isCustom &&
                                         groundingEnabled &&
                                         modelSupportsGrounding(modelId),
                                 thinkingEnabled =
                                     (this@AiSearchHandler.thinkingEnabled || thinkingEnabled) &&
-                                        activeProviderId != AiSearchLlmProviderId.OPENAI,
+                                        activeProviderId != AiSearchLlmProviderId.OPENAI &&
+                                        !activeProviderId.isCustom,
                                 useSystemInstruction = useSystemInstruction,
                                 systemInstruction = systemInstruction,
                             ),

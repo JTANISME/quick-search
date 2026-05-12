@@ -490,6 +490,14 @@
     <string name="settings_api_key_paste_action">Paste from clipboard</string>
     <string name="settings_ai_provider_openai">OpenAI</string>
     <string name="settings_ai_provider_groq">Groq</string>
+    <string name="settings_ai_provider_custom_label">Custom</string>
+    <string name="settings_add_custom_provider_button">Add Custom Provider</string>
+    <string name="settings_add_custom_provider_title">Add Custom Provider</string>
+    <string name="settings_add_custom_provider_desc">Add an OpenAI-compatible provider.</string>
+    <string name="settings_custom_provider_base_url_label">OpenAI Base URL</string>
+    <string name="settings_custom_provider_base_url_input_label">Base URL</string>
+    <string name="settings_custom_provider_base_url_hint">Example: https://openrouter.ai/api/v1</string>
+    <string name="settings_custom_provider_key_label">Key</string>
     <string name="settings_model_picker_search_hint">Search models</string>
     <string name="settings_direct_search_grounding_label">Web Search</string>
     <string name="settings_direct_search_thinking_label">Thinking</string>

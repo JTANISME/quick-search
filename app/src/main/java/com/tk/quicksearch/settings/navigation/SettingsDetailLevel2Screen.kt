@@ -714,8 +714,11 @@ internal fun SettingsDetailLevel2Screen(
                                     onRefreshAvailableGeminiModels = callbacks.onRefreshAvailableGeminiModels,
                                     showGroundingCheckbox =
                                         state.aiSearchLlmProviderId != AiSearchLlmProviderId.OPENAI &&
+                                            !state.aiSearchLlmProviderId.isCustom &&
                                             state.aiSearchLlmProviderId != AiSearchLlmProviderId.GROQ,
-                                    showThinkingCheckbox = state.aiSearchLlmProviderId != AiSearchLlmProviderId.OPENAI,
+                                    showThinkingCheckbox =
+                                        state.aiSearchLlmProviderId != AiSearchLlmProviderId.OPENAI &&
+                                            !state.aiSearchLlmProviderId.isCustom,
                                     onRequestScrollToBottom = {
                                         coroutineScope.launch {
                                             scrollState.scrollTo(scrollState.maxValue)
@@ -731,6 +734,7 @@ internal fun SettingsDetailLevel2Screen(
                                 apiKeyLast4ByProvider = state.llmApiKeyLast4ByProvider,
                                 isSavingApiKey = state.isSavingGeminiApiKey,
                                 onSetApiKey = callbacks.onSetLlmApiKey,
+                                onAddCustomProvider = callbacks.onAddCustomLlmProvider,
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }

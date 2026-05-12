@@ -568,6 +568,7 @@ abstract class BasePreferences(
         const val KEY_GROQ_MODEL = "groq_model"
         const val KEY_GROQ_GROUNDING_ENABLED = "groq_grounding_enabled"
         const val KEY_GROQ_THINKING_ENABLED = "groq_thinking_enabled"
+        const val KEY_CUSTOM_LLM_PROVIDERS = "custom_llm_providers"
 
         // Usage permission banner preferences keys
         const val KEY_USAGE_PERMISSION_BANNER_DISMISS_COUNT =

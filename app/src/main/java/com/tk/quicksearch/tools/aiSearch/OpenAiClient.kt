@@ -21,12 +21,11 @@ import java.net.URL
 class OpenAiClient(
     private val apiKey: String,
     private val context: Context,
+    private val baseUrl: String = DEFAULT_BASE_URL,
 ) {
     companion object {
         private const val LOG_TAG = "AI_REQUEST"
-        private const val BASE_URL = "https://api.openai.com/v1"
-        private const val MODELS_ENDPOINT = "$BASE_URL/models"
-        private const val CHAT_ENDPOINT = "$BASE_URL/chat/completions"
+        private const val DEFAULT_BASE_URL = "https://api.openai.com/v1"
         private const val SYSTEM_PROMPT =
             "Return only the direct answer as a single short sentence. " +
                 "Provide additional context ONLY when its needed. " +
@@ -38,10 +37,12 @@ class OpenAiClient(
         suspend fun fetchAvailableTextModels(
             apiKey: String,
             context: Context,
+            baseUrl: String = DEFAULT_BASE_URL,
+            filterForOpenAiPicker: Boolean = true,
         ): Result<List<LlmTextModel>> =
             withContext(Dispatchers.IO) {
                 runCatching {
-                    val url = URL(MODELS_ENDPOINT)
+                    val url = URL("${baseUrl.trim().trimEnd('/')}/models")
                     val connection =
                         (url.openConnection() as HttpURLConnection).apply {
                             requestMethod = "GET"
@@ -62,7 +63,7 @@ class OpenAiClient(
                         for (i in 0 until data.length()) {
                             val item = data.optJSONObject(i) ?: continue
                             val id = item.optString("id").takeIf { it.isNotBlank() } ?: continue
-                            if (!OpenAiModelCatalog.isModelPickerModel(id)) continue
+                            if (filterForOpenAiPicker && !OpenAiModelCatalog.isModelPickerModel(id)) continue
                             val displayName =
                                 item.optString("display_name").takeIf { it.isNotBlank() }
                                     ?: item.optString("name").takeIf { it.isNotBlank() }
@@ -72,7 +73,8 @@ class OpenAiClient(
                                     id = id,
                                     displayName = displayName,
                                     supportsSystemInstructions = true,
-                                    supportsGrounding = OpenAiModelCatalog.supportsWebSearch(id),
+                                    supportsGrounding =
+                                        filterForOpenAiPicker && OpenAiModelCatalog.supportsWebSearch(id),
                                 ),
                             )
                         }
@@ -151,7 +153,7 @@ class OpenAiClient(
     ): Result<String> {
         var connection: HttpURLConnection? = null
         return try {
-            val url = URL(CHAT_ENDPOINT)
+            val url = URL("${baseUrl.trim().trimEnd('/')}/chat/completions")
             connection =
                 (url.openConnection() as HttpURLConnection).apply {
                     requestMethod = "POST"

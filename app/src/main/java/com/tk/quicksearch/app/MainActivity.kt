@@ -432,7 +432,12 @@ class MainActivity : ComponentActivity() {
         }
 
         if (isExplicitLauncherLaunch(intent)) {
-            navigationRequest.value = NavigationRequest(destination = RootDestination.Search)
+            val activeSettingsDetail = SettingsNavigationMemory.getLastOpenedSettingsDetail()
+            val shouldNavigateHomeOnRelaunch =
+                activeSettingsDetail != SettingsDetailType.API_KEY_SETUP
+            if (shouldNavigateHomeOnRelaunch) {
+                navigationRequest.value = NavigationRequest(destination = RootDestination.Search)
+            }
         }
 
         val incomingText = extractTextFromIntent(intent)

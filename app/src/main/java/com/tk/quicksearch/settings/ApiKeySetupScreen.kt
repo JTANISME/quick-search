@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -24,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,9 +39,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.res.painterResource
 import com.tk.quicksearch.R
 import com.tk.quicksearch.settings.shared.SettingsCard
+import com.tk.quicksearch.shared.ui.components.AppAlertDialog
 import com.tk.quicksearch.shared.ui.components.dialogTextFieldColors
 import com.tk.quicksearch.shared.ui.theme.DesignTokens
 import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderId
@@ -47,8 +53,10 @@ fun ApiKeySetupScreen(
     apiKeyLast4ByProvider: Map<AiSearchLlmProviderId, String>,
     isSavingApiKey: Boolean,
     onSetApiKey: (AiSearchLlmProviderId, String?) -> Unit,
+    onAddCustomProvider: (baseUrl: String, apiKey: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showCustomProviderDialog by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(DesignTokens.SpacingLarge),
@@ -67,7 +75,161 @@ fun ApiKeySetupScreen(
                 onSetApiKey = onSetApiKey,
             )
         }
+
+        apiKeyLast4ByProvider.keys.filter { it.isCustom }.forEach { providerId ->
+            ProviderApiKeyCard(
+                providerId = providerId,
+                apiKeyLast4 = apiKeyLast4ByProvider[providerId],
+                isSavingApiKey = isSavingApiKey,
+                onSetApiKey = onSetApiKey,
+            )
+        }
+
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(top = 30.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Button(onClick = { showCustomProviderDialog = true }) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp).offset(y = 1.dp),
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(text = stringResource(R.string.settings_add_custom_provider_button))
+                }
+            }
+        }
     }
+
+    if (showCustomProviderDialog) {
+        AddCustomProviderDialog(
+            isSaving = isSavingApiKey,
+            onDismiss = { showCustomProviderDialog = false },
+            onSave = { baseUrl, apiKey ->
+                onAddCustomProvider(baseUrl, apiKey)
+                showCustomProviderDialog = false
+            },
+        )
+    }
+}
+
+@Composable
+private fun AddCustomProviderDialog(
+    isSaving: Boolean,
+    onDismiss: () -> Unit,
+    onSave: (baseUrl: String, apiKey: String) -> Unit,
+) {
+    val clipboardManager = LocalClipboardManager.current
+    var baseUrlInput by rememberSaveable { mutableStateOf("") }
+    var apiKeyInput by rememberSaveable { mutableStateOf("") }
+    val canSave =
+        baseUrlInput.trim().isNotBlank() &&
+            apiKeyInput.trim().isNotBlank()
+
+    fun pasteKeyFromClipboard() {
+        apiKeyInput =
+            clipboardManager
+                .getText()
+                ?.text
+                ?.trim()
+                ?.takeIf { it.isNotEmpty() }
+                .orEmpty()
+    }
+
+    AppAlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(R.string.settings_add_custom_provider_title)) },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.SpacingMedium),
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_add_custom_provider_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = stringResource(R.string.settings_custom_provider_base_url_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                OutlinedTextField(
+                    value = baseUrlInput,
+                    onValueChange = { baseUrlInput = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = {
+                        Text(text = stringResource(R.string.settings_custom_provider_base_url_input_label))
+                    },
+                    placeholder = {
+                        Text(text = stringResource(R.string.settings_custom_provider_base_url_input_label))
+                    },
+                    singleLine = true,
+                    colors = dialogTextFieldColors(),
+                )
+                OutlinedTextField(
+                    value = apiKeyInput,
+                    onValueChange = {},
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .pointerInput(apiKeyInput) {
+                                detectTapGestures {
+                                    if (apiKeyInput.isEmpty()) {
+                                        pasteKeyFromClipboard()
+                                    } else {
+                                        apiKeyInput = ""
+                                    }
+                                }
+                            },
+                    leadingIcon =
+                        if (apiKeyInput.isEmpty()) {
+                            {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center,
+                                ) {
+                                    TextButton(
+                                        enabled = !isSaving,
+                                        onClick = { pasteKeyFromClipboard() },
+                                        modifier = Modifier.wrapContentWidth(),
+                                    ) {
+                                        Text(text = stringResource(R.string.settings_gemini_api_key_paste_hint))
+                                    }
+                                }
+                            }
+                        } else {
+                            null
+                        },
+                    singleLine = true,
+                    readOnly = true,
+                    colors = dialogTextFieldColors(),
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                enabled = !isSaving && canSave,
+                onClick = {
+                    onSave(
+                        baseUrlInput.trim(),
+                        apiKeyInput.trim(),
+                    )
+                },
+            ) {
+                Text(text = stringResource(R.string.dialog_save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.dialog_cancel))
+            }
+        },
+    )
 }
 
 @Composable
@@ -290,6 +452,13 @@ private fun ProviderLogo(
                     modifier = Modifier.fillMaxSize(),
                 )
             }
+        }
+        else -> {
+            Text(
+                text = stringResource(R.string.settings_ai_provider_custom_label),
+                style = MaterialTheme.typography.titleMedium,
+                color = contentColor,
+            )
         }
     }
 }

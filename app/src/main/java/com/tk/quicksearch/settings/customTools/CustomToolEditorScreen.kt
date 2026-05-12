@@ -96,9 +96,12 @@ fun CustomToolEditorScreen(
         }
     }
 
-    val showThinkingToggle = selectedProviderInput != AiSearchLlmProviderId.OPENAI
+    val showThinkingToggle =
+        selectedProviderInput != AiSearchLlmProviderId.OPENAI &&
+            !selectedProviderInput.isCustom
     val showGroundingCheckbox =
         selectedProviderInput != AiSearchLlmProviderId.OPENAI &&
+            !selectedProviderInput.isCustom &&
             selectedProviderInput != AiSearchLlmProviderId.GROQ
 
     val isNameValid = !showNameInput || nameInput.trim().isNotBlank()

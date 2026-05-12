@@ -12,6 +12,7 @@ import com.tk.quicksearch.search.apps.prefetchAppIcons
 import com.tk.quicksearch.shared.permissions.PermissionHelper
 import com.tk.quicksearch.shared.util.PackageConstants
 import com.tk.quicksearch.shared.util.WallpaperUtils
+import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderRegistry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -330,7 +331,15 @@ internal class SearchStartupLifecycleDelegate(
                     geminiThinkingEnabled = aiSearchHandler.isGeminiThinkingEnabled(),
                     availableGeminiModels = aiSearchHandler.getAvailableGeminiModels(),
                     availableLlmModelsByProvider =
-                        mapOf(aiSearchHandler.getAiSearchProviderId() to aiSearchHandler.getAvailableGeminiModels()),
+                        userPreferences.getConfiguredLlmProviderIds().associateWith { providerId ->
+                            if (providerId == aiSearchHandler.getAiSearchProviderId()) {
+                                aiSearchHandler.getAvailableGeminiModels()
+                            } else {
+                                AiSearchLlmProviderRegistry
+                                    .get(providerId, applicationProvider())
+                                    .fallbackTextModels
+                            }
+                        },
                 )
             }
             updateConfigState { state ->
@@ -666,7 +675,15 @@ internal class SearchStartupLifecycleDelegate(
                         geminiThinkingEnabled = geminiThinkingEnabled,
                         availableGeminiModels = availableGeminiModels,
                         availableLlmModelsByProvider =
-                            mapOf(aiSearchHandler.getAiSearchProviderId() to availableGeminiModels),
+                            userPreferences.getConfiguredLlmProviderIds().associateWith { providerId ->
+                                if (providerId == aiSearchHandler.getAiSearchProviderId()) {
+                                    availableGeminiModels
+                                } else {
+                                    AiSearchLlmProviderRegistry
+                                        .get(providerId, applicationProvider())
+                                        .fallbackTextModels
+                                }
+                            },
                     )
                 }
                 updateConfigState { state ->

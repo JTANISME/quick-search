@@ -138,6 +138,7 @@ internal fun buildSettingsScreenCallbacks(
         onToggleRecentQueries = viewModel::setRecentQueriesEnabled,
         onSetGeminiApiKey = viewModel::setGeminiApiKey,
         onSetLlmApiKey = viewModel::setLlmApiKey,
+        onAddCustomLlmProvider = viewModel::addCustomLlmProvider,
         onSetPersonalContext = viewModel::setPersonalContext,
         onSetGeminiModel = viewModel::setGeminiModel,
         onSetLlmModel = viewModel::setLlmModel,

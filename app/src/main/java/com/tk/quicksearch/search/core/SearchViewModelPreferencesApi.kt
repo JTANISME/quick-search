@@ -174,6 +174,11 @@ internal interface SearchViewModelPreferencesApi {
         apiKey: String?,
     ) = preferencesApiDelegate.setLlmApiKey(providerId, apiKey)
 
+    fun addCustomLlmProvider(
+        baseUrl: String,
+        apiKey: String,
+    ) = preferencesApiDelegate.addCustomLlmProvider(baseUrl, apiKey)
+
     fun setPersonalContext(context: String?) = preferencesApiDelegate.setPersonalContext(context)
 
     fun setGeminiModel(modelId: String?) = preferencesApiDelegate.setGeminiModel(modelId)
@@ -368,6 +373,11 @@ class SearchViewModelPreferencesApiDelegate internal constructor(
         providerId: AiSearchLlmProviderId,
         apiKey: String?,
     ) = preferencesDelegate.setLlmApiKey(providerId, apiKey)
+
+    fun addCustomLlmProvider(
+        baseUrl: String,
+        apiKey: String,
+    ) = preferencesDelegate.addCustomLlmProvider(baseUrl, apiKey)
 
     fun setPersonalContext(context: String?) = preferencesDelegate.setPersonalContext(context)
 

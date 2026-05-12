@@ -16,6 +16,8 @@ import com.tk.quicksearch.search.searchHistory.SearchHistoryPreferences
 import com.tk.quicksearch.searchEngines.AliasValidator.isValidGeneralAliasCode
 import com.tk.quicksearch.searchEngines.AliasValidator.normalizeShortcutCodeInput
 import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderId
+import com.tk.quicksearch.tools.aiSearch.CustomLlmProviderConfig
+import com.tk.quicksearch.tools.aiSearch.OpenAiModelCatalog
 
 /**
  * Stores user-driven overrides for the app grid such as hidden or pinned apps. Manages preferences
@@ -48,6 +50,7 @@ class UserAppPreferences(
     private val openAiPreferences by lazy { OpenAiPreferences(context) }
     private val anthropicPreferences by lazy { AnthropicPreferences(context) }
     private val groqPreferences by lazy { GroqPreferences(context) }
+    private val customLlmProviderPreferences by lazy { CustomLlmProviderPreferences(context) }
     private val llmPreferences by lazy { LlmPreferences(context) }
     val uiPreferences by lazy { UiPreferences(context) }
     private val amazonPreferences by lazy { AmazonPreferences(context) }
@@ -690,19 +693,31 @@ class UserAppPreferences(
      * New providers should extend this when provider-specific credential keys are added.
      */
     fun getLlmApiKey(providerId: AiSearchLlmProviderId): String? =
+        if (providerId.isCustom) {
+            customLlmProviderPreferences.getProvider(providerId)?.apiKey
+        } else {
             when (providerId) {
                 AiSearchLlmProviderId.GEMINI -> geminiPreferences.getGeminiApiKey()
                 AiSearchLlmProviderId.OPENAI -> openAiPreferences.getApiKey()
                 AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.getApiKey()
                 AiSearchLlmProviderId.GROQ -> groqPreferences.getApiKey()
+                else -> null
             }
+        }
 
     fun setLlmApiKey(providerId: AiSearchLlmProviderId, key: String?) {
+        if (providerId.isCustom) {
+            if (key.isNullOrBlank()) {
+                customLlmProviderPreferences.removeProvider(providerId)
+            }
+            return
+        }
         when (providerId) {
             AiSearchLlmProviderId.GEMINI -> geminiPreferences.setGeminiApiKey(key)
             AiSearchLlmProviderId.OPENAI -> openAiPreferences.setApiKey(key)
             AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.setApiKey(key)
             AiSearchLlmProviderId.GROQ -> groqPreferences.setApiKey(key)
+            else -> Unit
         }
     }
 
@@ -712,73 +727,110 @@ class UserAppPreferences(
         openAiPreferences.setApiKey(null)
         anthropicPreferences.setApiKey(null)
         groqPreferences.setApiKey(null)
+        customLlmProviderPreferences.getProviders().forEach {
+            customLlmProviderPreferences.removeProvider(AiSearchLlmProviderId.custom(it.id))
+        }
     }
 
     fun getLlmModel(providerId: AiSearchLlmProviderId): String =
+        if (providerId.isCustom) {
+            customLlmProviderPreferences.getProvider(providerId)?.modelId ?: OpenAiModelCatalog.DEFAULT_MODEL_ID
+        } else {
             when (providerId) {
                 AiSearchLlmProviderId.GEMINI -> geminiPreferences.getGeminiModel()
                 AiSearchLlmProviderId.OPENAI -> openAiPreferences.getModel()
                 AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.getModel()
                 AiSearchLlmProviderId.GROQ -> groqPreferences.getModel()
+                else -> OpenAiModelCatalog.DEFAULT_MODEL_ID
             }
+        }
 
     fun setLlmModel(providerId: AiSearchLlmProviderId, modelId: String?) {
+        if (providerId.isCustom) {
+            customLlmProviderPreferences.setProviderModel(providerId, modelId)
+            return
+        }
         when (providerId) {
             AiSearchLlmProviderId.GEMINI -> geminiPreferences.setGeminiModel(modelId)
             AiSearchLlmProviderId.OPENAI -> openAiPreferences.setModel(modelId)
             AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.setModel(modelId)
             AiSearchLlmProviderId.GROQ -> groqPreferences.setModel(modelId)
+            else -> Unit
         }
     }
 
     fun isLlmGroundingEnabled(providerId: AiSearchLlmProviderId): Boolean =
+        if (providerId.isCustom) {
+            false
+        } else {
             when (providerId) {
                 AiSearchLlmProviderId.GEMINI -> geminiPreferences.isGeminiGroundingEnabled()
                 AiSearchLlmProviderId.OPENAI -> openAiPreferences.isGroundingEnabled()
                 AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.isGroundingEnabled()
                 AiSearchLlmProviderId.GROQ -> groqPreferences.isGroundingEnabled()
+                else -> false
             }
+        }
 
     fun setLlmGroundingEnabled(providerId: AiSearchLlmProviderId, enabled: Boolean) {
+        if (providerId.isCustom) return
         when (providerId) {
             AiSearchLlmProviderId.GEMINI -> geminiPreferences.setGeminiGroundingEnabled(enabled)
             AiSearchLlmProviderId.OPENAI -> openAiPreferences.setGroundingEnabled(enabled)
             AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.setGroundingEnabled(enabled)
             AiSearchLlmProviderId.GROQ -> groqPreferences.setGroundingEnabled(enabled)
+            else -> Unit
         }
     }
 
     fun isLlmThinkingEnabled(providerId: AiSearchLlmProviderId): Boolean =
+        if (providerId.isCustom) {
+            false
+        } else {
             when (providerId) {
                 AiSearchLlmProviderId.GEMINI -> geminiPreferences.isThinkingEnabled()
                 AiSearchLlmProviderId.OPENAI -> false
                 AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.isThinkingEnabled()
                 AiSearchLlmProviderId.GROQ -> groqPreferences.isThinkingEnabled()
+                else -> false
             }
+        }
 
     fun setLlmThinkingEnabled(providerId: AiSearchLlmProviderId, enabled: Boolean) {
+        if (providerId.isCustom) return
         when (providerId) {
             AiSearchLlmProviderId.GEMINI -> geminiPreferences.setThinkingEnabled(enabled)
             AiSearchLlmProviderId.OPENAI -> Unit
             AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.setThinkingEnabled(enabled)
             AiSearchLlmProviderId.GROQ -> groqPreferences.setThinkingEnabled(enabled)
+            else -> Unit
         }
     }
 
     fun getLlmPersonalContext(providerId: AiSearchLlmProviderId): String? =
+        if (providerId.isCustom) {
+            openAiPreferences.getPersonalContext()
+        } else {
             when (providerId) {
                 AiSearchLlmProviderId.GEMINI -> geminiPreferences.getPersonalContext()
                 AiSearchLlmProviderId.OPENAI -> openAiPreferences.getPersonalContext()
                 AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.getPersonalContext()
                 AiSearchLlmProviderId.GROQ -> groqPreferences.getPersonalContext()
+                else -> null
             }
+        }
 
     fun setLlmPersonalContext(providerId: AiSearchLlmProviderId, context: String?) {
+        if (providerId.isCustom) {
+            openAiPreferences.setPersonalContext(context)
+            return
+        }
         when (providerId) {
             AiSearchLlmProviderId.GEMINI -> geminiPreferences.setPersonalContext(context)
             AiSearchLlmProviderId.OPENAI -> openAiPreferences.setPersonalContext(context)
             AiSearchLlmProviderId.ANTHROPIC -> anthropicPreferences.setPersonalContext(context)
             AiSearchLlmProviderId.GROQ -> groqPreferences.setPersonalContext(context)
+            else -> Unit
         }
     }
 
@@ -787,14 +839,31 @@ class UserAppPreferences(
         !geminiPreferences.getGeminiApiKey().isNullOrBlank() ||
             !openAiPreferences.getApiKey().isNullOrBlank() ||
             !anthropicPreferences.getApiKey().isNullOrBlank() ||
-            !groqPreferences.getApiKey().isNullOrBlank()
+            !groqPreferences.getApiKey().isNullOrBlank() ||
+            customLlmProviderPreferences.getProviders().any { it.apiKey.isNotBlank() }
 
     fun getLlmApiKeyLast4ByProvider(): Map<AiSearchLlmProviderId, String> =
-        AiSearchLlmProviderId.entries.mapNotNull { providerId ->
+        getConfiguredLlmProviderIds().mapNotNull { providerId ->
             getLlmApiKey(providerId)?.trim()?.takeIf { it.isNotBlank() }?.takeLast(4)?.let { last4 ->
                 providerId to last4
             }
         }.toMap()
+
+    fun getConfiguredLlmProviderIds(): List<AiSearchLlmProviderId> =
+        AiSearchLlmProviderId.entries +
+            customLlmProviderPreferences.getProviders().map { AiSearchLlmProviderId.custom(it.id) }
+
+    fun getCustomLlmProviders(): List<CustomLlmProviderConfig> =
+        customLlmProviderPreferences.getProviders()
+
+    fun getCustomLlmProvider(providerId: AiSearchLlmProviderId): CustomLlmProviderConfig? =
+        customLlmProviderPreferences.getProvider(providerId)
+
+    fun addCustomLlmProvider(
+        baseUrl: String,
+        apiKey: String,
+    ): CustomLlmProviderConfig? =
+        customLlmProviderPreferences.addProvider(baseUrl, apiKey)
 
     // Backward-compatible Gemini facade methods kept for existing call sites.
     fun getGeminiApiKey(): String? = geminiPreferences.getGeminiApiKey()

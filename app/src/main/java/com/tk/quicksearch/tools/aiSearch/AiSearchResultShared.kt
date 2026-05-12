@@ -259,20 +259,28 @@ internal fun GeminiAttributionRow(
                 )
             }
             else -> {
-                val logoAspectRatio = if (isGemma) 250f / 64f else 288f / 65f
-                val logoHeight = if (isGemma) 18.dp else 14.dp
-                if (isGemma) {
-                    GemmaWordmark(
-                            contentDescription = poweredByText,
-                            wordmarkTextColor = contentColor,
-                            modifier = Modifier.height(logoHeight).aspectRatio(logoAspectRatio),
+                if (llmProviderId.isCustom) {
+                    Text(
+                            text = usedModelId.orEmpty(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = contentColor,
                     )
                 } else {
-                    GeminiWordmark(
-                            contentDescription = poweredByText,
-                            wordmarkTextColor = contentColor,
-                            modifier = Modifier.height(logoHeight).aspectRatio(logoAspectRatio),
-                    )
+                    val logoAspectRatio = if (isGemma) 250f / 64f else 288f / 65f
+                    val logoHeight = if (isGemma) 18.dp else 14.dp
+                    if (isGemma) {
+                        GemmaWordmark(
+                                contentDescription = poweredByText,
+                                wordmarkTextColor = contentColor,
+                                modifier = Modifier.height(logoHeight).aspectRatio(logoAspectRatio),
+                        )
+                    } else {
+                        GeminiWordmark(
+                                contentDescription = poweredByText,
+                                wordmarkTextColor = contentColor,
+                                modifier = Modifier.height(logoHeight).aspectRatio(logoAspectRatio),
+                        )
+                    }
                 }
             }
         }

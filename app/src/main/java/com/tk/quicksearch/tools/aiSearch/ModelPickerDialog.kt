@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +20,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,12 +36,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.tk.quicksearch.R
 import com.tk.quicksearch.shared.ui.components.AppAlertDialog
-import com.tk.quicksearch.shared.ui.components.dialogTextFieldColors
+import com.tk.quicksearch.shared.ui.theme.AppColors
 
 data class LlmModelPickerOption(
     val providerId: AiSearchLlmProviderId,
@@ -63,6 +68,11 @@ fun ModelPickerDialog(
     },
 ) {
     val listState = rememberLazyListState()
+    val density = LocalDensity.current
+    val imeBottom = WindowInsets.ime.getBottom(density)
+    val isKeyboardOpen = imeBottom > 0
+    val dialogContentMaxHeight = if (isKeyboardOpen) 420.dp else 560.dp
+    val modelListMaxHeight = if (isKeyboardOpen) 220.dp else 360.dp
     val selectedModel = models.firstOrNull { it.id == selectedModelId }
     val supportsGrounding = selectedModel?.supportsGrounding != false
     var searchQuery by remember { mutableStateOf("") }
@@ -110,13 +120,18 @@ fun ModelPickerDialog(
 
     AppAlertDialog(
         onDismissRequest = onDismiss,
+        modifier = Modifier.fillMaxWidth(0.94f),
+        properties = DialogProperties(usePlatformDefaultWidth = false),
         title = { Text(text = stringResource(R.string.dialog_gemini_model_picker_title)) },
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = dialogContentMaxHeight),
                 verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
-                OutlinedTextField(
+                TextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
@@ -124,11 +139,20 @@ fun ModelPickerDialog(
                         Text(text = stringResource(R.string.settings_model_picker_search_hint))
                     },
                     singleLine = true,
-                    colors = dialogTextFieldColors(),
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedContainerColor = AppColors.getSettingsCardContainerColor(),
+                            unfocusedContainerColor = AppColors.getSettingsCardContainerColor(),
+                            disabledContainerColor = AppColors.getSettingsCardContainerColor(),
+                            focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                            unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                            disabledIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                        ),
                 )
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.fillMaxWidth().heightIn(max = 360.dp),
+                    modifier = Modifier.fillMaxWidth().heightIn(max = modelListMaxHeight),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     items(filteredOptions) { option ->
@@ -218,6 +242,7 @@ private fun fallbackModels(providerId: AiSearchLlmProviderId): List<GeminiTextMo
         AiSearchLlmProviderId.OPENAI -> OpenAiModelCatalog.FALLBACK_TEXT_MODELS
         AiSearchLlmProviderId.ANTHROPIC -> AnthropicModelCatalog.FALLBACK_TEXT_MODELS
         AiSearchLlmProviderId.GROQ -> GroqModelCatalog.FALLBACK_TEXT_MODELS
+        else -> emptyList()
     }
 
 private fun providerSortOrder(providerId: AiSearchLlmProviderId): Int =
@@ -226,6 +251,7 @@ private fun providerSortOrder(providerId: AiSearchLlmProviderId): Int =
         AiSearchLlmProviderId.OPENAI -> 1
         AiSearchLlmProviderId.ANTHROPIC -> 2
         AiSearchLlmProviderId.GROQ -> 3
+        else -> 4
     }
 
 @Composable
@@ -286,6 +312,13 @@ private fun ProviderWordmark(
                 )
             }
         }
+        else -> {
+            Text(
+                text = stringResource(R.string.settings_ai_provider_custom_label),
+                style = MaterialTheme.typography.labelSmall,
+                color = contentColor,
+            )
+        }
     }
 }
 
@@ -295,6 +328,7 @@ private fun providerSearchName(providerId: AiSearchLlmProviderId): String =
         AiSearchLlmProviderId.OPENAI -> "OpenAI"
         AiSearchLlmProviderId.ANTHROPIC -> "Claude"
         AiSearchLlmProviderId.GROQ -> "Groq"
+        else -> "Custom"
     }
 
 private fun modelSearchText(model: GeminiTextModel): String =

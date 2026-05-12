@@ -709,6 +709,51 @@ internal class SearchPreferencesDelegate(
         }
     }
 
+    fun addCustomLlmProvider(
+        baseUrl: String,
+        apiKey: String,
+    ) {
+        scope.launch(Dispatchers.IO) {
+            updateFeatureState { it.copy(isSavingGeminiApiKey = true) }
+            try {
+                val provider = userPreferences.addCustomLlmProvider(baseUrl, apiKey) ?: return@launch
+                val providerId = AiSearchLlmProviderId.custom(provider.id)
+                aiSearchHandler.setLlmApiKey(providerId, provider.apiKey)
+                aiSearchHandler.setAiSearchProviderId(providerId)
+
+                val models =
+                    fetchAvailableModels(providerId, provider.apiKey).ifEmpty {
+                        AiSearchLlmProviderRegistry
+                            .get(providerId, applicationProvider())
+                            .fallbackTextModels
+                    }
+                models.firstOrNull()?.id?.let { firstModelId ->
+                    aiSearchHandler.setSelectedModelId(firstModelId)
+                }
+                val hasAnyKey = userPreferences.hasAnyLlmApiKey()
+                searchEngineManager.updateSearchTargetsForGemini(hasAnyKey)
+
+                updateFeatureState {
+                    it.copy(
+                        hasApiKey = hasAnyKey,
+                        geminiApiKeyLast4 = aiSearchHandler.getLlmApiKey()?.trim()?.takeLast(4),
+                        llmApiKeyLast4ByProvider = userPreferences.getLlmApiKeyLast4ByProvider(),
+                        aiSearchLlmProviderId = aiSearchHandler.getAiSearchProviderId(),
+                        personalContext = aiSearchHandler.getPersonalContext(),
+                        geminiModel = aiSearchHandler.getGeminiModel(),
+                        geminiGroundingEnabled = aiSearchHandler.isGeminiGroundingEnabled(),
+                        geminiThinkingEnabled = aiSearchHandler.isGeminiThinkingEnabled(),
+                        availableGeminiModels = models,
+                        availableLlmModelsByProvider =
+                            it.availableLlmModelsByProvider + (providerId to models),
+                    )
+                }
+            } finally {
+                updateFeatureState { it.copy(isSavingGeminiApiKey = false) }
+            }
+        }
+    }
+
     fun setPersonalContext(context: String?) {
         scope.launch(Dispatchers.IO) {
             aiSearchHandler.setPersonalContext(context)

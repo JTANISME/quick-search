@@ -23,18 +23,33 @@ data class LlmRequest(
 )
 
 /** Current AI search LLM providers. */
-enum class AiSearchLlmProviderId(
+data class AiSearchLlmProviderId(
     val storageValue: String,
 ) {
-    GEMINI("gemini"),
-    OPENAI("openai"),
-    ANTHROPIC("anthropic"),
-    GROQ("groq"),
-    ;
+    val isCustom: Boolean
+        get() = storageValue.startsWith(CUSTOM_PREFIX)
+
+    val customId: String?
+        get() = storageValue.removePrefix(CUSTOM_PREFIX).takeIf { isCustom && it.isNotBlank() }
 
     companion object {
+        private const val CUSTOM_PREFIX = "custom:"
+
+        val GEMINI = AiSearchLlmProviderId("gemini")
+        val OPENAI = AiSearchLlmProviderId("openai")
+        val ANTHROPIC = AiSearchLlmProviderId("anthropic")
+        val GROQ = AiSearchLlmProviderId("groq")
+        val entries = listOf(GEMINI, OPENAI, ANTHROPIC, GROQ)
+
+        fun custom(id: String): AiSearchLlmProviderId =
+            AiSearchLlmProviderId("$CUSTOM_PREFIX${id.trim()}")
+
         fun fromStorageValue(value: String?): AiSearchLlmProviderId =
-            entries.firstOrNull { it.storageValue == value } ?: GEMINI
+            when {
+                value.isNullOrBlank() -> GEMINI
+                value.startsWith(CUSTOM_PREFIX) -> AiSearchLlmProviderId(value)
+                else -> entries.firstOrNull { it.storageValue == value } ?: GEMINI
+            }
 
         /**
          * Detect the provider from an API key prefix.
@@ -81,11 +96,16 @@ object AiSearchLlmProviderRegistry {
     fun get(
         id: AiSearchLlmProviderId,
         context: Context,
-    ): AiSearchLlmProvider =
-        when (id) {
+    ): AiSearchLlmProvider {
+        if (id.isCustom) {
+            return CustomOpenAiCompatibleLlmProvider(id, context)
+        }
+        return when (id) {
             AiSearchLlmProviderId.GEMINI -> GeminiAiSearchLlmProvider
             AiSearchLlmProviderId.OPENAI -> OpenAiAiSearchLlmProvider
             AiSearchLlmProviderId.ANTHROPIC -> AnthropicAiSearchLlmProvider
             AiSearchLlmProviderId.GROQ -> GroqAiSearchLlmProvider
+            else -> GeminiAiSearchLlmProvider
         }
+    }
 }
