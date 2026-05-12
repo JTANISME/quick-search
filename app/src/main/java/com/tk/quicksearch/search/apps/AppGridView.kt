@@ -343,58 +343,91 @@ fun AppGridView(
 
         if (showAppGrid) {
             gridHasBeenVisible = true
-            if (suggestionTabs.size > 1) {
-                AppSuggestionTabStrip(
-                        tabs = suggestionTabs,
-                        selectedIndex = selectedSuggestionTabIndex,
-                        onSelectedIndexChange = ::selectSuggestionTab,
-                )
-            }
-            val baseGridModifier = Modifier.graphicsLayer {
+            val suggestionsContentModifier = Modifier.graphicsLayer {
                 alpha = suggestionsAlpha.value
                 translationY = with(density) { suggestionsTranslationYDp.value.dp.toPx() }
             }
-            if (suggestionTabs.size > 1 && !isSearching) {
-                AnimatedContent(
-                        targetState = selectedSuggestionTabIndex,
-                        transitionSpec = {
-                            val movingForward = targetState > initialState
-                            val stiffness = Spring.StiffnessMediumLow
-                            if (movingForward) {
-                                slideInHorizontally(
-                                        initialOffsetX = { TabSlideOffsetPx },
-                                        animationSpec = spring(stiffness = stiffness),
-                                ) + fadeIn() togetherWith
-                                        slideOutHorizontally(
-                                                targetOffsetX = { -TabSlideOffsetPx },
-                                                animationSpec = spring(stiffness = stiffness),
-                                        ) + fadeOut()
-                            } else {
-                                slideInHorizontally(
-                                        initialOffsetX = { -TabSlideOffsetPx },
-                                        animationSpec = spring(stiffness = stiffness),
-                                ) + fadeIn() togetherWith
-                                        slideOutHorizontally(
-                                                targetOffsetX = { TabSlideOffsetPx },
-                                                animationSpec = spring(stiffness = stiffness),
-                                        ) + fadeOut()
-                            }
-                        },
-                        label = "appSuggestionTabSlide",
-                ) { selectedIndex ->
-                    val selectedTab = suggestionTabs[selectedIndex]
+            Column(
+                    modifier = suggestionsContentModifier,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(AppGridRowSpacing),
+            ) {
+                if (suggestionTabs.size > 1) {
+                    AppSuggestionTabStrip(
+                            tabs = suggestionTabs,
+                            selectedIndex = selectedSuggestionTabIndex,
+                            onSelectedIndexChange = ::selectSuggestionTab,
+                    )
+                }
+                if (suggestionTabs.size > 1 && !isSearching) {
+                    AnimatedContent(
+                            targetState = selectedSuggestionTabIndex,
+                            transitionSpec = {
+                                val movingForward = targetState > initialState
+                                val stiffness = Spring.StiffnessMediumLow
+                                if (movingForward) {
+                                    slideInHorizontally(
+                                            initialOffsetX = { TabSlideOffsetPx },
+                                            animationSpec = spring(stiffness = stiffness),
+                                    ) + fadeIn() togetherWith
+                                            slideOutHorizontally(
+                                                    targetOffsetX = { -TabSlideOffsetPx },
+                                                    animationSpec = spring(stiffness = stiffness),
+                                            ) + fadeOut()
+                                } else {
+                                    slideInHorizontally(
+                                            initialOffsetX = { -TabSlideOffsetPx },
+                                            animationSpec = spring(stiffness = stiffness),
+                                    ) + fadeIn() togetherWith
+                                            slideOutHorizontally(
+                                                    targetOffsetX = { TabSlideOffsetPx },
+                                                    animationSpec = spring(stiffness = stiffness),
+                                            ) + fadeOut()
+                                }
+                            },
+                            label = "appSuggestionTabSlide",
+                    ) { selectedIndex ->
+                        val selectedTab = suggestionTabs[selectedIndex]
+                        AppGrid(
+                                apps =
+                                        if (selectedTab.type == AppSuggestionTabType.PINNED) {
+                                            selectedTab.apps
+                                        } else {
+                                            fillSuggestionGridApps(
+                                                    primaryApps = selectedTab.apps,
+                                                    fallbackApps = suggestionFallbackApps,
+                                                    minItems = minSuggestionGridItems,
+                                            )
+                                        },
+                                isSearching = isSearching,
+                                onAppClick = onAppClick,
+                                onAppInfoClick = onAppInfoClick,
+                                onUninstallClick = onUninstallClick,
+                                onHideApp = onHideApp,
+                                onPinApp = onPinApp,
+                                onUnpinApp = onUnpinApp,
+                                onNicknameClick = onNicknameClick,
+                                onTriggerClick = onTriggerClick,
+                                getAppNickname = getAppNickname,
+                                getAppTrigger = getAppTrigger,
+                                pinnedPackageNames = pinnedPackageNames,
+                                shortcutsByPackage = shortcutsByPackage,
+                                rowCount = rowCount,
+                                phoneColumnOverride = phoneColumnOverride,
+                                iconPackPackage = iconPackPackage,
+                                showAppLabels = showAppLabels,
+                                oneHandedMode = oneHandedMode,
+                                isOverlayPresentation = isOverlayPresentation,
+                                predictedTarget = predictedTarget,
+                                suppressTopResultIndicator = suppressTopResultIndicator,
+                                appIconShape = appIconShape,
+                                themedIconsEnabled = themedIconsEnabled,
+                                showWallpaperBackground = showWallpaperBackground,
+                        )
+                    }
+                } else {
                     AppGrid(
-                            modifier = baseGridModifier,
-                            apps =
-                                    if (selectedTab.type == AppSuggestionTabType.PINNED) {
-                                        selectedTab.apps
-                                    } else {
-                                        fillSuggestionGridApps(
-                                                primaryApps = selectedTab.apps,
-                                                fallbackApps = suggestionFallbackApps,
-                                                minItems = minSuggestionGridItems,
-                                        )
-                                    },
+                            apps = activeApps,
                             isSearching = isSearching,
                             onAppClick = onAppClick,
                             onAppInfoClick = onAppInfoClick,
@@ -421,35 +454,6 @@ fun AppGridView(
                             showWallpaperBackground = showWallpaperBackground,
                     )
                 }
-            } else {
-                AppGrid(
-                        modifier = baseGridModifier,
-                        apps = activeApps,
-                        isSearching = isSearching,
-                        onAppClick = onAppClick,
-                        onAppInfoClick = onAppInfoClick,
-                        onUninstallClick = onUninstallClick,
-                        onHideApp = onHideApp,
-                        onPinApp = onPinApp,
-                        onUnpinApp = onUnpinApp,
-                        onNicknameClick = onNicknameClick,
-                        onTriggerClick = onTriggerClick,
-                        getAppNickname = getAppNickname,
-                        getAppTrigger = getAppTrigger,
-                        pinnedPackageNames = pinnedPackageNames,
-                        shortcutsByPackage = shortcutsByPackage,
-                        rowCount = rowCount,
-                        phoneColumnOverride = phoneColumnOverride,
-                        iconPackPackage = iconPackPackage,
-                        showAppLabels = showAppLabels,
-                        oneHandedMode = oneHandedMode,
-                        isOverlayPresentation = isOverlayPresentation,
-                        predictedTarget = predictedTarget,
-                        suppressTopResultIndicator = suppressTopResultIndicator,
-                        appIconShape = appIconShape,
-                        themedIconsEnabled = themedIconsEnabled,
-                        showWallpaperBackground = showWallpaperBackground,
-                )
             }
         }
     }
