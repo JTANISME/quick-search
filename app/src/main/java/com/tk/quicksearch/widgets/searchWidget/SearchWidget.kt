@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
@@ -220,12 +221,23 @@ class SearchWidget(
             }
 
         val customBackgroundColor = config.backgroundColor?.let(::Color)
+        val deviceThemeBackgroundColorRes =
+            if (config.useDeviceThemeBackground) {
+                deviceThemeBackgroundColorRes(config.backgroundAlpha)
+            } else {
+                null
+            }
+        val deviceThemeBackgroundColor =
+            deviceThemeBackgroundColorRes?.let { colorRes ->
+                Color(ContextCompat.getColor(context, colorRes))
+            }
+        val resolvedCustomBackgroundColor = deviceThemeBackgroundColor ?: customBackgroundColor
         val useDynamicSystemColors =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                 config.theme == WidgetTheme.SYSTEM &&
-                customBackgroundColor == null
+                resolvedCustomBackgroundColor == null
         val backgroundColor =
-            customBackgroundColor?.copy(alpha = config.backgroundAlpha)
+            resolvedCustomBackgroundColor?.copy(alpha = config.backgroundAlpha)
                 ?: WidgetColorUtils.getBackgroundColor(
                     effectiveTheme,
                     config.backgroundAlpha,
@@ -241,7 +253,7 @@ class SearchWidget(
                 config.theme,
                 config.backgroundAlpha,
                 config.textIconColorOverride,
-                customBackgroundColor = customBackgroundColor,
+                customBackgroundColor = resolvedCustomBackgroundColor,
                 isSystemInDarkTheme,
             )
 
@@ -250,8 +262,8 @@ class SearchWidget(
             borderColor = borderColor,
             textIconColor = textIconColor,
             backgroundColorProvider =
-                if (config.useDeviceThemeBackground) {
-                    ColorProvider(R.color.quick_search_widget_device_primary)
+                if (deviceThemeBackgroundColorRes != null) {
+                    ColorProvider(deviceThemeBackgroundColorRes)
                 } else if (useDynamicSystemColors) {
                     DayNightColorProvider(
                         day = WidgetColorUtils.getBackgroundColor(WidgetTheme.LIGHT, config.backgroundAlpha),
@@ -783,5 +795,25 @@ private fun nearlyEqual(
     second: Float,
     epsilon: Float = DEFAULT_FLOAT_COMPARISON_EPSILON,
 ): Boolean = kotlin.math.abs(first - second) <= epsilon
+
+private fun deviceThemeBackgroundColorRes(backgroundAlpha: Float): Int {
+    val clampedAlpha = backgroundAlpha.coerceIn(0f, 1f)
+    if (nearlyEqual(clampedAlpha, WidgetDefaults.BACKGROUND_ALPHA)) {
+        return R.color.quick_search_widget_device_primary
+    }
+    return when ((clampedAlpha * 10f).roundToInt()) {
+        0 -> R.color.quick_search_widget_device_primary_alpha_0
+        1 -> R.color.quick_search_widget_device_primary_alpha_10
+        2 -> R.color.quick_search_widget_device_primary_alpha_20
+        3 -> R.color.quick_search_widget_device_primary_alpha_30
+        4 -> R.color.quick_search_widget_device_primary_alpha_40
+        5 -> R.color.quick_search_widget_device_primary_alpha_50
+        6 -> R.color.quick_search_widget_device_primary_alpha_60
+        7 -> R.color.quick_search_widget_device_primary_alpha_70
+        8 -> R.color.quick_search_widget_device_primary_alpha_80
+        9 -> R.color.quick_search_widget_device_primary_alpha_90
+        else -> R.color.quick_search_widget_device_primary_alpha_100
+    }
+}
 
 private fun Float.finiteOr(default: Float): Float = if (isFinite()) this else default

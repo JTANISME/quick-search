@@ -16,8 +16,10 @@ class SearchWidgetReceiver : GlanceAppWidgetReceiver() {
     ) {
         super.onReceive(context, intent)
 
-        // Handle configuration changes (including theme changes)
-        if (intent.action == Intent.ACTION_CONFIGURATION_CHANGED) {
+        // Handle configuration and wallpaper changes, including Material You palette updates.
+        if (intent.action == Intent.ACTION_CONFIGURATION_CHANGED ||
+            intent.action == Intent.ACTION_WALLPAPER_CHANGED
+        ) {
             // Update all widget instances to reflect theme changes
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val componentName = ComponentName(context, SearchWidgetReceiver::class.java)

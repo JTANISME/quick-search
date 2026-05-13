@@ -452,10 +452,11 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        if (isExplicitLauncherLaunch(intent)) {
+        if (isHomeOrLauncherLaunch(intent)) {
             val activeSettingsDetail = SettingsNavigationMemory.getLastOpenedSettingsDetail()
+            val isHomeGestureLaunch = intent?.hasCategory(Intent.CATEGORY_HOME) == true
             val shouldNavigateHomeOnRelaunch =
-                activeSettingsDetail != SettingsDetailType.API_KEY_SETUP
+                isHomeGestureLaunch || activeSettingsDetail != SettingsDetailType.API_KEY_SETUP
             if (shouldNavigateHomeOnRelaunch) {
                 navigationRequest.value = NavigationRequest(destination = RootDestination.Search)
             }
@@ -558,9 +559,10 @@ class MainActivity : ComponentActivity() {
         // ACTION_ASSIST can optionally start voice typing based on user preference.
     }
 
-    private fun isExplicitLauncherLaunch(intent: Intent?): Boolean {
+    private fun isHomeOrLauncherLaunch(intent: Intent?): Boolean {
         if (intent?.action != Intent.ACTION_MAIN) return false
-        return intent.hasCategory(Intent.CATEGORY_LAUNCHER)
+        return intent.hasCategory(Intent.CATEGORY_LAUNCHER) ||
+            intent.hasCategory(Intent.CATEGORY_HOME)
     }
 
     private fun extractSettingsImportUri(intent: Intent?): Uri? {

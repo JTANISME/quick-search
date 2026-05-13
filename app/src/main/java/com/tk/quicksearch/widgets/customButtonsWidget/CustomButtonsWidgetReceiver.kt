@@ -18,7 +18,9 @@ class CustomButtonsWidgetReceiver : GlanceAppWidgetReceiver() {
     ) {
         super.onReceive(context, intent)
 
-        if (intent.action == Intent.ACTION_CONFIGURATION_CHANGED) {
+        if (intent.action == Intent.ACTION_CONFIGURATION_CHANGED ||
+            intent.action == Intent.ACTION_WALLPAPER_CHANGED
+        ) {
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val componentName = ComponentName(context, CustomButtonsWidgetReceiver::class.java)
             val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
