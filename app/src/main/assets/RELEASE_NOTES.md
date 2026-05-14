@@ -1,5 +1,5 @@
 - Swipe left or right on app suggestions to see New & Updated, Pinned, and Most Used apps.
 - Added support for configuring multiple AI providers at the same time. Also added support for custom AI providers using OpenAI-compatible APIs.
 - Swipe left or right on expanded search history to switch between recent queries and recently opened results.
-- Option to set Quick Search as a launcher.
+- Option to set Quick Search as a launcher. Swipe right to access widgets.
 - Bug fixes
