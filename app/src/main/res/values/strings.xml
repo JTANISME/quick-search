@@ -724,10 +724,12 @@
     <string name="widgets_panel_title">Widgets</string>
     <string name="widgets_panel_add_widget">Add Widget</string>
     <string name="widgets_picker_title">Add Widget</string>
-    <string name="widgets_picker_search_hint">Search widgets or apps</string>
+    <string name="widgets_picker_search_hint">Search</string>
     <string name="widgets_picker_empty">No widgets found.</string>
     <string name="widgets_picker_widget_count">%1$d widgets</string>
     <string name="widgets_picker_widget_size">%1$d x %2$d dp</string>
+    <string name="widgets_picker_widget_grid_size">%1$d x %2$d</string>
+    <string name="widgets_picker_preview_unavailable">Preview unavailable</string>
     <!-- ============================================================================
          Widget
          ============================================================================ -->

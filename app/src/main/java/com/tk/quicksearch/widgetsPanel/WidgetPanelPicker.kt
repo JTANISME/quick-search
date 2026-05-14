@@ -4,6 +4,11 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.os.Build
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.RemoteViews
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,21 +45,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.drawable.toBitmap
 import com.tk.quicksearch.R
 import com.tk.quicksearch.shared.ui.theme.AppColors
 import com.tk.quicksearch.shared.ui.theme.DesignTokens
 
 private const val WIDGET_PREVIEW_FALLBACK_SIZE_PX = 96
+private val WIDGET_PANEL_GRID_ROW_HEIGHT_DP = 80f
+private val WIDGET_PANEL_GRID_GAP_DP = 8f
 
 private data class WidgetPickerApp(
     val packageName: String,
@@ -102,18 +116,25 @@ internal fun WidgetPickerSheet(
             if (normalizedQuery.isBlank()) {
                 apps
             } else {
-                apps.mapNotNull { app ->
-                    val matchingWidgets =
-                        app.widgets.filter { provider ->
-                            app.appLabel.lowercase().contains(normalizedQuery) ||
-                                provider.loadLabel(packageManager)?.toString().orEmpty().lowercase()
-                                    .contains(normalizedQuery)
-                        }
-                    if (matchingWidgets.isEmpty()) null else app.copy(widgets = matchingWidgets)
-                }
+                apps.filter { app -> app.appLabel.lowercase().contains(normalizedQuery) }
             }
         }
     var expandedApps by rememberSaveable { mutableStateOf(setOf<String>()) }
+    val blockSheetDragFromListScroll =
+        remember {
+            object : NestedScrollConnection {
+                override fun onPostScroll(
+                    consumed: Offset,
+                    available: Offset,
+                    source: NestedScrollSource,
+                ): Offset = if (available.y < 0f) available else Offset.Zero
+
+                override suspend fun onPostFling(
+                    consumed: Velocity,
+                    available: Velocity,
+                ): Velocity = if (available.y < 0f) available else Velocity.Zero
+            }
+        }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -141,7 +162,7 @@ internal fun WidgetPickerSheet(
             )
 
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().nestedScroll(blockSheetDragFromListScroll),
                 verticalArrangement = Arrangement.spacedBy(DesignTokens.SpacingMedium),
             ) {
                 items(filteredApps, key = { it.packageName }) { app ->
@@ -307,12 +328,37 @@ private fun WidgetPickerRow(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
-    val preview = remember(provider) {
-        runCatching { provider.loadPreviewImage(context, 0) }.getOrNull()
-            ?: runCatching { provider.loadIcon(context, 0) }.getOrNull()
+    val densityDpi = context.resources.displayMetrics.densityDpi
+    val previewImage = remember(provider) {
+        runCatching { provider.loadPreviewImage(context, densityDpi) }.getOrNull()
+            ?: runCatching { provider.loadPreviewImage(context, android.util.DisplayMetrics.DENSITY_DEVICE_STABLE) }
+                .getOrNull()
+            ?: runCatching { provider.loadPreviewImage(context, android.util.DisplayMetrics.DENSITY_DEFAULT) }
+                .getOrNull()
+    }
+    val previewLayoutRes = remember(provider) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) provider.previewLayout else 0
+    }
+    val widgetIcon = remember(provider) {
+        runCatching { provider.loadIcon(context, densityDpi) }.getOrNull()
     }
     val minWidth = with(density) { provider.minWidth.toDp() }
     val minHeight = with(density) { provider.minHeight.toDp() }
+    val initialGridSize =
+        remember(provider, minWidth, minHeight) {
+            computeInitialSpan(
+                targetCellWidth =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) provider.targetCellWidth else 0,
+                targetCellHeight =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) provider.targetCellHeight else 0,
+                minWidthDp = minWidth.value,
+                minHeightDp = minHeight.value,
+                // Mirrors panel sizing used in WidgetsPanelScreen.
+                cellWidthDp = 80f,
+                rowHeightDp = WIDGET_PANEL_GRID_ROW_HEIGHT_DP,
+                gapDp = WIDGET_PANEL_GRID_GAP_DP,
+            )
+        }
 
     Column(
         modifier =
@@ -328,11 +374,38 @@ private fun WidgetPickerRow(
             color = MaterialTheme.colorScheme.surfaceContainerHighest,
         ) {
             Box(contentAlignment = Alignment.Center) {
-                DrawableImage(
-                    drawable = preview,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize().padding(DesignTokens.SpacingSmall),
-                )
+                when {
+                    previewImage != null -> {
+                        DrawableImage(
+                            drawable = previewImage,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize().padding(DesignTokens.SpacingSmall),
+                        )
+                    }
+                    previewLayoutRes != 0 -> {
+                        WidgetRemoteViewsPreview(
+                            packageName = provider.provider.packageName,
+                            layoutRes = previewLayoutRes,
+                            fallbackIcon = widgetIcon,
+                            modifier = Modifier.fillMaxSize().padding(DesignTokens.SpacingSmall),
+                        )
+                    }
+                    widgetIcon != null -> {
+                        DrawableImage(
+                            drawable = widgetIcon,
+                            contentDescription = null,
+                            modifier = Modifier.size(56.dp),
+                        )
+                    }
+                    else -> {
+                        Text(
+                            text = stringResource(R.string.widgets_picker_preview_unavailable),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(DesignTokens.SpacingSmall),
+                        )
+                    }
+                }
             }
         }
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -340,20 +413,24 @@ private fun WidgetPickerRow(
                 text = provider.loadLabel(packageManager)?.toString().orEmpty(),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
             Text(
                 text =
                     stringResource(
-                        R.string.widgets_picker_widget_size,
-                        minWidth.value.toInt(),
-                        minHeight.value.toInt(),
+                        R.string.widgets_picker_widget_grid_size,
+                        initialGridSize.first,
+                        initialGridSize.second,
                     ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.Center,
             ) {
                 AssistChip(
                     onClick = onClick,
@@ -362,6 +439,55 @@ private fun WidgetPickerRow(
             }
         }
     }
+}
+
+@Composable
+private fun WidgetRemoteViewsPreview(
+    packageName: String,
+    layoutRes: Int,
+    fallbackIcon: Drawable?,
+    modifier: Modifier = Modifier,
+) {
+    AndroidView(
+        modifier = modifier,
+        factory = { ctx ->
+            val container =
+                FrameLayout(ctx).apply {
+                    layoutParams =
+                        ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                        )
+                }
+            val inflated =
+                runCatching {
+                    RemoteViews(packageName, layoutRes).apply(ctx, container)
+                }.getOrNull()
+            if (inflated != null) {
+                container.addView(
+                    inflated,
+                    FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                    ),
+                )
+            } else if (fallbackIcon != null) {
+                val iconView =
+                    ImageView(ctx).apply {
+                        setImageDrawable(fallbackIcon)
+                        scaleType = ImageView.ScaleType.FIT_CENTER
+                    }
+                container.addView(
+                    iconView,
+                    FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                    ),
+                )
+            }
+            container
+        },
+    )
 }
 
 @Composable
@@ -399,6 +525,7 @@ private fun DrawableImage(
             painter = BitmapPainter(bitmap),
             contentDescription = contentDescription,
             modifier = modifier,
+            contentScale = ContentScale.Fit,
         )
     }
 }

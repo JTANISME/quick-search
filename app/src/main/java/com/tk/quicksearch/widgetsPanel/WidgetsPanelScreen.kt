@@ -3,6 +3,7 @@ package com.tk.quicksearch.widgetsPanel
 import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -95,6 +96,7 @@ private val WidgetResizeVisualShort = 6.dp
 private val WidgetActionButtonSize = 32.dp
 private val WidgetActionButtonInset = 6.dp
 private val WidgetEditBorderWidth = 2.dp
+private val WidgetPanelBottomScrollSpace = 150.dp
 
 private data class PendingWidgetRequest(
     val appWidgetId: Int,
@@ -193,7 +195,16 @@ fun WidgetsPanelScreen(
                 .setComponent(configure)
                 .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, request.appWidgetId)
         pendingRequest = request
-        configureLauncher.launch(intent)
+        val launchFailed =
+            runCatching { configureLauncher.launch(intent) }
+                .exceptionOrNull()
+                ?.let { it is SecurityException || it is ActivityNotFoundException }
+                ?: false
+
+        if (launchFailed) {
+            // Some widgets expose configure components that are not exported to third-party launchers.
+            finalizeAddWidget(request)
+        }
     }
 
     val bindLauncher =
@@ -230,7 +241,15 @@ fun WidgetsPanelScreen(
                 Intent(AppWidgetManager.ACTION_APPWIDGET_BIND)
                     .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                     .putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, provider.provider)
-            bindLauncher.launch(intent)
+            val launchFailed =
+                runCatching { bindLauncher.launch(intent) }
+                    .exceptionOrNull()
+                    ?.let { it is SecurityException || it is ActivityNotFoundException }
+                    ?: false
+            if (launchFailed) {
+                appWidgetHost.deleteAppWidgetId(appWidgetId)
+                pendingRequest = null
+            }
         }
     }
 
@@ -348,6 +367,8 @@ fun WidgetsPanelScreen(
                     } else {
                         Spacer(modifier = Modifier.height(DesignTokens.SpacingSmall))
                     }
+
+                    Spacer(modifier = Modifier.height(WidgetPanelBottomScrollSpace))
                 }
             }
 
