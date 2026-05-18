@@ -153,6 +153,35 @@ internal class SearchPreferencesDelegate(
         }
     }
 
+    fun setAppSuggestionTabEnabled(
+        tab: AppSuggestionTabType,
+        enabled: Boolean,
+    ) {
+        scope.launch(Dispatchers.IO) {
+            val currentTabs = userPreferences.getEnabledAppSuggestionTabs()
+            if (!enabled && currentTabs.size <= 1 && tab in currentTabs) return@launch
+            val updatedTabs =
+                currentTabs.toMutableSet().apply {
+                    if (enabled) {
+                        add(tab)
+                    } else {
+                        remove(tab)
+                    }
+                }
+            userPreferences.setEnabledAppSuggestionTabs(updatedTabs)
+            updateConfigState { state ->
+                val selectedTab =
+                    state.selectedAppSuggestionTab.takeIf { it in updatedTabs || it == AppSuggestionTabType.PINNED }
+                        ?: updatedTabs.firstOrNull()
+                        ?: AppSuggestionTabType.RECENTS
+                state.copy(
+                    enabledAppSuggestionTabs = updatedTabs,
+                    selectedAppSuggestionTab = selectedTab,
+                )
+            }
+        }
+    }
+
     fun setShowAppLabels(show: Boolean) {
         updateBooleanPreference(
             value = show,

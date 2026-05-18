@@ -1128,6 +1128,12 @@ class UserAppPreferences(
     fun setSelectedAppSuggestionTab(tab: AppSuggestionTabType) =
             uiPreferences.setSelectedAppSuggestionTab(tab)
 
+    fun getEnabledAppSuggestionTabs(): Set<AppSuggestionTabType> =
+            uiPreferences.getEnabledAppSuggestionTabs()
+
+    fun setEnabledAppSuggestionTabs(tabs: Set<AppSuggestionTabType>) =
+            uiPreferences.setEnabledAppSuggestionTabs(tabs)
+
     fun shouldShowAppLabels(): Boolean = uiPreferences.shouldShowAppLabels()
 
     fun setShowAppLabels(show: Boolean) = uiPreferences.setShowAppLabels(show)

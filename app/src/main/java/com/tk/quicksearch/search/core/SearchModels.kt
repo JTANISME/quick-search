@@ -532,6 +532,7 @@ data class SearchUiState(
         val deviceThemeEnabled: Boolean = false,
         val appSuggestionsEnabled: Boolean = true,
         val selectedAppSuggestionTab: AppSuggestionTabType = AppSuggestionTabType.RECENTS,
+        val enabledAppSuggestionTabs: Set<AppSuggestionTabType> = AppSuggestionTabType.DefaultEnabledTabs,
         // Section visibility preferences
         val disabledSections: Set<SearchSection> = emptySet(),
         // Web suggestions
@@ -772,6 +773,7 @@ fun SearchUiState(
                 deviceThemeEnabled = config.deviceThemeEnabled,
                 appSuggestionsEnabled = config.appSuggestionsEnabled,
                 selectedAppSuggestionTab = config.selectedAppSuggestionTab,
+                enabledAppSuggestionTabs = config.enabledAppSuggestionTabs,
                 selectedIconPackPackage = config.selectedIconPackPackage,
                 availableIconPacks = config.availableIconPacks,
                 maskUnsupportedIconPackIcons = config.maskUnsupportedIconPackIcons,

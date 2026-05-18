@@ -3,6 +3,7 @@ package com.tk.quicksearch.settings.shared
 import com.tk.quicksearch.search.core.CustomTool
 import com.tk.quicksearch.search.core.SearchTarget
 import com.tk.quicksearch.search.core.AppIconShape
+import com.tk.quicksearch.search.core.AppSuggestionTabType
 import com.tk.quicksearch.search.core.LauncherAppIcon
 import com.tk.quicksearch.search.core.BackgroundSource
 import com.tk.quicksearch.search.core.CallingApp
@@ -94,6 +95,7 @@ data class SettingsScreenState(
     val customTools: List<CustomTool> = emptyList(),
     val disabledCustomToolIds: Set<String> = emptySet(),
     val appSuggestionsEnabled: Boolean,
+    val enabledAppSuggestionTabs: Set<AppSuggestionTabType> = AppSuggestionTabType.DefaultEnabledTabs,
     val webSuggestionsEnabled: Boolean,
     val webSuggestionsCount: Int,
     val topResultIndicatorEnabled: Boolean,
@@ -129,6 +131,7 @@ data class SettingsScreenState(
                 excludedAppShortcuts = excludedAppShortcuts,
                 disabledSections = disabledSections,
                 appSuggestionsEnabled = appSuggestionsEnabled,
+                enabledAppSuggestionTabs = enabledAppSuggestionTabs,
                 webSuggestionsEnabled = webSuggestionsEnabled,
                 webSuggestionsCount = webSuggestionsCount,
                 topResultIndicatorEnabled = topResultIndicatorEnabled,
@@ -459,6 +462,7 @@ data class SearchResultsSettingsState(
     val excludedAppShortcuts: List<StaticShortcut>,
     val disabledSections: Set<SearchSection>,
     val appSuggestionsEnabled: Boolean,
+    val enabledAppSuggestionTabs: Set<AppSuggestionTabType>,
     val webSuggestionsEnabled: Boolean,
     val webSuggestionsCount: Int,
     val topResultIndicatorEnabled: Boolean,

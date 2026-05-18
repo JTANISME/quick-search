@@ -245,6 +245,7 @@ data class SearchUiConfigState(
         val wallpaperAccentEnabled: Boolean = true,
         val appSuggestionsEnabled: Boolean = true,
         val selectedAppSuggestionTab: AppSuggestionTabType = AppSuggestionTabType.RECENTS,
+        val enabledAppSuggestionTabs: Set<AppSuggestionTabType> = AppSuggestionTabType.DefaultEnabledTabs,
         val selectedIconPackPackage: String? = null,
         val availableIconPacks: List<IconPackInfo> = emptyList(),
         val maskUnsupportedIconPackIcons: Boolean = false,

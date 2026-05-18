@@ -152,6 +152,7 @@ private fun renderAppsSection(
             isSearching = appsParams.isSearching,
             hasUsagePermission = appsParams.hasUsagePermission,
             selectedSuggestionTab = appsParams.selectedSuggestionTab,
+            enabledSuggestionTabs = appsParams.enabledSuggestionTabs,
             onSuggestionTabSelected = appsParams.onSuggestionTabSelected,
             hasAppResults = appsParams.hasAppResults,
             onAppClick = appsParams.onAppClick,

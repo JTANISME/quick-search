@@ -145,6 +145,7 @@ fun AppGridView(
         isSearching: Boolean,
         hasUsagePermission: Boolean,
         selectedSuggestionTab: AppSuggestionTabType,
+        enabledSuggestionTabs: Set<AppSuggestionTabType>,
         onSuggestionTabSelected: (AppSuggestionTabType) -> Unit,
         hasAppResults: Boolean,
         onAppClick: (AppInfo) -> Unit,
@@ -192,24 +193,33 @@ fun AppGridView(
                     newOrUpdatedApps,
                     pinnedAndRecentApps,
                     mostUsedApps,
+                    enabledSuggestionTabs,
             ) {
                 if (isSearching) return@remember emptyList()
                 if (hasUsagePermission) {
                     buildList {
-                        add(AppSuggestionTab(AppSuggestionTabType.NEW_UPDATED, newUpdatedTitle, newOrUpdatedApps))
-                        if (pinnedApps.isNotEmpty()) {
+                        if (AppSuggestionTabType.NEW_UPDATED in enabledSuggestionTabs) {
+                            add(AppSuggestionTab(AppSuggestionTabType.NEW_UPDATED, newUpdatedTitle, newOrUpdatedApps))
+                        }
+                        if (pinnedApps.isNotEmpty() && AppSuggestionTabType.PINNED in enabledSuggestionTabs) {
                             add(AppSuggestionTab(AppSuggestionTabType.PINNED, pinnedTitle, pinnedApps))
                         }
-                        add(AppSuggestionTab(AppSuggestionTabType.RECENTS, recentsTitle, pinnedAndRecentApps))
-                        add(AppSuggestionTab(AppSuggestionTabType.MOST_USED, mostUsedTitle, mostUsedApps))
+                        if (AppSuggestionTabType.RECENTS in enabledSuggestionTabs) {
+                            add(AppSuggestionTab(AppSuggestionTabType.RECENTS, recentsTitle, pinnedAndRecentApps))
+                        }
+                        if (AppSuggestionTabType.MOST_USED in enabledSuggestionTabs) {
+                            add(AppSuggestionTab(AppSuggestionTabType.MOST_USED, mostUsedTitle, mostUsedApps))
+                        }
                     }
-                } else if (pinnedApps.isNotEmpty()) {
-                    listOf(
-                            AppSuggestionTab(AppSuggestionTabType.PINNED, pinnedTitle, pinnedApps),
-                            AppSuggestionTab(AppSuggestionTabType.RECENTS, recentsTitle, pinnedAndRecentApps),
-                    )
                 } else {
-                    emptyList()
+                    buildList {
+                        if (pinnedApps.isNotEmpty() && AppSuggestionTabType.PINNED in enabledSuggestionTabs) {
+                            add(AppSuggestionTab(AppSuggestionTabType.PINNED, pinnedTitle, pinnedApps))
+                        }
+                        if (AppSuggestionTabType.RECENTS in enabledSuggestionTabs) {
+                            add(AppSuggestionTab(AppSuggestionTabType.RECENTS, recentsTitle, pinnedAndRecentApps))
+                        }
+                    }
                 }
             }
     val selectedSuggestionTabIndex =
@@ -243,7 +253,7 @@ fun AppGridView(
                 )
                 }
             } else {
-                apps
+                if (isSearching) apps else emptyList()
             }
     val shortcutsByPackage =
             remember(appShortcuts, disabledShortcutIds) {
@@ -314,7 +324,7 @@ fun AppGridView(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(AppGridRowSpacing),
     ) {
-        val showAppGrid = apps.isNotEmpty() && (areAppIconsLoaded || gridHasBeenVisible)
+        val showAppGrid = activeApps.isNotEmpty() && (areAppIconsLoaded || gridHasBeenVisible)
 
         LaunchedEffect(showAppGrid, isSearching) {
             if (!showAppGrid) return@LaunchedEffect
@@ -352,7 +362,7 @@ fun AppGridView(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(AppGridRowSpacing),
             ) {
-                if (suggestionTabs.size > 1) {
+                if (suggestionTabs.isNotEmpty()) {
                     AppSuggestionTabStrip(
                             tabs = suggestionTabs,
                             selectedIndex = selectedSuggestionTabIndex,

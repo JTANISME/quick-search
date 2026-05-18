@@ -861,6 +861,7 @@
     <string name="app_suggestions_tab_pinned">Pinned</string>
     <string name="app_suggestions_tab_recent">Recents</string>
     <string name="app_suggestions_tab_most_used">Most Used</string>
+    <string name="app_suggestions_tab_required_toast">Keep at least one app suggestion tab enabled</string>
     <string name="app_suggestions_usage_access_link">usage access permission</string>
     <string name="app_suggestions_usage_access_tip">Grant usage access permission to see more appropriate suggestions</string>
     <string name="search_section_app_settings_toggle_desc">Turn app settings search on or off</string>

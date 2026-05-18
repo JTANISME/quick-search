@@ -54,6 +54,11 @@ internal interface SearchViewModelPreferencesApi {
     fun setSelectedAppSuggestionTab(tab: AppSuggestionTabType) =
         preferencesApiDelegate.setSelectedAppSuggestionTab(tab)
 
+    fun setAppSuggestionTabEnabled(
+        tab: AppSuggestionTabType,
+        enabled: Boolean,
+    ) = preferencesApiDelegate.setAppSuggestionTabEnabled(tab, enabled)
+
     fun setShowAppLabels(show: Boolean) = preferencesApiDelegate.setShowAppLabels(show)
 
     fun setPhoneAppGridColumns(columns: Int) = preferencesApiDelegate.setPhoneAppGridColumns(columns)
@@ -255,6 +260,11 @@ class SearchViewModelPreferencesApiDelegate internal constructor(
 
     fun setSelectedAppSuggestionTab(tab: AppSuggestionTabType) =
         preferencesDelegate.setSelectedAppSuggestionTab(tab)
+
+    fun setAppSuggestionTabEnabled(
+        tab: AppSuggestionTabType,
+        enabled: Boolean,
+    ) = preferencesDelegate.setAppSuggestionTabEnabled(tab, enabled)
 
     fun setShowAppLabels(show: Boolean) = preferencesDelegate.setShowAppLabels(show)
 

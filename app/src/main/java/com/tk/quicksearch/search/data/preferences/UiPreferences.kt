@@ -556,6 +556,21 @@ class UiPreferences(
         prefs.edit().putString(UiPreferences.KEY_SELECTED_APP_SUGGESTION_TAB, tab.name).apply()
     }
 
+    fun getEnabledAppSuggestionTabs(): Set<AppSuggestionTabType> {
+        val raw = prefs.getStringSet(UiPreferences.KEY_ENABLED_APP_SUGGESTION_TABS, null)
+        return AppSuggestionTabType.parseEnabledTabs(raw)
+    }
+
+    fun setEnabledAppSuggestionTabs(tabs: Set<AppSuggestionTabType>) {
+        prefs
+            .edit()
+            .putStringSet(
+                UiPreferences.KEY_ENABLED_APP_SUGGESTION_TABS,
+                tabs.map { it.name }.toSet(),
+            )
+            .apply()
+    }
+
     // ============================================================================
     // Web Search Suggestions Preferences
     // ============================================================================
@@ -875,6 +890,7 @@ class UiPreferences(
         // App suggestions preferences keys
         const val KEY_APP_SUGGESTIONS_ENABLED = "app_suggestions_enabled"
         const val KEY_SELECTED_APP_SUGGESTION_TAB = "selected_app_suggestion_tab"
+        const val KEY_ENABLED_APP_SUGGESTION_TABS = "enabled_app_suggestion_tabs"
 
         // Recent queries preferences keys
         const val KEY_RECENT_QUERIES = "recent_queries"
