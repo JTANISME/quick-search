@@ -274,7 +274,7 @@ private fun AppSuggestionTabCheckboxes(
                             DesignTokens.ItemRowSpacing,
                     top = DesignTokens.SpacingXXSmall,
                     end = DesignTokens.SpacingXXLarge,
-                    bottom = DesignTokens.SpacingSmall,
+                    bottom = DesignTokens.SpacingMedium,
                 ),
         verticalArrangement = Arrangement.spacedBy(DesignTokens.SpacingSmall),
     ) {
