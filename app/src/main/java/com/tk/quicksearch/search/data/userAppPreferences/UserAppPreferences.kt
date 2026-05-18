@@ -82,6 +82,11 @@ class UserAppPreferences(
 
     fun getPinnedPackages(): Set<String> = appPreferences.getPinnedPackages()
 
+    fun getPinnedPackageOrder(): List<String> = appPreferences.getPinnedPackageOrder()
+
+    fun setPinnedPackageOrder(packageNames: List<String>): List<String> =
+            appPreferences.setPinnedPackageOrder(packageNames)
+
     fun hidePackageInSuggestions(packageName: String): Set<String> =
             appPreferences.hidePackageInSuggestions(packageName)
 

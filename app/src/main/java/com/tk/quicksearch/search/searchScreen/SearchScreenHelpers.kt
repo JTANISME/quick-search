@@ -307,6 +307,7 @@ data class AppsSectionParams(
     val onHideApp: (AppInfo) -> Unit,
     val onPinApp: (AppInfo) -> Unit,
     val onUnpinApp: (AppInfo) -> Unit,
+    val onReorderPinnedApps: (List<AppInfo>) -> Unit,
     val onNicknameClick: (AppInfo) -> Unit,
     val onTriggerClick: (AppInfo) -> Unit,
     val getAppNickname: (String) -> String?,
@@ -439,6 +440,7 @@ internal fun buildSectionParams(
     onHideApp: (AppInfo) -> Unit,
     onPinApp: (AppInfo) -> Unit,
     onUnpinApp: (AppInfo) -> Unit,
+    onReorderPinnedApps: (List<AppInfo>) -> Unit,
     onSuggestionTabSelected: (AppSuggestionTabType) -> Unit,
     getFileNickname: (String) -> String?,
     getContactNickname: (Long) -> String?,
@@ -836,6 +838,7 @@ internal fun buildSectionParams(
             onHideApp = onHideApp,
             onPinApp = onPinApp,
             onUnpinApp = onUnpinApp,
+            onReorderPinnedApps = onReorderPinnedApps,
             onNicknameClick = { app ->
                 onUpdateNicknameDialogState(
                     NicknameDialogState.App(

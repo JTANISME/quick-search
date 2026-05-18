@@ -161,6 +161,7 @@ private fun renderAppsSection(
             onHideApp = appsParams.onHideApp,
             onPinApp = appsParams.onPinApp,
             onUnpinApp = appsParams.onUnpinApp,
+            onReorderPinnedApps = appsParams.onReorderPinnedApps,
             onNicknameClick = appsParams.onNicknameClick,
             onTriggerClick = appsParams.onTriggerClick,
             getAppNickname = appsParams.getAppNickname,
