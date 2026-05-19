@@ -69,6 +69,7 @@ data class CustomTool(
         val name: String,
         val prompt: String,
         val modelId: String,
+        val providerId: AiSearchLlmProviderId = AiSearchLlmProviderId.GEMINI,
         val groundingEnabled: Boolean = false,
         val thinkingEnabled: Boolean = false,
 )

@@ -826,20 +826,35 @@ internal class SearchPreferencesDelegate(
         }
     }
 
-    fun setAiBackedToolModel(
+    fun setAiBackedToolSettings(
         toolId: AiBackedToolConfigId,
+        providerId: AiSearchLlmProviderId,
         modelId: String,
+        groundingEnabled: Boolean,
+        thinkingEnabled: Boolean,
     ) {
         scope.launch(Dispatchers.IO) {
             val normalizedModelId = modelId.trim()
             if (normalizedModelId.isBlank()) return@launch
             when (toolId) {
-                AiBackedToolConfigId.CURRENCY_CONVERTER ->
+                AiBackedToolConfigId.CURRENCY_CONVERTER -> {
+                    userPreferences.setCurrencyConverterProviderId(providerId)
                     userPreferences.setCurrencyConverterModel(normalizedModelId)
-                AiBackedToolConfigId.WORD_CLOCK ->
+                    userPreferences.setCurrencyConverterGroundingEnabled(groundingEnabled)
+                    userPreferences.setCurrencyConverterThinkingEnabled(thinkingEnabled)
+                }
+                AiBackedToolConfigId.WORD_CLOCK -> {
+                    userPreferences.setWordClockProviderId(providerId)
                     userPreferences.setWordClockModel(normalizedModelId)
-                AiBackedToolConfigId.DICTIONARY ->
+                    userPreferences.setWordClockGroundingEnabled(groundingEnabled)
+                    userPreferences.setWordClockThinkingEnabled(thinkingEnabled)
+                }
+                AiBackedToolConfigId.DICTIONARY -> {
+                    userPreferences.setDictionaryProviderId(providerId)
                     userPreferences.setDictionaryModel(normalizedModelId)
+                    userPreferences.setDictionaryGroundingEnabled(groundingEnabled)
+                    userPreferences.setDictionaryThinkingEnabled(thinkingEnabled)
+                }
             }
         }
     }
@@ -918,6 +933,7 @@ internal class SearchPreferencesDelegate(
     fun addCustomTool(
         name: String,
         prompt: String,
+        providerId: AiSearchLlmProviderId,
         modelId: String,
         groundingEnabled: Boolean = false,
         aliasCode: String = "",
@@ -933,6 +949,7 @@ internal class SearchPreferencesDelegate(
                 name = trimmedName,
                 prompt = prompt.trim(),
                 modelId = resolvedModelId,
+                providerId = providerId,
                 groundingEnabled = groundingEnabled,
                 thinkingEnabled = thinkingEnabled,
             )
@@ -960,6 +977,7 @@ internal class SearchPreferencesDelegate(
         id: String,
         name: String,
         prompt: String,
+        providerId: AiSearchLlmProviderId,
         modelId: String,
         groundingEnabled: Boolean = false,
         thinkingEnabled: Boolean = false,
@@ -976,6 +994,7 @@ internal class SearchPreferencesDelegate(
                             name = trimmedName,
                             prompt = prompt.trim(),
                             modelId = resolvedModelId,
+                            providerId = providerId,
                             groundingEnabled = groundingEnabled,
                             thinkingEnabled = thinkingEnabled,
                         )

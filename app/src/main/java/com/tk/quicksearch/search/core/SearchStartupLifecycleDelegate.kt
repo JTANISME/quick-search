@@ -12,6 +12,7 @@ import com.tk.quicksearch.search.apps.prefetchAppIcons
 import com.tk.quicksearch.shared.permissions.PermissionHelper
 import com.tk.quicksearch.shared.util.PackageConstants
 import com.tk.quicksearch.shared.util.WallpaperUtils
+import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderId
 import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderRegistry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -872,7 +873,7 @@ internal class SearchStartupLifecycleDelegate(
 
         val normalizedTools =
             tools.map { tool ->
-                if (tool.modelId in availableModelIdSet) {
+                if (tool.providerId != AiSearchLlmProviderId.GEMINI || tool.modelId in availableModelIdSet) {
                     tool
                 } else {
                     tool.copy(modelId = firstAvailableModelId)

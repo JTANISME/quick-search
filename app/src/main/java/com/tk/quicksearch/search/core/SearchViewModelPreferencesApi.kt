@@ -24,20 +24,22 @@ internal interface SearchViewModelPreferencesApi {
     fun addCustomTool(
         name: String,
         prompt: String,
+        providerId: AiSearchLlmProviderId,
         modelId: String,
         groundingEnabled: Boolean = false,
         aliasCode: String = "",
         thinkingEnabled: Boolean = false,
-    ) = preferencesApiDelegate.addCustomTool(name, prompt, modelId, groundingEnabled, aliasCode, thinkingEnabled)
+    ) = preferencesApiDelegate.addCustomTool(name, prompt, providerId, modelId, groundingEnabled, aliasCode, thinkingEnabled)
 
     fun updateCustomTool(
         id: String,
         name: String,
         prompt: String,
+        providerId: AiSearchLlmProviderId,
         modelId: String,
         groundingEnabled: Boolean = false,
         thinkingEnabled: Boolean = false,
-    ) = preferencesApiDelegate.updateCustomTool(id, name, prompt, modelId, groundingEnabled, thinkingEnabled)
+    ) = preferencesApiDelegate.updateCustomTool(id, name, prompt, providerId, modelId, groundingEnabled, thinkingEnabled)
 
     fun deleteCustomTool(id: String) = preferencesApiDelegate.deleteCustomTool(id)
 
@@ -193,10 +195,19 @@ internal interface SearchViewModelPreferencesApi {
         modelId: String?,
     ) = preferencesApiDelegate.setLlmModel(providerId, modelId)
 
-    fun setAiBackedToolModel(
+    fun setAiBackedToolSettings(
         toolId: AiBackedToolConfigId,
+        providerId: AiSearchLlmProviderId,
         modelId: String,
-    ) = preferencesApiDelegate.setAiBackedToolModel(toolId, modelId)
+        groundingEnabled: Boolean,
+        thinkingEnabled: Boolean,
+    ) = preferencesApiDelegate.setAiBackedToolSettings(
+        toolId,
+        providerId,
+        modelId,
+        groundingEnabled,
+        thinkingEnabled,
+    )
 
     fun setGeminiGroundingEnabled(enabled: Boolean) =
         preferencesApiDelegate.setGeminiGroundingEnabled(enabled)
@@ -231,20 +242,22 @@ class SearchViewModelPreferencesApiDelegate internal constructor(
     fun addCustomTool(
         name: String,
         prompt: String,
+        providerId: AiSearchLlmProviderId,
         modelId: String,
         groundingEnabled: Boolean = false,
         aliasCode: String = "",
         thinkingEnabled: Boolean = false,
-    ) = preferencesDelegate.addCustomTool(name, prompt, modelId, groundingEnabled, aliasCode, thinkingEnabled)
+    ) = preferencesDelegate.addCustomTool(name, prompt, providerId, modelId, groundingEnabled, aliasCode, thinkingEnabled)
 
     fun updateCustomTool(
         id: String,
         name: String,
         prompt: String,
+        providerId: AiSearchLlmProviderId,
         modelId: String,
         groundingEnabled: Boolean = false,
         thinkingEnabled: Boolean = false,
-    ) = preferencesDelegate.updateCustomTool(id, name, prompt, modelId, groundingEnabled, thinkingEnabled)
+    ) = preferencesDelegate.updateCustomTool(id, name, prompt, providerId, modelId, groundingEnabled, thinkingEnabled)
 
     fun deleteCustomTool(id: String) = preferencesDelegate.deleteCustomTool(id)
 
@@ -398,10 +411,19 @@ class SearchViewModelPreferencesApiDelegate internal constructor(
         modelId: String?,
     ) = preferencesDelegate.setLlmModel(providerId, modelId)
 
-    fun setAiBackedToolModel(
+    fun setAiBackedToolSettings(
         toolId: AiBackedToolConfigId,
+        providerId: AiSearchLlmProviderId,
         modelId: String,
-    ) = preferencesDelegate.setAiBackedToolModel(toolId, modelId)
+        groundingEnabled: Boolean,
+        thinkingEnabled: Boolean,
+    ) = preferencesDelegate.setAiBackedToolSettings(
+        toolId,
+        providerId,
+        modelId,
+        groundingEnabled,
+        thinkingEnabled,
+    )
 
     fun setGeminiGroundingEnabled(enabled: Boolean) =
         preferencesDelegate.setGeminiGroundingEnabled(enabled)

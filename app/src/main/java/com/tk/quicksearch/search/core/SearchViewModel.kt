@@ -558,6 +558,7 @@ class SearchViewModel(
         handlers.aiSearchHandler.requestCustomToolSearch(
             query = query,
             systemInstruction = tool.prompt,
+            providerId = tool.providerId,
             modelId = tool.modelId,
             groundingEnabled = tool.groundingEnabled,
             thinkingEnabled = tool.thinkingEnabled,
