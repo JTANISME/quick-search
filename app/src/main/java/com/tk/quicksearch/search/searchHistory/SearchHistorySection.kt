@@ -369,7 +369,7 @@ private fun SearchHistoryTabs(
         if (showWallpaperBackground) {
             Color.Transparent
         } else {
-            MaterialTheme.colorScheme.surface
+            AppColors.getSettingsCardContainerColor()
         }
 
     PrimaryTabRow(
