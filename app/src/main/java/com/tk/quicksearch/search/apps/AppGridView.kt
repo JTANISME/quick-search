@@ -19,7 +19,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
@@ -56,7 +61,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.input.pointer.changedToUp
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.input.pointer.pointerInput
@@ -835,6 +843,7 @@ private fun AppGridItem(
         onPinnedDragEnd: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
+    val view = LocalView.current
     val imageBackgroundIsDark = LocalImageBackgroundIsDark.current
     val indicatorUseLightFill =
             if (showWallpaperBackground && imageBackgroundIsDark != null) {
@@ -883,37 +892,54 @@ private fun AppGridItem(
             animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
             label = "pinnedAppDragAlpha",
     )
+    val currentAppClick by rememberUpdatedState(appActions.onClick)
+    val currentPinnedDragStart by rememberUpdatedState(onPinnedDragStart)
+    val currentPinnedDrag by rememberUpdatedState(onPinnedDrag)
+    val currentPinnedDragEnd by rememberUpdatedState(onPinnedDragEnd)
 
     val dragModifier =
             if (onPinnedDragStart != null && onPinnedDrag != null && onPinnedDragEnd != null) {
                 Modifier.pointerInput(appInfo.launchCountKey()) {
-                    var hasDragged = false
-                    detectDragGesturesAfterLongPress(
-                            onDragStart = {
-                                hasDragged = false
-                                isLocalDragging = true
-                                showOptions = true
-                                onPinnedDragStart()
-                            },
-                            onDrag = { change, dragAmount ->
-                                change.consume()
-                                hasDragged = true
-                                showOptions = false
-                                onPinnedDrag(dragAmount.x, dragAmount.y)
-                            },
-                            onDragEnd = {
-                                if (hasDragged) {
-                                    showOptions = false
+                    awaitEachGesture {
+                        val down = awaitFirstDown(requireUnconsumed = false)
+                        val longPress = awaitLongPressOrCancellation(down.id)
+                        if (longPress == null) {
+                            if (currentEvent.changes.any { it.id == down.id && it.changedToUp() }) {
+                                currentEvent.changes.forEach { it.consume() }
+                                hapticConfirm(view)()
+                                currentAppClick()
+                            }
+                            return@awaitEachGesture
+                        }
+                        var overSlop = Offset.Zero
+                        val drag =
+                                awaitTouchSlopOrCancellation(longPress.id) { change, dragAmount ->
+                                    change.consume()
+                                    overSlop = dragAmount
                                 }
-                                isLocalDragging = false
-                                onPinnedDragEnd()
-                            },
-                            onDragCancel = {
-                                showOptions = false
-                                isLocalDragging = false
-                                onPinnedDragEnd()
-                            },
-                    )
+                        if (drag == null) {
+                            showOptions = true
+                            currentEvent.changes.forEach { it.consume() }
+                            return@awaitEachGesture
+                        }
+
+                        showOptions = false
+                        isLocalDragging = true
+                        currentPinnedDragStart?.invoke()
+                        try {
+                            if (overSlop != Offset.Zero) {
+                                currentPinnedDrag?.invoke(overSlop.x, overSlop.y)
+                            }
+                            drag(drag.id) { change ->
+                                val dragAmount = change.positionChange()
+                                change.consume()
+                                currentPinnedDrag?.invoke(dragAmount.x, dragAmount.y)
+                            }
+                        } finally {
+                            isLocalDragging = false
+                            currentPinnedDragEnd?.invoke()
+                        }
+                    }
                 }
             } else {
                 Modifier
@@ -975,9 +1001,10 @@ private fun AppGridItem(
                     iconIsLegacy = iconResult.isLegacy,
                     monochromeData = iconResult.monochromeData,
                     appName = appInfo.appName,
-                    onClick = appActions.onClick,
+                    onClick = { if (!showOptions) appActions.onClick() },
                     onLongClick = if (isDraggable) null else ({ showOptions = true }),
                     gestureModifier = dragModifier,
+                    clickGesturesEnabled = !isDraggable,
                     appIconSize = appIconSize,
                     appIconShape = appIconShape,
                     hasCustomIconPack = iconPackPackage != null,
@@ -1001,6 +1028,9 @@ private fun AppGridItem(
                 hasNickname = appState.hasNickname,
                 hasTrigger = appState.hasTrigger,
                 shortcuts = shortcuts,
+                appInfo = appInfo,
+                iconPackPackage = iconPackPackage,
+                appIconShape = appIconShape,
                 onShortcutClick = { shortcut -> launchStaticShortcut(context, shortcut) },
                 onAppInfoClick = appActions.onAppInfoClick,
                 onHideApp = appActions.onHideApp,
@@ -1024,6 +1054,7 @@ private fun AppIconSurface(
         onClick: () -> Unit,
         onLongClick: (() -> Unit)?,
         gestureModifier: Modifier = Modifier,
+        clickGesturesEnabled: Boolean = true,
         appIconSize: Dp,
         appIconShape: AppIconShape = AppIconShape.DEFAULT,
         hasCustomIconPack: Boolean = false,
@@ -1087,7 +1118,9 @@ private fun AppIconSurface(
             shape = DesignTokens.ShapeLarge,
     ) {
         val clickModifier =
-                if (onLongClick != null) {
+                if (!clickGesturesEnabled) {
+                    Modifier
+                } else if (onLongClick != null) {
                     Modifier.combinedClickable(
                             onClick = {
                                 hapticConfirm(view)()

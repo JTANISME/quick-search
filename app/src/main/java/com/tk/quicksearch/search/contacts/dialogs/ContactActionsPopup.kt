@@ -701,6 +701,7 @@ private fun ContactActionLongPressMenu(
             },
         )
         if (showTriggerAction) {
+            HorizontalDivider()
             DropdownMenuItem(
                 text = {
                     Text(
