@@ -105,7 +105,7 @@ private const val SuggestionsEnterOffsetDp = 12f
 private const val SuggestionTabInactiveAlpha = 0.34f
 private const val SuggestionTabSwipeThresholdPx = 48f
 private val AppGridRowSpacing = DesignTokens.SpacingXSmall
-private val OverlayGridWidthRoundingSlack = 1.dp
+private val AppGridWidthRoundingSlack = 1.dp
 private val RegularAppIconSize = DesignTokens.IconSizeXLarge - DesignTokens.SpacingXXSmall
 private val OverlayAppIconSurfaceSize = 52.dp
 private val OverlayAppIconSize = 36.dp
@@ -665,11 +665,7 @@ private fun AppGrid(
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val horizontalSpacing = DesignTokens.SpacingMedium
         val widthRoundingSlack =
-                if (isOverlayPresentation && columns > 1) {
-                    OverlayGridWidthRoundingSlack
-                } else {
-                    0.dp
-                }
+                if (columns > 1) AppGridWidthRoundingSlack else 0.dp
         val rowItemWidth =
                 if (columns <= 1) {
                     maxWidth
