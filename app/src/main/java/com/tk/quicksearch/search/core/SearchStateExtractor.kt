@@ -151,6 +151,7 @@ internal object SearchStateExtractor {
             oneHandedMode = s.oneHandedMode,
             bottomSearchBarEnabled = s.bottomSearchBarEnabled,
             searchHintsEnabled = s.searchHintsEnabled,
+            settingsIconEnabled = s.settingsIconEnabled,
             topResultIndicatorEnabled = s.topResultIndicatorEnabled,
             wallpaperAccentEnabled = s.wallpaperAccentEnabled,
             openKeyboardOnLaunch = s.openKeyboardOnLaunch,

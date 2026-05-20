@@ -160,6 +160,9 @@ internal interface SearchViewModelPreferencesApi {
     fun setSearchHintsEnabled(enabled: Boolean) =
         preferencesApiDelegate.setSearchHintsEnabled(enabled)
 
+    fun setSettingsIconEnabled(enabled: Boolean) =
+        preferencesApiDelegate.setSettingsIconEnabled(enabled)
+
     fun setOpenKeyboardOnLaunchEnabled(enabled: Boolean) =
         preferencesApiDelegate.setOpenKeyboardOnLaunchEnabled(enabled)
 
@@ -370,6 +373,9 @@ class SearchViewModelPreferencesApiDelegate internal constructor(
 
     fun setSearchHintsEnabled(enabled: Boolean) =
         preferencesDelegate.setSearchHintsEnabled(enabled)
+
+    fun setSettingsIconEnabled(enabled: Boolean) =
+        preferencesDelegate.setSettingsIconEnabled(enabled)
 
     fun setOpenKeyboardOnLaunchEnabled(enabled: Boolean) =
         preferencesDelegate.setOpenKeyboardOnLaunchEnabled(enabled)

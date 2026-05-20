@@ -62,6 +62,7 @@ internal fun buildSettingsScreenCallbacks(
         onToggleOneHandedMode = viewModel::setOneHandedMode,
         onToggleBottomSearchBar = viewModel::setBottomSearchBarEnabled,
         onToggleSearchHints = viewModel::setSearchHintsEnabled,
+        onToggleSettingsIcon = viewModel::setSettingsIconEnabled,
         onToggleOverlayMode = handlers.onToggleOverlayMode,
         onDismissOverlayAssistantTip = viewModel::dismissOverlayAssistantTip,
         setAliasCode = viewModel::setAlias,

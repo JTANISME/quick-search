@@ -140,6 +140,7 @@ internal fun PersistentSearchBar(
     onQueryChange: (String) -> Unit,
     onClearQuery: () -> Unit,
     onSettingsClick: () -> Unit,
+    showSettingsIcon: Boolean = true,
     dismissKeyboardBeforeSettingsClick: Boolean = false,
     enabledTargets: List<SearchTarget>,
     shortcutCodes: Map<String, String> = emptyMap(),
@@ -700,7 +701,7 @@ internal fun PersistentSearchBar(
                                 tint = accentColor,
                             )
                         }
-                    } else {
+                    } else if (showSettingsIcon) {
                         IconButton(
                             onClick = {
                                 hapticStrong(view)()

@@ -32,6 +32,7 @@ class StartupPreferencesFacade(
             val oneHandedMode: Boolean,
             val bottomSearchBarEnabled: Boolean,
             val searchHintsEnabled: Boolean,
+            val settingsIconEnabled: Boolean,
             val topResultIndicatorEnabled: Boolean,
             val openKeyboardOnLaunch: Boolean,
             val clearQueryOnLaunch: Boolean,
@@ -192,6 +193,13 @@ class StartupPreferencesFacade(
                         allPrefs[
                                 com.tk.quicksearch.search.data.preferences.UiPreferences
                                         .KEY_SEARCH_HINTS_ENABLED,
+                        ] as?
+                                Boolean
+                                ?: true,
+                settingsIconEnabled =
+                        allPrefs[
+                                com.tk.quicksearch.search.data.preferences.UiPreferences
+                                        .KEY_SETTINGS_ICON_ENABLED,
                         ] as?
                                 Boolean
                                 ?: true,
@@ -596,6 +604,13 @@ class StartupPreferencesFacade(
                                 allPrefs[
                                         com.tk.quicksearch.search.data.preferences.UiPreferences
                                                 .KEY_SEARCH_HINTS_ENABLED,
+                                ] as?
+                                        Boolean
+                                        ?: true,
+                        settingsIconEnabled =
+                                allPrefs[
+                                        com.tk.quicksearch.search.data.preferences.UiPreferences
+                                                .KEY_SETTINGS_ICON_ENABLED,
                                 ] as?
                                         Boolean
                                         ?: true,

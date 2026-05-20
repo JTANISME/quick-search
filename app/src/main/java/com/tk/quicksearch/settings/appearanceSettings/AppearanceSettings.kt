@@ -38,6 +38,8 @@ fun AppearanceSettingsSection(
         onToggleBottomSearchBar: (Boolean) -> Unit,
         searchHintsEnabled: Boolean,
         onToggleSearchHints: (Boolean) -> Unit,
+        settingsIconEnabled: Boolean,
+        onToggleSettingsIcon: (Boolean) -> Unit,
         wallpaperBackgroundAlpha: Float,
         wallpaperBlurRadius: Float,
         onWallpaperBackgroundAlphaChange: (Float) -> Unit,
@@ -188,6 +190,13 @@ fun AppearanceSettingsSection(
                         subtitle = stringResource(R.string.settings_search_hints_desc),
                         checked = searchHintsEnabled,
                         onCheckedChange = onToggleSearchHints,
+                        extraVerticalPadding = 8.dp,
+                )
+                SettingsToggleRow(
+                        title = stringResource(R.string.settings_icon_title),
+                        subtitle = stringResource(R.string.settings_icon_desc),
+                        checked = settingsIconEnabled,
+                        onCheckedChange = onToggleSettingsIcon,
                         extraVerticalPadding = 8.dp,
                         showDivider = false,
                 )

@@ -288,6 +288,15 @@ internal fun SettingsDetailLevel1Screen(
                                     ),
                                 )
                             },
+                            settingsIconEnabled = state.settingsIconEnabled,
+                            onToggleSettingsIcon = { enabled ->
+                                callbacks.onApplySettingsCommand(
+                                    SettingsCommand.Toggle(
+                                        key = com.tk.quicksearch.search.appSettings.AppSettingsToggleKey.SETTINGS_ICON,
+                                        enabled = enabled,
+                                    ),
+                                )
+                            },
                             wallpaperBackgroundAlpha = state.wallpaperBackgroundAlpha,
                             wallpaperBlurRadius = state.wallpaperBlurRadius,
                             onWallpaperBackgroundAlphaChange = { alpha ->

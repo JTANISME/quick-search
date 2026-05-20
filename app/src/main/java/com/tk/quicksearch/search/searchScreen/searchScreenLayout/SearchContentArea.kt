@@ -20,9 +20,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -139,6 +141,8 @@ fun SearchContentArea(
     isOverlayPresentation: Boolean = false,
     onOpenPermissionsSettings: () -> Unit = {},
     onChangeWallpaperClick: () -> Unit = {},
+    onOpenSettingsClick: () -> Unit = {},
+    showOpenSettingsOption: Boolean = true,
     isDefaultLauncher: Boolean = false,
     onBottomOneHandedOverscrollUp: () -> Unit = {},
     onLauncherOverscrollDown: () -> Unit = {},
@@ -565,6 +569,22 @@ fun SearchContentArea(
                             onChangeWallpaperClick()
                         },
                     )
+                    if (showOpenSettingsOption) {
+                        HorizontalDivider()
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.action_open_settings)) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Rounded.Settings,
+                                    contentDescription = null,
+                                )
+                            },
+                            onClick = {
+                                showBackgroundMenu = false
+                                onOpenSettingsClick()
+                            },
+                        )
+                    }
                 }
             }
 

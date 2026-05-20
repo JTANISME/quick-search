@@ -919,6 +919,10 @@ class UserAppPreferences(
 
     fun setSearchHintsEnabled(enabled: Boolean) = uiPreferences.setSearchHintsEnabled(enabled)
 
+    fun isSettingsIconEnabled(): Boolean = uiPreferences.isSettingsIconEnabled()
+
+    fun setSettingsIconEnabled(enabled: Boolean) = uiPreferences.setSettingsIconEnabled(enabled)
+
     fun isOpenKeyboardOnLaunchEnabled(): Boolean = uiPreferences.isOpenKeyboardOnLaunchEnabled()
 
     fun setOpenKeyboardOnLaunchEnabled(enabled: Boolean) =

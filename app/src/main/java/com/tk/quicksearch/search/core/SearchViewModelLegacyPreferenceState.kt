@@ -15,6 +15,7 @@ internal class SearchViewModelLegacyPreferenceState(
     var oneHandedMode: Boolean = false
     var bottomSearchBarEnabled: Boolean = false
     var searchHintsEnabled: Boolean = true
+    var settingsIconEnabled: Boolean = true
     var topResultIndicatorEnabled: Boolean = true
     var wallpaperAccentEnabled: Boolean = true
     var openKeyboardOnLaunch: Boolean = true
@@ -60,6 +61,7 @@ internal class SearchViewModelLegacyPreferenceState(
         oneHandedMode = prefCache.oneHandedMode
         bottomSearchBarEnabled = prefCache.bottomSearchBarEnabled
         searchHintsEnabled = prefCache.searchHintsEnabled
+        settingsIconEnabled = prefCache.settingsIconEnabled
         topResultIndicatorEnabled = prefCache.topResultIndicatorEnabled
         wallpaperAccentEnabled = prefCache.wallpaperAccentEnabled
         openKeyboardOnLaunch = prefCache.openKeyboardOnLaunch

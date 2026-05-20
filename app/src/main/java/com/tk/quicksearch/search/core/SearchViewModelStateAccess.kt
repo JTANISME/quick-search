@@ -59,6 +59,12 @@ internal class SearchViewModelPreferencesStateAccess(
             state.bottomSearchBarEnabled = value
         }
 
+    override var settingsIconEnabled: Boolean
+        get() = state.settingsIconEnabled
+        set(value) {
+            state.settingsIconEnabled = value
+        }
+
     override var topResultIndicatorEnabled: Boolean
         get() = state.topResultIndicatorEnabled
         set(value) {

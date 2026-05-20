@@ -230,6 +230,7 @@ data class SearchUiConfigState(
         val oneHandedMode: Boolean = false,
         val bottomSearchBarEnabled: Boolean = false,
         val searchHintsEnabled: Boolean = true,
+        val settingsIconEnabled: Boolean = true,
         val topResultIndicatorEnabled: Boolean = true,
         val openKeyboardOnLaunch: Boolean = true,
         val clearQueryOnLaunch: Boolean = true,

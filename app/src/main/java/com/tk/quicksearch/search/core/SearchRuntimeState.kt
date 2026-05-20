@@ -23,6 +23,7 @@ internal data class SearchRuntimeState(
     var oneHandedMode: Boolean = false,
     var bottomSearchBarEnabled: Boolean = false,
     var searchHintsEnabled: Boolean = true,
+    var settingsIconEnabled: Boolean = true,
     var topResultIndicatorEnabled: Boolean = true,
     var wallpaperAccentEnabled: Boolean = true,
     var openKeyboardOnLaunch: Boolean = true,

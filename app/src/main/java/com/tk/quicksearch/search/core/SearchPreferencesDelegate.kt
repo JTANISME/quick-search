@@ -23,6 +23,7 @@ internal interface SearchPreferencesStateAccess {
     var folderBlacklistPatterns: Set<String>
     var oneHandedMode: Boolean
     var bottomSearchBarEnabled: Boolean
+    var settingsIconEnabled: Boolean
     var topResultIndicatorEnabled: Boolean
     var wallpaperAccentEnabled: Boolean
     var openKeyboardOnLaunch: Boolean
@@ -639,6 +640,17 @@ internal class SearchPreferencesDelegate(
             preferenceSetter = userPreferences::setSearchHintsEnabled,
             stateUpdater = {
                 updateUiState { state -> state.copy(searchHintsEnabled = it) }
+            },
+        )
+    }
+
+    fun setSettingsIconEnabled(enabled: Boolean) {
+        updateBooleanPreference(
+            value = enabled,
+            preferenceSetter = userPreferences::setSettingsIconEnabled,
+            stateUpdater = {
+                stateAccess.settingsIconEnabled = it
+                updateUiState { state -> state.copy(settingsIconEnabled = it) }
             },
         )
     }

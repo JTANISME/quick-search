@@ -40,6 +40,13 @@ class UiPreferences(
         setBooleanPref(UiPreferences.KEY_SEARCH_HINTS_ENABLED, enabled)
     }
 
+    fun isSettingsIconEnabled(): Boolean =
+            getBooleanPref(UiPreferences.KEY_SETTINGS_ICON_ENABLED, true)
+
+    fun setSettingsIconEnabled(enabled: Boolean) {
+        setBooleanPref(UiPreferences.KEY_SETTINGS_ICON_ENABLED, enabled)
+    }
+
     fun isOpenKeyboardOnLaunchEnabled(): Boolean =
             getBooleanPref(UiPreferences.KEY_OPEN_KEYBOARD_ON_LAUNCH, true)
 
@@ -979,6 +986,7 @@ class UiPreferences(
         const val KEY_ONE_HANDED_MODE = "one_handed_mode"
         const val KEY_BOTTOM_SEARCH_BAR_ENABLED = "bottom_search_bar_enabled"
         const val KEY_SEARCH_HINTS_ENABLED = "search_hints_enabled"
+        const val KEY_SETTINGS_ICON_ENABLED = "settings_icon_enabled"
         const val KEY_OPEN_KEYBOARD_ON_LAUNCH = "open_keyboard_on_launch"
         const val KEY_WAS_DEFAULT_LAUNCHER = "was_default_launcher"
         const val KEY_DEFAULT_LAUNCHER_PREVIOUS_ONE_HANDED_MODE =

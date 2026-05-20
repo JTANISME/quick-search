@@ -297,6 +297,12 @@ class AppSettingsRepository(
                 toggleKey = AppSettingsToggleKey.SEARCH_HINTS,
             )
             addToggle(
+                id = "app_toggle_settings_icon",
+                titleRes = R.string.settings_icon_title,
+                descriptionRes = R.string.settings_icon_desc,
+                toggleKey = AppSettingsToggleKey.SETTINGS_ICON,
+            )
+            addToggle(
                 id = "app_toggle_app_labels",
                 titleRes = R.string.settings_show_app_labels_title,
                 descriptionRes = R.string.settings_show_app_labels_desc,
