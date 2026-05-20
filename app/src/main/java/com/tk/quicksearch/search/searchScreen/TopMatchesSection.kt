@@ -309,6 +309,7 @@ internal fun TopMatchesSection(
     matches: List<TopMatchItem>,
     params: SectionRenderParams,
     showWallpaperBackground: Boolean,
+    showTopResultIndicator: Boolean,
     reverseOrder: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
@@ -346,7 +347,7 @@ internal fun TopMatchesSection(
         }
 
         displayedMatches.forEach { item ->
-            val isTopPredicted = item == bestMatch
+            val isTopPredicted = showTopResultIndicator && item == bestMatch
             SearchResultCard(
                 modifier =
                     Modifier

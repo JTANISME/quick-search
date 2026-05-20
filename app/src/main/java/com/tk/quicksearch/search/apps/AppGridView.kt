@@ -663,8 +663,18 @@ private fun AppGrid(
                     visibleDisplayedApps
                 }
             }
-    val firstResultKey = remember(visibleDisplayedApps, suppressTopResultIndicator) {
-        if (suppressTopResultIndicator) null else visibleDisplayedApps.firstOrNull()?.launchCountKey()
+    val predictedAppKey = remember(predictedTarget, suppressTopResultIndicator) {
+        if (suppressTopResultIndicator) {
+            null
+        } else {
+            (predictedTarget as? PredictedSubmitTarget.App)?.let { target ->
+                if (target.userHandleId == null) {
+                    target.packageName
+                } else {
+                    "${target.packageName}:${target.userHandleId}"
+                }
+            }
+        }
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
@@ -816,7 +826,7 @@ private fun AppGrid(
                             appActions = createAppActions(app),
                             appState = createAppState(app),
                             iconPackPackage = iconPackPackage,
-                            isPredicted = app.launchCountKey() == firstResultKey,
+                            isPredicted = app.launchCountKey() == predictedAppKey,
                             oneHandedMode = oneHandedMode,
                             appIconSizeStep = appIconSizeStep,
                             appIconShape = appIconShape,

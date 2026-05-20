@@ -328,6 +328,7 @@ fun ContentLayout(
                 matches = topMatches,
                 params = sectionParams,
                 showWallpaperBackground = effectiveShowWallpaperBackground,
+                showTopResultIndicator = state.topResultIndicatorEnabled,
                 reverseOrder = false,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -635,6 +636,7 @@ fun ContentLayout(
                 matches = topMatches,
                 params = sectionParams,
                 showWallpaperBackground = effectiveShowWallpaperBackground,
+                showTopResultIndicator = state.topResultIndicatorEnabled,
                 reverseOrder = true,
                 modifier = Modifier.fillMaxWidth(),
             )
