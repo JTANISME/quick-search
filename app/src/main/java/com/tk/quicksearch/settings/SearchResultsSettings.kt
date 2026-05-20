@@ -377,6 +377,7 @@ private fun TopMatchesCard(
     disabledTopMatchesSections: Set<SearchSection>,
     onTopMatchesSectionOrderChange: (List<SearchSection>) -> Unit,
     onTopMatchesSectionEnabledChange: (SearchSection, Boolean) -> Unit,
+    isLocked: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     var showPriorityDialog by rememberSaveable { mutableStateOf(false) }
@@ -393,6 +394,7 @@ private fun TopMatchesCard(
                 checked = topMatchesEnabled,
                 onCheckedChange = onTopMatchesToggle,
                 leadingIcon = Icons.Rounded.AutoAwesome,
+                enabled = !isLocked,
                 isFirstItem = true,
                 isLastItem = !topMatchesEnabled,
             )
@@ -767,13 +769,16 @@ fun SearchResultsSettingsSection(
             state.excludedAppShortcuts.isNotEmpty() ||
             state.excludedFileExtensions.isNotEmpty()
 
+    val sectionOrder =
+        ItemPriorityConfig
+            .getSearchResultsPriority()
+            .filter { section -> FeatureFlags.isSearchSectionEnabled(section) }
+    val allSectionsDisabled = sectionOrder.isNotEmpty() && sectionOrder.all { it in state.disabledSections }
+
     Column(modifier = modifier) {
         // Search Sections Section
         SectionSettingsSection(
-            sectionOrder =
-                ItemPriorityConfig
-                    .getSearchResultsPriority()
-                    .filter { section -> FeatureFlags.isSearchSectionEnabled(section) },
+            sectionOrder = sectionOrder,
             disabledSections = state.disabledSections,
             onToggleSection = callbacks.onToggleSection,
             sectionAliasCodes = state.shortcutCodes,
@@ -852,6 +857,7 @@ fun SearchResultsSettingsSection(
                     SettingsCommand.TopMatchesSectionEnabled(section, enabled),
                 )
             },
+            isLocked = allSectionsDisabled,
             modifier = Modifier.padding(top = DesignTokens.SpacingLarge),
         )
 
