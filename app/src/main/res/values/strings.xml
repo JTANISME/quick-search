@@ -85,6 +85,8 @@
     <string name="action_reset_app_shortcut_icon">Reset to default icon</string>
     <string name="action_retry">Retry</string>
     <string name="action_share">Share</string>
+    <string name="action_move_up">Move Up</string>
+    <string name="action_move_down">Move Down</string>
     <string name="action_undo">Undo</string>
     <string name="action_uninstall_app">Uninstall</string>
     <string name="action_unpin_app">Unpin</string>

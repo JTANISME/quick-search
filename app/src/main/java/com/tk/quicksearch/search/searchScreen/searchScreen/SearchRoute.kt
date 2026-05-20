@@ -590,6 +590,7 @@ fun SearchRoute(
             },
             onPinContact = viewModel::pinContact,
             onUnpinContact = viewModel::unpinContact,
+            onMovePinnedContact = viewModel::movePinnedContact,
             onExcludeContact = onExcludeContactWithUndo,
             onCalendarEventClick = { event: com.tk.quicksearch.search.models.CalendarEventInfo ->
                 if (event.eventId < 0) {
@@ -600,6 +601,7 @@ fun SearchRoute(
             },
             onPinCalendarEvent = viewModel::pinCalendarEvent,
             onUnpinCalendarEvent = viewModel::unpinCalendarEvent,
+            onMovePinnedCalendarEvent = viewModel::movePinnedCalendarEvent,
             onExcludeCalendarEvent = onExcludeCalendarEventWithUndo,
             onIncludeCalendarEvent = viewModel::removeExcludedCalendarEvent,
             onArchiveTodayCalendarEvent = { event -> viewModel.archiveTodayCalendarEvent(event.eventId) },
@@ -610,9 +612,11 @@ fun SearchRoute(
             },
             onPinNote = viewModel::pinNote,
             onUnpinNote = viewModel::unpinNote,
+            onMovePinnedNote = viewModel::movePinnedNote,
             onDeleteNote = onDeleteNoteWithUndo,
             onPinFile = viewModel::pinFile,
             onUnpinFile = viewModel::unpinFile,
+            onMovePinnedFile = viewModel::movePinnedFile,
             onExcludeFile = onExcludeFileWithUndo,
             onExcludeFileExtension = onExcludeFileExtensionWithUndo,
             onSettingClick = { setting: com.tk.quicksearch.search.deviceSettings.DeviceSetting ->
@@ -627,12 +631,14 @@ fun SearchRoute(
             onAppSettingPhoneAppGridColumnsChange = viewModel::setPhoneAppGridColumns,
             onPinSetting = viewModel::pinSetting,
             onUnpinSetting = viewModel::unpinSetting,
+            onMovePinnedSetting = viewModel::movePinnedSetting,
             onExcludeSetting = onExcludeSettingWithUndo,
             onAppShortcutClick = { shortcut: com.tk.quicksearch.search.data.AppShortcutRepository.StaticShortcut ->
                 viewModel.launchAppShortcut(shortcut)
             },
             onPinAppShortcut = viewModel::pinAppShortcut,
             onUnpinAppShortcut = viewModel::unpinAppShortcut,
+            onMovePinnedAppShortcut = viewModel::movePinnedAppShortcut,
             onExcludeAppShortcut = onExcludeAppShortcutWithUndo,
             onIncludeAppShortcut = viewModel::removeExcludedAppShortcut,
             onAppShortcutAppInfoClick = { shortcut: com.tk.quicksearch.search.data.AppShortcutRepository.StaticShortcut ->
