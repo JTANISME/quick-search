@@ -850,7 +850,7 @@ private fun SearchBarLeadingIcon(
                 if (bitmap != null) {
                     Image(
                         bitmap = bitmap,
-                        contentDescription = stringResource(R.string.desc_search_icon),
+                        contentDescription = stringResource(R.string.common_search),
                         modifier = Modifier
                             .padding(start = DesignTokens.SpacingSmall)
                             .size(DesignTokens.IconSize),
@@ -858,7 +858,7 @@ private fun SearchBarLeadingIcon(
                 } else {
                     Icon(
                         imageVector = Icons.Rounded.Settings,
-                        contentDescription = stringResource(R.string.desc_search_icon),
+                        contentDescription = stringResource(R.string.common_search),
                         tint = iconTint,
                         modifier = Modifier.padding(start = DesignTokens.SpacingXSmall),
                     )
@@ -867,7 +867,7 @@ private fun SearchBarLeadingIcon(
                 Icon(
                     imageVector =
                         SearchSectionUiMetadataRegistry.metadataFor(iconState.section).searchBarIcon,
-                    contentDescription = stringResource(R.string.desc_search_icon),
+                    contentDescription = stringResource(R.string.common_search),
                     tint = iconTint,
                     modifier = Modifier.padding(start = DesignTokens.SpacingXSmall),
                 )
@@ -877,7 +877,7 @@ private fun SearchBarLeadingIcon(
         LeadingIconState.Search -> {
             Icon(
                 imageVector = Icons.Rounded.Search,
-                contentDescription = stringResource(R.string.desc_search_icon),
+                contentDescription = stringResource(R.string.common_search),
                 tint = iconTint,
                 modifier = Modifier.padding(start = DesignTokens.SpacingXSmall),
             )

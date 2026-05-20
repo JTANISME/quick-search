@@ -52,14 +52,14 @@ class AppSettingsRepository(
             )
             addNavigation(
                 id = "app_settings_gemini_api",
-                titleRes = R.string.settings_backup_export_option_gemini_title,
+                titleRes = R.string.common_ai_provider,
                 descriptionRes = R.string.settings_gemini_api_desc,
                 destination = AppSettingsDestination.GEMINI_API,
                 keywords = listOf("ai provider", "gemini", "openai", "groq", "claude"),
             )
             addNavigation(
                 id = "app_settings_api_key_setup",
-                titleRes = R.string.settings_api_key_setup_title,
+                titleRes = R.string.common_api_key_setup,
                 descriptionRes = R.string.settings_api_key_setup_nav_desc,
                 destination = AppSettingsDestination.API_KEY_SETUP,
                 keywords = listOf("api key", "token", "openai", "groq", "claude"),

@@ -197,7 +197,7 @@ internal fun SearchScreenContent(
     val staticSearchHint =
         stringResource(
             if (isDefaultLauncher) {
-                R.string.search_hint_launcher_static
+                R.string.common_search
             } else {
                 R.string.search_hint_static
             },

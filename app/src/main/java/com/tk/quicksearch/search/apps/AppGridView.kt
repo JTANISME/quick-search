@@ -212,7 +212,7 @@ fun AppGridView(
     val pinnedTitle = stringResource(R.string.app_suggestions_tab_pinned)
     val recentsTitle = stringResource(R.string.app_suggestions_tab_recent)
     val newUpdatedTitle = stringResource(R.string.app_suggestions_tab_new_updated)
-    val mostUsedTitle = stringResource(R.string.app_suggestions_tab_most_used)
+    val mostUsedTitle = stringResource(R.string.common_most_used)
     val suggestionTabs =
             remember(
                     hasUsagePermission,
