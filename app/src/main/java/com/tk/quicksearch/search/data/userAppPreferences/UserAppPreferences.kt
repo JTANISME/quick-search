@@ -911,6 +911,10 @@ class UserAppPreferences(
     fun setBottomSearchBarEnabled(enabled: Boolean) =
             uiPreferences.setBottomSearchBarEnabled(enabled)
 
+    fun isSearchHintsEnabled(): Boolean = uiPreferences.isSearchHintsEnabled()
+
+    fun setSearchHintsEnabled(enabled: Boolean) = uiPreferences.setSearchHintsEnabled(enabled)
+
     fun isOpenKeyboardOnLaunchEnabled(): Boolean = uiPreferences.isOpenKeyboardOnLaunchEnabled()
 
     fun setOpenKeyboardOnLaunchEnabled(enabled: Boolean) =

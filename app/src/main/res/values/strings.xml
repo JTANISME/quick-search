@@ -4,6 +4,8 @@
          ============================================================================ -->
     <string name="app_name">Quick Search</string>
     <string name="search_hint">Search Anything…</string>
+    <string name="search_hint_static">Search Anything</string>
+    <string name="search_hint_launcher_static">Search</string>
     <string name="search_hint_apps">Search Apps…</string>
     <string name="search_hint_app_shortcuts">Search App Shortcuts…</string>
     <string name="search_hint_contacts">Search Contacts…</string>
@@ -453,6 +455,8 @@
     <string name="settings_beta_tag">Beta</string>
     <string name="settings_bottom_searchbar_desc">Place the search bar at the bottom of the screen</string>
     <string name="settings_bottom_searchbar_title">Bottom Searchbar</string>
+    <string name="settings_search_hints_desc">Enable/Disable rotating search hints</string>
+    <string name="settings_search_hints_title">Search Hints</string>
     <string name="settings_cache_cleared_toast">Cache cleared. Rebuilding app index\u2026</string>
     <string name="settings_calendar_events_empty">No calendar events available.</string>
     <string name="app_settings_create_calendar_event_title">New Calendar Event</string>

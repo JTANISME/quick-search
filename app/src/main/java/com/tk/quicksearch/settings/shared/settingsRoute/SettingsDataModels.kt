@@ -45,6 +45,7 @@ data class SettingsScreenState(
     val excludedFileExtensions: Set<String>,
     val oneHandedMode: Boolean,
     val bottomSearchBarEnabled: Boolean = false,
+    val searchHintsEnabled: Boolean = true,
     val overlayModeEnabled: Boolean,
     val hasSeenOverlayAssistantTip: Boolean = true,
     val shortcutCodes: Map<String, String>,
@@ -186,6 +187,7 @@ data class SettingsScreenState(
             AppearanceSettingsState(
                 oneHandedMode = oneHandedMode,
                 bottomSearchBarEnabled = bottomSearchBarEnabled,
+                searchHintsEnabled = searchHintsEnabled,
                 overlayModeEnabled = overlayModeEnabled,
                 hasSeenOverlayAssistantTip = hasSeenOverlayAssistantTip,
                 hasWallpaperPermission = hasWallpaperPermission,
@@ -268,6 +270,7 @@ data class SettingsScreenCallbacks(
     val onRemoveExcludedFileExtension: (String) -> Unit,
     val onToggleOneHandedMode: (Boolean) -> Unit,
     val onToggleBottomSearchBar: (Boolean) -> Unit,
+    val onToggleSearchHints: (Boolean) -> Unit,
     val onToggleOverlayMode: (Boolean) -> Unit,
     val onDismissOverlayAssistantTip: () -> Unit,
     val setAliasCode: (SearchTarget, String) -> Unit,
@@ -429,6 +432,7 @@ data class SettingsScreenCallbacks(
             AppearanceSettingsCallbacks(
                 onToggleOneHandedMode = onToggleOneHandedMode,
                 onToggleBottomSearchBar = onToggleBottomSearchBar,
+                onToggleSearchHints = onToggleSearchHints,
                 onToggleOverlayMode = onToggleOverlayMode,
                 onDismissOverlayAssistantTip = onDismissOverlayAssistantTip,
                 onWallpaperBackgroundAlphaChange = onWallpaperBackgroundAlphaChange,
@@ -515,6 +519,7 @@ data class FileSearchSettingsState(
 data class AppearanceSettingsState(
     val oneHandedMode: Boolean,
     val bottomSearchBarEnabled: Boolean,
+    val searchHintsEnabled: Boolean,
     val overlayModeEnabled: Boolean,
     val hasSeenOverlayAssistantTip: Boolean,
     val hasWallpaperPermission: Boolean,
@@ -617,6 +622,7 @@ data class SearchEngineSettingsCallbacks(
 data class AppearanceSettingsCallbacks(
     val onToggleOneHandedMode: (Boolean) -> Unit,
     val onToggleBottomSearchBar: (Boolean) -> Unit,
+    val onToggleSearchHints: (Boolean) -> Unit,
     val onToggleOverlayMode: (Boolean) -> Unit,
     val onDismissOverlayAssistantTip: () -> Unit,
     val onWallpaperBackgroundAlphaChange: (Float) -> Unit,

@@ -194,6 +194,14 @@ internal fun SearchScreenContent(
     val triggerWords = remember(getAllTriggerWordsById, state.nicknameUpdateVersion) { getAllTriggerWordsById().values }
 
     val hintSearchAnything = stringResource(R.string.search_hint)
+    val staticSearchHint =
+        stringResource(
+            if (isDefaultLauncher) {
+                R.string.search_hint_launcher_static
+            } else {
+                R.string.search_hint_static
+            },
+        )
     val cycleHints = stringArrayResource(R.array.search_hints_cycle)
     // Indices must stay in sync with R.array.search_hints_cycle order in strings.xml
     val defaultHints = remember(
@@ -239,8 +247,8 @@ internal fun SearchScreenContent(
 
     var hintIndex by remember { mutableStateOf(0) }
 
-    LaunchedEffect(isDefaultHintMode) {
-        if (!isDefaultHintMode) {
+    LaunchedEffect(isDefaultHintMode, state.searchHintsEnabled) {
+        if (!isDefaultHintMode || !state.searchHintsEnabled) {
             hintIndex = 0
             return@LaunchedEffect
         }
@@ -265,6 +273,7 @@ internal fun SearchScreenContent(
                             .metadataFor(state.detectedAliasSearchSection)
                             .searchHintRes,
                     )
+                !state.searchHintsEnabled -> staticSearchHint
                 else -> defaultHints[hintIndex % defaultHints.size]
             }
     val showCurrencyConverter =

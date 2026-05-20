@@ -59,6 +59,7 @@ internal fun SearchUiState.toSettingsScreenState(): SettingsScreenState {
         excludedFileExtensions = fileSearch.excludedFileExtensions,
         oneHandedMode = appearance.oneHandedMode,
         bottomSearchBarEnabled = appearance.bottomSearchBarEnabled,
+        searchHintsEnabled = appearance.searchHintsEnabled,
         overlayModeEnabled = appearance.overlayModeEnabled,
         hasSeenOverlayAssistantTip = appearance.hasSeenOverlayAssistantTip,
         hasWallpaperPermission = appearance.hasWallpaperPermission,
@@ -220,6 +221,7 @@ private fun SearchUiState.toFileSearchSettingsState() =
 private data class AppearanceMapperState(
     val oneHandedMode: Boolean,
     val bottomSearchBarEnabled: Boolean,
+    val searchHintsEnabled: Boolean,
     val overlayModeEnabled: Boolean,
     val hasSeenOverlayAssistantTip: Boolean,
     val hasWallpaperPermission: Boolean,
@@ -253,6 +255,7 @@ private fun SearchUiState.toAppearanceSettingsState() =
     AppearanceMapperState(
         oneHandedMode = oneHandedMode,
         bottomSearchBarEnabled = bottomSearchBarEnabled,
+        searchHintsEnabled = searchHintsEnabled,
         overlayModeEnabled = overlayModeEnabled,
         hasSeenOverlayAssistantTip = hasSeenOverlayAssistantTip,
         hasWallpaperPermission = hasWallpaperPermission,

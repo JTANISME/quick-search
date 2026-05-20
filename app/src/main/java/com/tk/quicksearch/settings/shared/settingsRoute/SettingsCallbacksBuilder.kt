@@ -61,6 +61,7 @@ internal fun buildSettingsScreenCallbacks(
         onRemoveExcludedFileExtension = viewModel::removeExcludedFileExtension,
         onToggleOneHandedMode = viewModel::setOneHandedMode,
         onToggleBottomSearchBar = viewModel::setBottomSearchBarEnabled,
+        onToggleSearchHints = viewModel::setSearchHintsEnabled,
         onToggleOverlayMode = handlers.onToggleOverlayMode,
         onDismissOverlayAssistantTip = viewModel::dismissOverlayAssistantTip,
         setAliasCode = viewModel::setAlias,

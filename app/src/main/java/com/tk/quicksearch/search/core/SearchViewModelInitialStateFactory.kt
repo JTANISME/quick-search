@@ -104,6 +104,7 @@ internal object SearchViewModelInitialStateFactory {
                 oneHandedMode =
                     startupSnapshot?.oneHandedMode ?: startupPreferencesReader.isOneHandedMode(),
                 bottomSearchBarEnabled = startupPreferencesReader.isBottomSearchBarEnabled(),
+                searchHintsEnabled = startupPreferencesReader.isSearchHintsEnabled(),
                 topResultIndicatorEnabled =
                     startupSnapshot?.topResultIndicatorEnabled
                         ?: startupPreferencesReader.isTopResultIndicatorEnabled(),

@@ -14,6 +14,7 @@ internal class SearchViewModelLegacyPreferenceState(
     var excludedFileExtensions: Set<String> = emptySet()
     var oneHandedMode: Boolean = false
     var bottomSearchBarEnabled: Boolean = false
+    var searchHintsEnabled: Boolean = true
     var topResultIndicatorEnabled: Boolean = true
     var wallpaperAccentEnabled: Boolean = true
     var openKeyboardOnLaunch: Boolean = true
@@ -58,6 +59,7 @@ internal class SearchViewModelLegacyPreferenceState(
         excludedFileExtensions = prefCache.excludedFileExtensions
         oneHandedMode = prefCache.oneHandedMode
         bottomSearchBarEnabled = prefCache.bottomSearchBarEnabled
+        searchHintsEnabled = prefCache.searchHintsEnabled
         topResultIndicatorEnabled = prefCache.topResultIndicatorEnabled
         wallpaperAccentEnabled = prefCache.wallpaperAccentEnabled
         openKeyboardOnLaunch = prefCache.openKeyboardOnLaunch

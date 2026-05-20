@@ -77,6 +77,7 @@ internal fun SearchViewModel.applySettingsCommand(command: SettingsCommand) {
                 AppSettingsToggleKey.OVERLAY_MODE -> setOverlayModeEnabled(command.enabled)
                 AppSettingsToggleKey.ONE_HANDED_MODE -> setOneHandedMode(command.enabled)
                 AppSettingsToggleKey.BOTTOM_SEARCHBAR -> setBottomSearchBarEnabled(command.enabled)
+                AppSettingsToggleKey.SEARCH_HINTS -> setSearchHintsEnabled(command.enabled)
                 AppSettingsToggleKey.APP_LABELS -> setShowAppLabels(command.enabled)
                 AppSettingsToggleKey.SHOW_TODAY_EVENTS -> setShowTodayEvents(command.enabled)
                 AppSettingsToggleKey.SEARCH_ENGINE_COMPACT_MODE ->
@@ -163,6 +164,7 @@ internal fun SearchUiState.isAppSettingToggleEnabled(toggleKey: AppSettingsToggl
         AppSettingsToggleKey.OVERLAY_MODE -> overlayModeEnabled
         AppSettingsToggleKey.ONE_HANDED_MODE -> oneHandedMode
         AppSettingsToggleKey.BOTTOM_SEARCHBAR -> bottomSearchBarEnabled
+        AppSettingsToggleKey.SEARCH_HINTS -> searchHintsEnabled
         AppSettingsToggleKey.APP_LABELS -> showAppLabels
         AppSettingsToggleKey.SHOW_TODAY_EVENTS -> showTodayEvents
         AppSettingsToggleKey.SEARCH_ENGINE_COMPACT_MODE -> isSearchEngineCompactMode

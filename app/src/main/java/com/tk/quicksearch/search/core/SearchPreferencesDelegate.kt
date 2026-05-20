@@ -633,6 +633,16 @@ internal class SearchPreferencesDelegate(
         )
     }
 
+    fun setSearchHintsEnabled(enabled: Boolean) {
+        updateBooleanPreference(
+            value = enabled,
+            preferenceSetter = userPreferences::setSearchHintsEnabled,
+            stateUpdater = {
+                updateUiState { state -> state.copy(searchHintsEnabled = it) }
+            },
+        )
+    }
+
     fun setOpenKeyboardOnLaunchEnabled(enabled: Boolean) {
         updateBooleanPreference(
             value = enabled,

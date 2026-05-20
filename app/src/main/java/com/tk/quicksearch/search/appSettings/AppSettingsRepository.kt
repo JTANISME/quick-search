@@ -291,6 +291,12 @@ class AppSettingsRepository(
                 toggleKey = AppSettingsToggleKey.BOTTOM_SEARCHBAR,
             )
             addToggle(
+                id = "app_toggle_search_hints",
+                titleRes = R.string.settings_search_hints_title,
+                descriptionRes = R.string.settings_search_hints_desc,
+                toggleKey = AppSettingsToggleKey.SEARCH_HINTS,
+            )
+            addToggle(
                 id = "app_toggle_app_labels",
                 titleRes = R.string.settings_show_app_labels_title,
                 descriptionRes = R.string.settings_show_app_labels_desc,
