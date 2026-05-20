@@ -1043,7 +1043,7 @@ class UiPreferences(
         private const val MIN_APP_ICON_SIZE_PERCENT = 70
         private const val MAX_APP_ICON_SIZE_PERCENT = 100
         const val DEFAULT_TOP_MATCHES_LIMIT = 3
-        val TOP_MATCHES_LIMIT_OPTIONS = listOf(1, 3, 5)
+        val TOP_MATCHES_LIMIT_OPTIONS = listOf(1, 3, 5, 7, 10)
         val DEFAULT_TOP_MATCHES_SECTION_ORDER: List<SearchSection>
             get() = SearchSectionRegistry.orderedSections
         const val TOP_MATCHES_SECTION_ORDER_SEPARATOR = ","

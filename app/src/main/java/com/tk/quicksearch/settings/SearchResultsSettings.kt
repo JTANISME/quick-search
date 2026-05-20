@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Apps
@@ -31,8 +30,6 @@ import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Reorder
 import androidx.compose.material.icons.automirrored.rounded.InsertDriveFile
 import androidx.compose.material.icons.rounded.VisibilityOff
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -415,7 +412,7 @@ private fun TopMatchesCard(
                         ),
                 )
                 HorizontalDivider(color = AppColors.SettingsDivider)
-                TopMatchesLimitChips(
+                TopMatchesLimitSlider(
                     selectedLimit = topMatchesLimit,
                     onLimitSelected = onTopMatchesLimitChange,
                 )
@@ -435,65 +432,42 @@ private fun TopMatchesCard(
 }
 
 @Composable
-private fun TopMatchesLimitChips(
+private fun TopMatchesLimitSlider(
     selectedLimit: Int,
     onLimitSelected: (Int) -> Unit,
 ) {
     val view = LocalView.current
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = DesignTokens.SpacingXXLarge,
-                    vertical = DesignTokens.SpacingLarge,
-                ),
-        horizontalArrangement = Arrangement.spacedBy(DesignTokens.SpacingSmall),
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.SpacingSmall)) {
-            Text(
-                text = stringResource(R.string.top_matches_count_label),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(DesignTokens.SpacingSmall),
-            ) {
-                com.tk.quicksearch.search.data.preferences.UiPreferences.TOP_MATCHES_LIMIT_OPTIONS.forEach { limit ->
-                    val selected = selectedLimit == limit
-                    AssistChip(
-                        modifier = Modifier.weight(1f),
-                        onClick = {
-                            hapticToggle(view)()
-                            onLimitSelected(limit)
-                        },
-                        label = {
-                            Text(
-                                text = limit.toString(),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        },
-                        shape = DesignTokens.ShapeFull,
-                        border = if (selected) null else BorderStroke(1.dp, AppColors.SettingsDivider),
-                        colors =
-                            AssistChipDefaults.assistChipColors(
-                                containerColor =
-                                    if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                labelColor =
-                                    if (selected) {
-                                        MaterialTheme.colorScheme.onPrimary
-                                    } else {
-                                        MaterialTheme.colorScheme.primary
-                                    },
-                            ),
-                    )
-                }
-            }
-        }
+    val limitOptions = com.tk.quicksearch.search.data.preferences.UiPreferences.TOP_MATCHES_LIMIT_OPTIONS
+    val currentIndex = limitOptions.indexOf(selectedLimit).coerceAtLeast(0)
+    var lastIndex by remember { mutableStateOf(currentIndex) }
+    LaunchedEffect(selectedLimit) {
+        lastIndex = limitOptions.indexOf(selectedLimit).coerceAtLeast(0)
     }
+
+    SettingsToggleRow(
+        title = stringResource(R.string.top_matches_count_label),
+        checked = true,
+        onCheckedChange = {},
+        sliderDetails =
+            SettingsToggleSliderDetails(
+                value = currentIndex.toFloat(),
+                onValueChange = { value ->
+                    val index = value.toInt().coerceIn(0, limitOptions.size - 1)
+                    if (index != lastIndex) {
+                        hapticToggle(view)()
+                        lastIndex = index
+                    }
+                    onLimitSelected(limitOptions[index])
+                },
+                valueRange = 0f..(limitOptions.size - 1).toFloat(),
+                steps = limitOptions.size - 2,
+                valueLabel = selectedLimit.toString(),
+                valueLabelWidth = 24.dp,
+            ),
+        isFirstItem = false,
+        isLastItem = true,
+        showSwitch = false,
+    )
 }
 
 @Composable
