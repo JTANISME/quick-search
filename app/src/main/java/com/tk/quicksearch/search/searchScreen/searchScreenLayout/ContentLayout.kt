@@ -594,6 +594,7 @@ fun ContentLayout(
                                 effectiveShowWallpaperBackground,
                             predictedTarget = predictedTarget,
                             appIconShape = state.appIconShape,
+                            iconPackPackage = state.selectedIconPackPackage,
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }

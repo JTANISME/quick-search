@@ -1064,6 +1064,7 @@ internal fun SearchScreenContent(
                                         compactRowCount = state.searchEngineCompactRowCount,
                                         predictedTarget = predictedTargetForIndicator,
                                         appIconShape = state.appIconShape,
+                                        iconPackPackage = state.selectedIconPackPackage,
                                         toolActionLabel = activeToolCardConfig?.label,
                                         toolActionIcon = activeToolCardConfig?.icon,
                                         onToolActionClick = activeToolCardConfig?.onClick,
@@ -1084,6 +1085,7 @@ internal fun SearchScreenContent(
                                         compactRowCount = 1,
                                         predictedTarget = predictedTargetForIndicator,
                                         appIconShape = state.appIconShape,
+                                        iconPackPackage = state.selectedIconPackPackage,
                                 )
                             },
                             shortcutContent = { target ->
@@ -1100,6 +1102,7 @@ internal fun SearchScreenContent(
                                         compactRowCount = 1,
                                         predictedTarget = predictedTargetForIndicator,
                                         appIconShape = state.appIconShape,
+                                        iconPackPackage = state.selectedIconPackPackage,
                                 )
                             },
                             hiddenContent = {
@@ -1118,6 +1121,7 @@ internal fun SearchScreenContent(
                                             compactRowCount = state.searchEngineCompactRowCount,
                                             predictedTarget = predictedTargetForIndicator,
                                             appIconShape = state.appIconShape,
+                                            iconPackPackage = state.selectedIconPackPackage,
                                             toolActionLabel = activeToolCardConfig.label,
                                             toolActionIcon = activeToolCardConfig.icon,
                                             onToolActionClick = activeToolCardConfig.onClick,
