@@ -166,9 +166,10 @@ internal fun PersistentSearchBar(
     onClearDetectedShortcut: () -> Unit = {},
     onSectionSelected: (SearchSection) -> Unit = {},
     onWelcomeAnimationCompleted: (() -> Unit)? = null,
+    focusRequester: FocusRequester? = null,
     modifier: Modifier = Modifier,
 ) {
-    val focusRequester = remember { FocusRequester() }
+    val focusRequester = focusRequester ?: remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val view = LocalView.current

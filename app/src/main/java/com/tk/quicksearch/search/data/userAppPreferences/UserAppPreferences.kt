@@ -916,6 +916,9 @@ class UserAppPreferences(
     fun setOpenKeyboardOnLaunchEnabled(enabled: Boolean) =
             uiPreferences.setOpenKeyboardOnLaunchEnabled(enabled)
 
+    fun applyDefaultLauncherPreferencesIfNeeded(isDefaultLauncher: Boolean): Boolean =
+            uiPreferences.applyDefaultLauncherPreferencesIfNeeded(isDefaultLauncher)
+
     fun isTopResultIndicatorEnabled(): Boolean = uiPreferences.isTopResultIndicatorEnabled()
 
     fun setTopResultIndicatorEnabled(enabled: Boolean) =

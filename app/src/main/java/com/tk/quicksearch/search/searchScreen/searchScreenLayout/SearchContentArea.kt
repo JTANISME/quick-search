@@ -41,6 +41,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -83,6 +86,7 @@ import com.tk.quicksearch.tools.aiSearch.AiSearchResult
 import kotlin.math.min
 
 private const val SEARCH_HISTORY_TAB_SWIPE_THRESHOLD_PX = 64f
+private const val OVERSCROLL_FOCUS_THRESHOLD_PX = 24f
 
 /** Renders the scrollable content area with sections based on layout mode. */
 @Composable
@@ -125,6 +129,7 @@ fun SearchContentArea(
     aiSearchState: AiSearchState? = null,
     isOverlayPresentation: Boolean = false,
     onOpenPermissionsSettings: () -> Unit = {},
+    onBottomOneHandedOverscrollUp: () -> Unit = {},
 ) {
     val useOneHandedMode =
         state.oneHandedMode &&
@@ -268,6 +273,27 @@ fun SearchContentArea(
 
             val needsEdgeFade =
                 !shouldHideScrollView && scrollState.maxValue > 0
+            val bottomOneHandedOverscrollEnabled =
+                state.bottomSearchBarEnabled && useOneHandedMode && alignResultsToBottom
+            val bottomOneHandedOverscrollConnection =
+                remember(bottomOneHandedOverscrollEnabled, onBottomOneHandedOverscrollUp) {
+                    object : NestedScrollConnection {
+                        override fun onPostScroll(
+                            consumed: Offset,
+                            available: Offset,
+                            source: NestedScrollSource,
+                        ): Offset {
+                            if (
+                                bottomOneHandedOverscrollEnabled &&
+                                    source == NestedScrollSource.UserInput &&
+                                    available.y < -OVERSCROLL_FOCUS_THRESHOLD_PX
+                            ) {
+                                onBottomOneHandedOverscrollUp()
+                            }
+                            return Offset.Zero
+                        }
+                    }
+                }
             val edgeFadeModifier =
                 if (needsEdgeFade) {
                     Modifier
@@ -367,6 +393,7 @@ fun SearchContentArea(
                                 )
                             } else {
                                 Modifier
+                                    .nestedScroll(bottomOneHandedOverscrollConnection)
                                     .verticalScroll(
                                         scrollState,
                                         reverseScrolling =

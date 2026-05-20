@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -134,6 +135,7 @@ internal fun SearchScreenContent(
         expandedSection: ExpandedSection,
         manuallySwitchedToNumberKeyboard: Boolean,
         scrollState: androidx.compose.foundation.ScrollState,
+        searchFocusRequester: FocusRequester,
         onClearDetectedShortcut: () -> Unit,
         onSectionSelected: (com.tk.quicksearch.search.core.SearchSection) -> Unit = {},
         modifier: Modifier = Modifier,
@@ -770,6 +772,7 @@ internal fun SearchScreenContent(
                 onClearDetectedShortcut = onClearDetectedShortcut,
                 onSectionSelected = onSectionSelected,
                 onWelcomeAnimationCompleted = onWelcomeAnimationCompleted,
+                focusRequester = searchFocusRequester,
                 forceRestingOutline = showBottomSearchBar,
                 modifier = searchFieldModifier,
                 onSearchAction = {
@@ -984,6 +987,10 @@ internal fun SearchScreenContent(
                 showAiSearch = state.AiSearchState.status != AiSearchStatus.Idle,
                 aiSearchState = state.AiSearchState,
                 isOverlayPresentation = isOverlayPresentation,
+                onBottomOneHandedOverscrollUp = {
+                    searchFocusRequester.requestFocus()
+                    keyboardController?.show()
+                },
         )
 
         // Fixed search engines section at the bottom (above keyboard, not scrollable)

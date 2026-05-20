@@ -492,6 +492,7 @@ fun SearchScreen(
             expandedSection = stateResult.expandedSection,
             manuallySwitchedToNumberKeyboard = stateResult.manuallySwitchedToNumberKeyboard,
             scrollState = stateResult.scrollState,
+            searchFocusRequester = stateResult.searchFocusRequester,
             onClearDetectedShortcut = onClearDetectedShortcut,
             onSectionSelected = onSectionSelected,
             isOverlayPresentation = isOverlayPresentation,

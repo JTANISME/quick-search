@@ -12,6 +12,7 @@ import com.tk.quicksearch.search.apps.prefetchAppIcons
 import com.tk.quicksearch.shared.permissions.PermissionHelper
 import com.tk.quicksearch.shared.util.PackageConstants
 import com.tk.quicksearch.shared.util.WallpaperUtils
+import com.tk.quicksearch.shared.util.isDefaultHomeApp
 import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderId
 import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderRegistry
 import kotlinx.coroutines.CoroutineDispatcher
@@ -231,12 +232,30 @@ internal class SearchStartupLifecycleDelegate(
 
     fun refreshPermissionSnapshotAtLaunch() {
         scope.launch(Dispatchers.Default) {
+            applyDefaultLauncherPreferenceTransition()
             val latestUsagePermission = repository.hasUsageAccess()
             if (permissionStateProvider().hasUsagePermission != latestUsagePermission) {
                 updatePermissionState { it.copy(hasUsagePermission = latestUsagePermission) }
             }
             refreshOptionalPermissions()
         }
+    }
+
+    private fun applyDefaultLauncherPreferenceTransition() {
+        val appliedDefaults =
+            userPreferences.applyDefaultLauncherPreferencesIfNeeded(
+                applicationProvider().isDefaultHomeApp(),
+            )
+        if (!appliedDefaults) return
+
+        updateConfigState { state ->
+            state.copy(
+                oneHandedMode = userPreferences.isOneHandedMode(),
+                bottomSearchBarEnabled = userPreferences.isBottomSearchBarEnabled(),
+                openKeyboardOnLaunch = userPreferences.isOpenKeyboardOnLaunchEnabled(),
+            )
+        }
+        saveStartupSurfaceSnapshotAsync(true, false)
     }
 
     fun refreshOptionalPermissions(): Boolean {

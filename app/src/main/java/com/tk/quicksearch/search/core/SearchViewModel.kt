@@ -56,6 +56,7 @@ import com.tk.quicksearch.searchEngines.SearchEngineManager
 import com.tk.quicksearch.searchEngines.SecondarySearchOrchestrator
 import com.tk.quicksearch.searchEngines.AliasHandler
 import com.tk.quicksearch.shared.featureFlags.FeatureFlags
+import com.tk.quicksearch.shared.util.isDefaultHomeApp
 import com.tk.quicksearch.shared.util.isLowRamDevice
 import com.tk.quicksearch.tools.aiTools.CurrencyConverterHandler
 import com.tk.quicksearch.tools.aiTools.DictionaryHandler
@@ -92,12 +93,17 @@ class SearchViewModel(
     private val startupPreferencesReader = UserAppPreferences(appContext)
     private val startupSurfaceStore = StartupSurfaceStore(appContext)
     private val initialState =
-        SearchViewModelInitialStateFactory.create(
-            appContext = appContext,
-            startupPreferencesReader = startupPreferencesReader,
-            startupSurfaceStore = startupSurfaceStore,
-            inMemoryRetainedQuery = inMemoryRetainedQuery,
-        )
+        run {
+            startupPreferencesReader.applyDefaultLauncherPreferencesIfNeeded(
+                appContext.isDefaultHomeApp(),
+            )
+            SearchViewModelInitialStateFactory.create(
+                appContext = appContext,
+                startupPreferencesReader = startupPreferencesReader,
+                startupSurfaceStore = startupSurfaceStore,
+                inMemoryRetainedQuery = inMemoryRetainedQuery,
+            )
+        }
     private val instantStartupSurfaceEnabled = initialState.instantStartupSurfaceEnabled
     private val initialResultsState = initialState.resultsState
     private val initialConfigState = initialState.configState

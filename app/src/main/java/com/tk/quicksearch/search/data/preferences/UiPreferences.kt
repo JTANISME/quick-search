@@ -40,6 +40,79 @@ class UiPreferences(
         setBooleanPref(UiPreferences.KEY_OPEN_KEYBOARD_ON_LAUNCH, enabled)
     }
 
+    fun applyDefaultLauncherPreferencesIfNeeded(isDefaultLauncher: Boolean): Boolean {
+        val wasDefaultLauncher = prefs.getBoolean(KEY_WAS_DEFAULT_LAUNCHER, false)
+        if (!isDefaultLauncher) {
+            return restoreDefaultLauncherPreferencesIfNeeded(wasDefaultLauncher)
+        }
+
+        if (wasDefaultLauncher) return false
+
+        val currentOneHandedMode = isOneHandedMode()
+        val currentBottomSearchBarEnabled = isBottomSearchBarEnabled()
+        val currentOpenKeyboardOnLaunch = isOpenKeyboardOnLaunchEnabled()
+
+        prefs.edit()
+            .putBoolean(KEY_WAS_DEFAULT_LAUNCHER, true)
+            .putBoolean(KEY_DEFAULT_LAUNCHER_PREVIOUS_ONE_HANDED_MODE, currentOneHandedMode)
+            .putBoolean(
+                KEY_DEFAULT_LAUNCHER_PREVIOUS_BOTTOM_SEARCH_BAR_ENABLED,
+                currentBottomSearchBarEnabled,
+            )
+            .putBoolean(
+                KEY_DEFAULT_LAUNCHER_PREVIOUS_OPEN_KEYBOARD_ON_LAUNCH,
+                currentOpenKeyboardOnLaunch,
+            )
+            .putBoolean(KEY_ONE_HANDED_MODE, true)
+            .putBoolean(KEY_BOTTOM_SEARCH_BAR_ENABLED, true)
+            .putBoolean(KEY_OPEN_KEYBOARD_ON_LAUNCH, false)
+            .apply()
+        return true
+    }
+
+    private fun restoreDefaultLauncherPreferencesIfNeeded(wasDefaultLauncher: Boolean): Boolean {
+        if (!wasDefaultLauncher) return false
+
+        val editor =
+            prefs.edit()
+                .putBoolean(KEY_WAS_DEFAULT_LAUNCHER, false)
+                .remove(KEY_DEFAULT_LAUNCHER_PREVIOUS_ONE_HANDED_MODE)
+                .remove(KEY_DEFAULT_LAUNCHER_PREVIOUS_BOTTOM_SEARCH_BAR_ENABLED)
+                .remove(KEY_DEFAULT_LAUNCHER_PREVIOUS_OPEN_KEYBOARD_ON_LAUNCH)
+
+        var restoredAny = false
+        if (isOneHandedMode() == true && prefs.contains(KEY_DEFAULT_LAUNCHER_PREVIOUS_ONE_HANDED_MODE)) {
+            editor.putBoolean(
+                KEY_ONE_HANDED_MODE,
+                prefs.getBoolean(KEY_DEFAULT_LAUNCHER_PREVIOUS_ONE_HANDED_MODE, false),
+            )
+            restoredAny = true
+        }
+        if (
+            isBottomSearchBarEnabled() == true &&
+                prefs.contains(KEY_DEFAULT_LAUNCHER_PREVIOUS_BOTTOM_SEARCH_BAR_ENABLED)
+        ) {
+            editor.putBoolean(
+                KEY_BOTTOM_SEARCH_BAR_ENABLED,
+                prefs.getBoolean(KEY_DEFAULT_LAUNCHER_PREVIOUS_BOTTOM_SEARCH_BAR_ENABLED, false),
+            )
+            restoredAny = true
+        }
+        if (
+            isOpenKeyboardOnLaunchEnabled() == false &&
+                prefs.contains(KEY_DEFAULT_LAUNCHER_PREVIOUS_OPEN_KEYBOARD_ON_LAUNCH)
+        ) {
+            editor.putBoolean(
+                KEY_OPEN_KEYBOARD_ON_LAUNCH,
+                prefs.getBoolean(KEY_DEFAULT_LAUNCHER_PREVIOUS_OPEN_KEYBOARD_ON_LAUNCH, true),
+            )
+            restoredAny = true
+        }
+
+        editor.apply()
+        return restoredAny
+    }
+
     fun isTopResultIndicatorEnabled(): Boolean =
             getBooleanPref(UiPreferences.KEY_TOP_RESULT_INDICATOR_ENABLED, true)
 
@@ -899,6 +972,13 @@ class UiPreferences(
         const val KEY_ONE_HANDED_MODE = "one_handed_mode"
         const val KEY_BOTTOM_SEARCH_BAR_ENABLED = "bottom_search_bar_enabled"
         const val KEY_OPEN_KEYBOARD_ON_LAUNCH = "open_keyboard_on_launch"
+        const val KEY_WAS_DEFAULT_LAUNCHER = "was_default_launcher"
+        const val KEY_DEFAULT_LAUNCHER_PREVIOUS_ONE_HANDED_MODE =
+                "default_launcher_previous_one_handed_mode"
+        const val KEY_DEFAULT_LAUNCHER_PREVIOUS_BOTTOM_SEARCH_BAR_ENABLED =
+                "default_launcher_previous_bottom_search_bar_enabled"
+        const val KEY_DEFAULT_LAUNCHER_PREVIOUS_OPEN_KEYBOARD_ON_LAUNCH =
+                "default_launcher_previous_open_keyboard_on_launch"
         const val KEY_TOP_RESULT_INDICATOR_ENABLED = "top_result_indicator_enabled"
         const val KEY_TOP_MATCHES_ENABLED = "top_matches_enabled"
         const val KEY_TOP_MATCHES_LIMIT = "top_matches_limit"

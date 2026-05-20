@@ -103,15 +103,11 @@ internal object SearchViewModelInitialStateFactory {
                 startupBackgroundPreviewPath = initialPreviewPath,
                 oneHandedMode =
                     startupSnapshot?.oneHandedMode ?: startupPreferencesReader.isOneHandedMode(),
-                bottomSearchBarEnabled =
-                    startupSnapshot?.bottomSearchBarEnabled
-                        ?: startupPreferencesReader.isBottomSearchBarEnabled(),
+                bottomSearchBarEnabled = startupPreferencesReader.isBottomSearchBarEnabled(),
                 topResultIndicatorEnabled =
                     startupSnapshot?.topResultIndicatorEnabled
                         ?: startupPreferencesReader.isTopResultIndicatorEnabled(),
-                openKeyboardOnLaunch =
-                    startupSnapshot?.openKeyboardOnLaunch
-                        ?: startupPreferencesReader.isOpenKeyboardOnLaunchEnabled(),
+                openKeyboardOnLaunch = startupPreferencesReader.isOpenKeyboardOnLaunchEnabled(),
                 clearQueryOnLaunch = clearQueryOnLaunch,
                 autoCloseOverlay = startupPreferencesReader.isAutoCloseOverlayEnabled(),
                 fontScaleMultiplier =
