@@ -20,6 +20,17 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("standard") {
+            dimension = "distribution"
+            isDefault = true
+        }
+        create("fdroid") {
+            dimension = "distribution"
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
@@ -76,8 +87,8 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.androidx.security.crypto)
     implementation(libs.okhttp)
-    implementation(libs.play.review.ktx)
-    implementation(libs.play.app.update.ktx)
+    "standardImplementation"(libs.play.review.ktx)
+    "standardImplementation"(libs.play.app.update.ktx)
     implementation(libs.libphonenumber)
     implementation(libs.reorderable)
     implementation(libs.androidx.browser)
