@@ -43,12 +43,12 @@
 <string name="search_hint_static">Tout rechercher</string>
 <string name="search_hint_word_clock">Saisissez un lieu pour obtenir l\'heure locale</string>
 <string-array name="search_hints_cycle">
-    <item >Search Contacts</item>
-    <item >Search Files</item>
-    <item >Calendar Events</item>
-    <item >Search Apps</item>
-    <item >Search App Shortcuts</item>
-    <item >Search Settings</item>
+    <item >Rechercher des contacts</item>
+    <item >Rechercher des fichiers</item>
+    <item >Événements de l\'agenda</item>
+    <item >Rechercher des applications</item>
+    <item >Rechercher dans les raccourcis d\'app</item>
+    <item >Rechercher dans les paramètres</item>
     <!-- These examples should not be translated -->
     <item >5 USD to INR</item>
     <item >5 lbs in kgs</item>

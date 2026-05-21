@@ -43,12 +43,12 @@
 <string name="search_hint_static">Искать везде</string>
 <string name="search_hint_word_clock">Введите любое место, чтобы узнать местное время</string>
 <string-array name="search_hints_cycle">
-    <item>Search Contacts</item>
-    <item>Search Files</item>
-    <item>Calendar Events</item>
-    <item>Search Apps</item>
-    <item>Search App Shortcuts</item>
-    <item>Search Settings</item>
+    <item>Искать в контактах</item>
+    <item>Искать в файлах</item>
+    <item>События календаря</item>
+    <item>Искать в приложениях</item>
+    <item>Искать в ярлыках приложений</item>
+    <item>Искать в настройках</item>
     <!-- These examples should not be translated -->
     <item>5 USD to INR</item>
     <item>5 lbs in kgs</item>

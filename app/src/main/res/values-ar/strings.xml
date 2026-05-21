@@ -44,12 +44,12 @@
     <string name="search_hint_static">ابحث عن أي شيء</string>
     <string name="search_hint_word_clock">أدخل أي مكان لمعرفة التوقيت المحلي الخاص به</string>
     <string-array name="search_hints_cycle">
-        <item>Search Contacts</item>
-        <item>Search Files</item>
-        <item>Calendar Events</item>
-        <item>Search Apps</item>
-        <item>Search App Shortcuts</item>
-        <item>Search Settings</item>
+        <item>ابحث في جهات الاتصال</item>
+        <item>ابحث عن الملفات</item>
+        <item>أحداث التقويم</item>
+        <item>ابحث عن التطبيقات</item>
+        <item>ابحث في اختصارات التطبيقات</item>
+        <item>ابحث في الإعدادات</item>
         <!-- These examples should not be translated -->
         <item>5 USD to INR</item>
         <item>5 lbs in kgs</item>
