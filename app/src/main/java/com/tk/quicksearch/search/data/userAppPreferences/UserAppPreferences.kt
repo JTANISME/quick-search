@@ -1356,28 +1356,26 @@ class UserAppPreferences(
     }
 
     // ============================================================================
-    // In-App Review Preferences
+    // Rate Quick Search Prompt Preferences
     // ============================================================================
 
     fun getFirstAppOpenTime(): Long = uiPreferences.getFirstAppOpenTime()
 
     fun recordFirstAppOpenTime() = uiPreferences.recordFirstAppOpenTime()
 
-    fun getLastReviewPromptTime(): Long = uiPreferences.getLastReviewPromptTime()
-
-    fun recordReviewPromptTime() = uiPreferences.recordReviewPromptTime()
-
-    fun getReviewPromptedCount(): Int = uiPreferences.getReviewPromptedCount()
-
-    fun incrementReviewPromptedCount() = uiPreferences.incrementReviewPromptedCount()
-
     fun getAppOpenCount(): Int = uiPreferences.getAppOpenCount()
 
     fun incrementAppOpenCount() = uiPreferences.incrementAppOpenCount()
 
-    fun recordAppOpenCountAtPrompt() = uiPreferences.recordAppOpenCountAtPrompt()
+    fun hasCompletedRateQuickSearch(): Boolean = uiPreferences.hasCompletedRateQuickSearch()
 
-    fun shouldShowReviewPrompt(): Boolean = uiPreferences.shouldShowReviewPrompt()
+    fun markRateQuickSearchCompleted() = uiPreferences.markRateQuickSearchCompleted()
+
+    fun getRateQuickSearchLastDismissedAt(): Long = uiPreferences.getRateQuickSearchLastDismissedAt()
+
+    fun recordRateQuickSearchDismissed() = uiPreferences.recordRateQuickSearchDismissed()
+
+    fun shouldShowRateQuickSearchCard(): Boolean = uiPreferences.shouldShowRateQuickSearchCard()
 
     // ============================================================================
     // In-App Update Session Tracking

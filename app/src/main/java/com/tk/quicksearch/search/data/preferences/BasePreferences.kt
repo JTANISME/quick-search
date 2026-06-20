@@ -602,12 +602,11 @@ abstract class BasePreferences(
         const val KEY_CALCULATOR_ENABLED = "calculator_enabled"
         const val KEY_UNIT_CONVERTER_ENABLED = "unit_converter_enabled"
 
-        // In-app review preferences keys
+        // Rate Quick Search prompt tracking
         const val KEY_FIRST_APP_OPEN_TIME = "first_app_open_time"
-        const val KEY_LAST_REVIEW_PROMPT_TIME = "last_review_prompt_time"
-        const val KEY_REVIEW_PROMPTED_COUNT = "review_prompted_count"
         const val KEY_APP_OPEN_COUNT = "app_open_count"
-        const val KEY_APP_OPEN_COUNT_AT_LAST_PROMPT = "app_open_count_at_last_prompt"
+        const val KEY_RATE_QUICK_SEARCH_LAST_DISMISSED_AT = "rate_quick_search_last_dismissed_at"
+        const val KEY_RATE_QUICK_SEARCH_COMPLETED = "rate_quick_search_completed"
 
         // In-app update session tracking keys
         const val KEY_UPDATE_CHECK_SHOWN_THIS_SESSION = "update_check_shown_this_session"

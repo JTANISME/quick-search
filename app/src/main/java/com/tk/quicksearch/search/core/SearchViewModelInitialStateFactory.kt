@@ -73,6 +73,7 @@ internal object SearchViewModelInitialStateFactory {
                 topMatchesLimit = startupPreferencesReader.getTopMatchesLimit(),
                 topMatchesSectionOrder = startupPreferencesReader.getTopMatchesSectionOrder(),
                 disabledTopMatchesSections = startupPreferencesReader.getDisabledTopMatchesSections(),
+                showRateQuickSearchCard = startupPreferencesReader.shouldShowRateQuickSearchCard(),
             )
 
         val initialConfigState =

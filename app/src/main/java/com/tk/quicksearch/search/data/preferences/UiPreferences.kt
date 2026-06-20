@@ -857,90 +857,65 @@ class UiPreferences(
     }
 
     // ============================================================================
-    // In-App Review Preferences
+    // Rate Quick Search Prompt Preferences
     // ============================================================================
 
     fun getFirstAppOpenTime(): Long = timingPrefs.getLong(UiPreferences.KEY_FIRST_APP_OPEN_TIME, 0L)
 
     fun recordFirstAppOpenTime() {
-        if (getFirstAppOpenTime() == 0L) {
-            timingPrefs
-                    .edit()
-                    .putLong(UiPreferences.KEY_FIRST_APP_OPEN_TIME, System.currentTimeMillis())
-                    .apply()
-        }
-    }
+        if (getFirstAppOpenTime() != 0L) return
 
-    fun getLastReviewPromptTime(): Long =
-            timingPrefs.getLong(UiPreferences.KEY_LAST_REVIEW_PROMPT_TIME, 0L)
-
-    fun recordReviewPromptTime() {
         timingPrefs
-                .edit()
-                .putLong(UiPreferences.KEY_LAST_REVIEW_PROMPT_TIME, System.currentTimeMillis())
-                .apply()
-    }
-
-    fun getReviewPromptedCount(): Int =
-            timingPrefs.getInt(UiPreferences.KEY_REVIEW_PROMPTED_COUNT, 0)
-
-    fun incrementReviewPromptedCount() {
-        val currentCount = getReviewPromptedCount()
-        timingPrefs.edit().putInt(UiPreferences.KEY_REVIEW_PROMPTED_COUNT, currentCount + 1).apply()
+            .edit()
+            .putLong(UiPreferences.KEY_FIRST_APP_OPEN_TIME, System.currentTimeMillis())
+            .apply()
     }
 
     fun getAppOpenCount(): Int = timingPrefs.getInt(UiPreferences.KEY_APP_OPEN_COUNT, 0)
 
     fun incrementAppOpenCount() {
-        val currentCount = getAppOpenCount()
-        timingPrefs.edit().putInt(UiPreferences.KEY_APP_OPEN_COUNT, currentCount + 1).apply()
-    }
-
-    fun getAppOpenCountAtLastPrompt(): Int =
-            timingPrefs.getInt(UiPreferences.KEY_APP_OPEN_COUNT_AT_LAST_PROMPT, 0)
-
-    fun recordAppOpenCountAtPrompt() {
-        val currentOpenCount = getAppOpenCount()
         timingPrefs
-                .edit()
-                .putInt(UiPreferences.KEY_APP_OPEN_COUNT_AT_LAST_PROMPT, currentOpenCount)
-                .apply()
+            .edit()
+            .putInt(UiPreferences.KEY_APP_OPEN_COUNT, getAppOpenCount() + 1)
+            .apply()
     }
 
-    fun shouldShowReviewPrompt(): Boolean {
+    fun hasCompletedRateQuickSearch(): Boolean =
+        timingPrefs.getBoolean(UiPreferences.KEY_RATE_QUICK_SEARCH_COMPLETED, false)
+
+    fun markRateQuickSearchCompleted() {
+        timingPrefs
+            .edit()
+            .putBoolean(UiPreferences.KEY_RATE_QUICK_SEARCH_COMPLETED, true)
+            .apply()
+    }
+
+    fun getRateQuickSearchLastDismissedAt(): Long =
+        timingPrefs.getLong(UiPreferences.KEY_RATE_QUICK_SEARCH_LAST_DISMISSED_AT, 0L)
+
+    fun recordRateQuickSearchDismissed() {
+        timingPrefs
+            .edit()
+            .putLong(
+                UiPreferences.KEY_RATE_QUICK_SEARCH_LAST_DISMISSED_AT,
+                System.currentTimeMillis(),
+            ).apply()
+    }
+
+    fun shouldShowRateQuickSearchCard(): Boolean {
+        if (!RATE_QUICK_SEARCH_ENABLED) return false
+        if (hasCompletedRateQuickSearch()) return false
+
         val firstOpenTime = getFirstAppOpenTime()
-        val promptedCount = getReviewPromptedCount()
-        val lastPromptTime = getLastReviewPromptTime()
-        val totalOpens = getAppOpenCount()
-        val opensAtLastPrompt = getAppOpenCountAtLastPrompt()
+        if (firstOpenTime == 0L) return false
+        if (getAppOpenCount() < RATE_QUICK_SEARCH_MIN_OPEN_COUNT) return false
 
-        // If never opened before, can't show review
-        if (firstOpenTime == 0L) {
-            return false
-        }
+        val now = System.currentTimeMillis()
+        val daysSinceFirstOpen = (now - firstOpenTime) / DAY_IN_MILLIS
+        if (daysSinceFirstOpen < RATE_QUICK_SEARCH_MIN_DAYS_USED) return false
 
-        val currentTime = System.currentTimeMillis()
-        val daysSinceFirstOpen = (currentTime - firstOpenTime) / (1000 * 60 * 60 * 24)
-
-        return when (promptedCount) {
-            0 -> {
-                // First review: at least 2 days AND at least 5 opens
-                daysSinceFirstOpen >= 2 && totalOpens >= 5
-            }
-            1 -> {
-                if (lastPromptTime == 0L) {
-                    false
-                } else {
-                    val daysSinceLastPrompt = (currentTime - lastPromptTime) / (1000 * 60 * 60 * 24)
-                    val opensSinceLastPrompt = totalOpens - opensAtLastPrompt
-                    // Second review: at least 4 days AND at least 5 more opens
-                    daysSinceLastPrompt >= 4 && opensSinceLastPrompt >= 5
-                }
-            }
-            else -> {
-                false
-            } // Never show after 2 prompts
-        }
+        val lastDismissedAt = getRateQuickSearchLastDismissedAt()
+        return lastDismissedAt == 0L || now - lastDismissedAt >= RATE_QUICK_SEARCH_DISMISS_COOLDOWN_MS
     }
 
     // ============================================================================
@@ -1114,15 +1089,20 @@ class UiPreferences(
         /** Previous preference key; migrated automatically on read/write. */
         const val LEGACY_KEY_CURRENCY_CONVERTER_MODEL_PREF = "currency_converter_gemini_model"
 
-        // In-app review preferences keys
+        // Rate Quick Search prompt keys
         const val KEY_FIRST_APP_OPEN_TIME = "first_app_open_time"
-        const val KEY_LAST_REVIEW_PROMPT_TIME = "last_review_prompt_time"
-        const val KEY_REVIEW_PROMPTED_COUNT = "review_prompted_count"
         const val KEY_APP_OPEN_COUNT = "app_open_count"
-        const val KEY_APP_OPEN_COUNT_AT_LAST_PROMPT = "app_open_count_at_last_prompt"
+        const val KEY_RATE_QUICK_SEARCH_LAST_DISMISSED_AT =
+            "rate_quick_search_last_dismissed_at"
+        const val KEY_RATE_QUICK_SEARCH_COMPLETED = "rate_quick_search_completed"
 
         // In-app update session tracking keys
         const val KEY_UPDATE_CHECK_SHOWN_THIS_SESSION = "update_check_shown_this_session"
+
+        private const val DAY_IN_MILLIS = 24 * 60 * 60 * 1000L
+        private const val RATE_QUICK_SEARCH_MIN_DAYS_USED = 3L
+        private const val RATE_QUICK_SEARCH_MIN_OPEN_COUNT = 6
+        private const val RATE_QUICK_SEARCH_DISMISS_COOLDOWN_MS = 7 * DAY_IN_MILLIS
 
         fun appIconSizeScale(step: Int): Float {
             val normalized = step.coerceIn(MIN_APP_ICON_SIZE_STEP, MAX_APP_ICON_SIZE_STEP)

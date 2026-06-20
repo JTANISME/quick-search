@@ -142,8 +142,6 @@
     <string name="dialog_edit_amazon_domain_hint">Ejemplos: amazon.com, amazon.es, amazon.com.mx, etc.</string>
     <string name="dialog_edit_amazon_domain_message">Actualiza el dominio de Amazon para tu país.</string>
     <string name="dialog_edit_amazon_domain_title">Editar dominio de Amazon</string>
-    <string name="dialog_enjoying_app_title">¿Te resulta útil esta aplicación?</string>
-    <string name="dialog_feedback_hint">Cuéntanos qué podemos mejorar</string>
     <string name="dialog_gemini_model_picker_title">Seleccionar modelo</string>
     <string name="dialog_nickname_message">Introduce un apodo para "%1$s". Podrás buscarlo usando este apodo.</string>
     <string name="dialog_no">No</string>

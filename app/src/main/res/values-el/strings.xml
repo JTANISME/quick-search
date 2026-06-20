@@ -142,8 +142,6 @@
     <string name="dialog_edit_amazon_domain_hint">Παραδείγματα: amazon.com, amazon.in, amazon.ca, κ.λπ.</string>
     <string name="dialog_edit_amazon_domain_message">Ενημερώστε το domain της Amazon για τη χώρα σας.</string>
     <string name="dialog_edit_amazon_domain_title">Επεξεργασία Amazon Domain</string>
-    <string name="dialog_enjoying_app_title">Βρίσκετε αυτή την εφαρμογή χρήσιμη;</string>
-    <string name="dialog_feedback_hint">Πείτε μας τι μπορούμε να βελτιώσουμε</string>
     <string name="dialog_gemini_model_picker_title">Επιλογή μοντέλου</string>
     <string name="dialog_nickname_message">Εισαγάγετε ένα ψευδώνυμο για το "%1$s". Μπορείτε να το αναζητήσετε χρησιμοποιώντας αυτό το ψευδώνυμο.</string>
     <string name="dialog_no">Όχι</string>

@@ -601,6 +601,19 @@ class SearchViewModel(
     fun handleOnResume() {
         startupLifecycleDelegate.handleOnResume()
     }
+    fun refreshRateQuickSearchCardState() {
+        updateFeatureState {
+            it.copy(showRateQuickSearchCard = userPreferences.shouldShowRateQuickSearchCard())
+        }
+    }
+    fun markRateQuickSearchCompleted() {
+        userPreferences.markRateQuickSearchCompleted()
+        refreshRateQuickSearchCardState()
+    }
+    fun dismissRateQuickSearchForNow() {
+        userPreferences.recordRateQuickSearchDismissed()
+        refreshRateQuickSearchCardState()
+    }
     private fun computeEffectiveIsDarkMode(): Boolean {
         return when (_configState.value.appThemeMode) {
             AppThemeMode.DARK -> true

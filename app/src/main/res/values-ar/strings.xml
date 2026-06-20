@@ -143,8 +143,6 @@
     <string name="dialog_edit_amazon_domain_hint">أمثلة: amazon.com، amazon.in، amazon.ca، إلخ.</string>
     <string name="dialog_edit_amazon_domain_message">قم بتحديث نطاق Amazon لبلدك.</string>
     <string name="dialog_edit_amazon_domain_title">تعديل نطاق Amazon</string>
-    <string name="dialog_enjoying_app_title">هل تجد هذا التطبيق مفيداً؟</string>
-    <string name="dialog_feedback_hint">أخبرنا بما يمكننا تحسينه</string>
     <string name="dialog_gemini_model_picker_title">اختر النموذج</string>
     <string name="dialog_nickname_message">أدخل لقباً لـ "%1$s". ستتمكن من البحث عنه باستخدام هذا اللقب.</string>
     <string name="dialog_no">لا</string>

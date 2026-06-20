@@ -142,8 +142,6 @@
 <string name="dialog_edit_amazon_domain_hint">Примеры: amazon.com, amazon.in, amazon.ca и т. д.</string>
 <string name="dialog_edit_amazon_domain_message">Обновите домен Amazon для вашей страны.</string>
 <string name="dialog_edit_amazon_domain_title">Изменить домен Amazon</string>
-    <string name="dialog_enjoying_app_title">Вам нравится это приложение?</string>
-<string name="dialog_feedback_hint">Поделитесь, что мы можем улучшить</string>
 <string name="dialog_gemini_model_picker_title">Выберите модель</string>
     <string name="dialog_nickname_message">Введите псевдоним для «%1$s». Вы сможете искать его по этому псевдониму.</string>
 <string name="dialog_no">Нет</string>

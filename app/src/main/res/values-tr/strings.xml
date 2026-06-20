@@ -141,8 +141,6 @@
 <string name="dialog_edit_amazon_domain_hint">Örnekler: amazon.com, amazon.in, amazon.ca vb.</string>
 <string name="dialog_edit_amazon_domain_message">Ülkeniz için Amazon alan adını güncelleyin.</string>
 <string name="dialog_edit_amazon_domain_title">Amazon alan adını düzenle</string>
-<string name="dialog_enjoying_app_title">Bu uygulamayı faydalı buluyor musunuz?</string>
-<string name="dialog_feedback_hint">Neyi geliştirebileceğimizi bize söyleyin</string>
 <string name="dialog_gemini_model_picker_title">Model seçin</string>
 <string name="dialog_nickname_message">"%1$s" için bir takma ad girin. Bu takma adı kullanarak arama yapabilirsiniz.</string>
 <string name="dialog_no">Hayır</string>

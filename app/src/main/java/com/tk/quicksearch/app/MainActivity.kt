@@ -44,7 +44,6 @@ import com.tk.quicksearch.settings.settingsDetailScreen.SettingsDetailType
 import com.tk.quicksearch.settings.settingsDetailScreen.NotesNavigationMemory
 import com.tk.quicksearch.shared.ui.theme.QuickSearchTheme
 import com.tk.quicksearch.shared.util.CrashLogManager
-import com.tk.quicksearch.shared.util.FeedbackUtils
 import com.tk.quicksearch.shared.util.WallpaperUtils
 import com.tk.quicksearch.widgets.searchWidget.SearchWidget
 import com.tk.quicksearch.widgets.searchWidget.MicAction
@@ -89,8 +88,6 @@ open class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             voiceSearchHandler.processVoiceInputResult(result, searchViewModel::onQueryChange)
         }
-    private val showReviewPromptDialog = mutableStateOf(false)
-    private val showFeedbackDialog = mutableStateOf(false)
     private val navigationRequest = mutableStateOf<NavigationRequest?>(null)
     private var pendingSearchTargetShortcut: Pair<String, SearchTarget>? = null
     private var pendingContactActionPickerRequest: PendingContactActionPickerRequest? = null
@@ -139,7 +136,7 @@ open class MainActivity : ComponentActivity() {
                     viewModel = searchViewModel,
                     userPreferences = userPreferences,
                     mode = StartupMode.MAIN,
-                    onReviewPromptEligible = { showReviewPromptDialog.value = true },
+                    onUsageTrackingUpdated = searchViewModel::refreshRateQuickSearchCardState,
                 )
             startupCoordinator.scheduleAfterFirstFrame(window)
 
@@ -353,36 +350,6 @@ open class MainActivity : ComponentActivity() {
                             finish()
                         },
                     )
-                    if (showReviewPromptDialog.value) {
-                        EnjoyingAppDialog(
-                            onYes = {
-                                showReviewPromptDialog.value = false
-                                ReviewHelper.requestReviewIfEligible(
-                                    this@MainActivity,
-                                    userPreferences,
-                                )
-                            },
-                            onNo = {
-                                showReviewPromptDialog.value = false
-                                showFeedbackDialog.value = true
-                                userPreferences.recordReviewPromptTime()
-                                userPreferences.recordAppOpenCountAtPrompt()
-                                userPreferences.incrementReviewPromptedCount()
-                            },
-                            onDismiss = { showReviewPromptDialog.value = false },
-                        )
-                    }
-                    if (showFeedbackDialog.value) {
-                        SendFeedbackDialog(
-                            onSend = { feedbackText ->
-                                FeedbackUtils.launchFeedbackEmail(
-                                    this@MainActivity,
-                                    feedbackText,
-                                )
-                            },
-                            onDismiss = { showFeedbackDialog.value = false },
-                        )
-                    }
                 }
             }
         }

@@ -330,6 +330,9 @@ data class AppsSectionParams(
     val predictedTarget: PredictedSubmitTarget? = null,
     val suppressTopResultIndicator: Boolean = false,
     val showWallpaperBackground: Boolean = false,
+    val showRateQuickSearchCard: Boolean = false,
+    val onRateQuickSearchClick: () -> Unit = {},
+    val onRateQuickSearchNotNowClick: () -> Unit = {},
     val onGridAppeared: (() -> Unit)? = null,
     val suppressSuggestionsEnterAnimation: Boolean = false,
 )
@@ -455,6 +458,8 @@ internal fun buildSectionParams(
     onUnpinApp: (AppInfo) -> Unit,
     onReorderPinnedApps: (List<AppInfo>) -> Unit,
     onSuggestionTabSelected: (AppSuggestionTabType) -> Unit,
+    onRateQuickSearchClick: () -> Unit,
+    onRateQuickSearchNotNowClick: () -> Unit,
     getFileNickname: (String) -> String?,
     getContactNickname: (Long) -> String?,
     getSettingNickname: (String) -> String?,
@@ -895,6 +900,12 @@ internal fun buildSectionParams(
             startupPhase = state.startupPhase,
             isOverlayPresentation = isOverlayPresentation,
             showWallpaperBackground = state.showWallpaperBackground,
+            showRateQuickSearchCard =
+                state.showRateQuickSearchCard &&
+                    !derivedState.isSearching &&
+                    !isOverlayPresentation,
+            onRateQuickSearchClick = onRateQuickSearchClick,
+            onRateQuickSearchNotNowClick = onRateQuickSearchNotNowClick,
         )
 
     val calendarParams =

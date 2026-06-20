@@ -146,6 +146,16 @@ private fun renderAppsSection(
     val appsParams = params.appsParams ?: return
 
     if (context.shouldRenderApps && appsParams.hasAppResults && appsParams.apps.isNotEmpty()) {
+        val shouldShowRateQuickSearchCard = appsParams.showRateQuickSearchCard
+        val renderRateQuickSearchCardFirst = shouldShowRateQuickSearchCard && appsParams.oneHandedMode
+
+        if (renderRateQuickSearchCardFirst) {
+            RateQuickSearchCard(
+                showWallpaperBackground = appsParams.showWallpaperBackground,
+                onClick = appsParams.onRateQuickSearchClick,
+                onNotNowClick = appsParams.onRateQuickSearchNotNowClick,
+            )
+        }
         AppGridView(
             apps = appsParams.apps,
             pinnedAndRecentApps = appsParams.pinnedAndRecentApps,
@@ -189,6 +199,13 @@ private fun renderAppsSection(
             onGridAppeared = appsParams.onGridAppeared,
             suppressSuggestionsEnterAnimation = appsParams.suppressSuggestionsEnterAnimation,
         )
+        if (shouldShowRateQuickSearchCard && !renderRateQuickSearchCardFirst) {
+            RateQuickSearchCard(
+                showWallpaperBackground = appsParams.showWallpaperBackground,
+                onClick = appsParams.onRateQuickSearchClick,
+                onNotNowClick = appsParams.onRateQuickSearchNotNowClick,
+            )
+        }
     }
 }
 

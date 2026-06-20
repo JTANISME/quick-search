@@ -5,6 +5,7 @@ import android.os.Build
 import com.tk.quicksearch.R
 import com.tk.quicksearch.search.core.SearchSection
 import com.tk.quicksearch.search.core.SearchSectionRegistry
+import com.tk.quicksearch.search.data.preferences.RATE_QUICK_SEARCH_ENABLED
 import com.tk.quicksearch.search.utils.SearchQueryContext
 import com.tk.quicksearch.shared.util.isTablet
 
@@ -238,13 +239,15 @@ class AppSettingsRepository(
                 destination = AppSettingsDestination.SEND_FEEDBACK,
                 keywords = listOf("support", "bug", "request"),
             )
-            addNavigation(
-                id = "app_settings_rate_quick_search",
-                titleRes = R.string.settings_feedback_rate_title,
-                descriptionRes = R.string.settings_feedback_rate_desc,
-                destination = AppSettingsDestination.RATE_QUICK_SEARCH,
-                keywords = listOf("review"),
-            )
+            if (RATE_QUICK_SEARCH_ENABLED) {
+                addNavigation(
+                    id = "app_settings_rate_quick_search",
+                    titleRes = R.string.settings_feedback_rate_title,
+                    descriptionRes = R.string.settings_feedback_rate_desc,
+                    destination = AppSettingsDestination.RATE_QUICK_SEARCH,
+                    keywords = listOf("review"),
+                )
+            }
             addNavigation(
                 id = "app_settings_development",
                 titleRes = R.string.settings_feedback_github_title,

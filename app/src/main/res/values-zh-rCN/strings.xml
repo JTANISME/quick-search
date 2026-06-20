@@ -142,8 +142,6 @@
     <string name="dialog_edit_amazon_domain_hint">例如：amazon.com、amazon.in、amazon.ca 等。</string>
     <string name="dialog_edit_amazon_domain_message">更新适用于您所在国家的 Amazon 域名。</string>
     <string name="dialog_edit_amazon_domain_title">编辑 Amazon 域名</string>
-    <string name="dialog_enjoying_app_title">您觉得这个应用好用吗？</string>
-    <string name="dialog_feedback_hint">告诉我们哪里可以改进</string>
     <string name="dialog_gemini_model_picker_title">选择模型</string>
     <string name="dialog_nickname_message">为“%1$s”输入一个昵称。此后您可以使用该昵称来搜索它。</string>
     <string name="dialog_no">否</string>

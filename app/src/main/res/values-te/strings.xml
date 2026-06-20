@@ -142,8 +142,6 @@
     <string name="dialog_edit_amazon_domain_hint">ఉదాహరణలు: amazon.com, amazon.in, amazon.ca, మొదలైనవి.</string>
     <string name="dialog_edit_amazon_domain_message">మీ దేశం కోసం Amazon డొమైన్‌ను నవీకరించండి.</string>
     <string name="dialog_edit_amazon_domain_title">Amazon డొమైన్‌ను సవరించండి</string>
-    <string name="dialog_enjoying_app_title">ఈ యాప్ మీకు ఉపయోగకరంగా అనిపిస్తోందా?</string>
-    <string name="dialog_feedback_hint">మేము దేనిని మెరుగుపరచవచ్చో మాకు తెలియజేయండి</string>
     <string name="dialog_gemini_model_picker_title">మోడల్‌ను ఎంచుకోండి</string>
     <string name="dialog_nickname_message">\"%1$s\" కోసం ఒక మారుపేరును నమోదు చేయండి. మీరు ఈ మారుపేరుతో కూడా శోధించవచ్చు.</string>
     <string name="dialog_no">కాదు</string>

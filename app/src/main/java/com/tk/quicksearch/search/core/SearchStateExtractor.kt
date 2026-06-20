@@ -130,6 +130,7 @@ internal object SearchStateExtractor {
             hasDismissedSearchHistoryTip = s.hasDismissedSearchHistoryTip,
             directDialEnabled = s.directDialEnabled,
             shouldShowUsagePermissionBanner = s.shouldShowUsagePermissionBanner,
+            showRateQuickSearchCard = s.showRateQuickSearchCard,
         )
 
     fun extractConfigState(s: SearchUiState) =
