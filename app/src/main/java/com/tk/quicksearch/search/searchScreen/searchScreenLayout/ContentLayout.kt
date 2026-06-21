@@ -97,6 +97,7 @@ fun ContentLayout(
     searchHistorySelectedTab: SearchHistoryTab = SearchHistoryTab.SEARCHES,
     onSearchHistorySelectedTabChange: (SearchHistoryTab) -> Unit = {},
     onOpenPermissionsSettings: () -> Unit = {},
+    selectedTopMatchIndex: Int? = null,
 ) {
     val context = LocalContext.current
     val effectiveContactsParams =
@@ -347,6 +348,7 @@ fun ContentLayout(
                 params = sectionParams,
                 showWallpaperBackground = effectiveShowWallpaperBackground,
                 showTopResultIndicator = state.topResultIndicatorEnabled,
+                selectedMatchIndex = selectedTopMatchIndex,
                 reverseOrder = false,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -697,6 +699,7 @@ fun ContentLayout(
                 params = sectionParams,
                 showWallpaperBackground = effectiveShowWallpaperBackground,
                 showTopResultIndicator = state.topResultIndicatorEnabled,
+                selectedMatchIndex = selectedTopMatchIndex,
                 reverseOrder = true,
                 modifier = Modifier.fillMaxWidth(),
             )

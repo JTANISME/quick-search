@@ -1,6 +1,5 @@
 package com.tk.quicksearch.search.searchScreen
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -44,7 +43,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringArrayResource
@@ -79,6 +77,7 @@ import com.tk.quicksearch.search.searchScreen.appThemeResultCardColor
 import com.tk.quicksearch.search.searchScreen.resolveSearchColorTheme
 import com.tk.quicksearch.shared.ui.theme.LocalSearchColorTheme
 import com.tk.quicksearch.shared.featureFlags.FeatureFlags
+import com.tk.quicksearch.shared.util.rememberPhysicalKeyboardConnected
 import com.tk.quicksearch.tools.aiTools.CurrencyConversionIntentParser
 import com.tk.quicksearch.tools.aiTools.DictionaryIntentParser
 import com.tk.quicksearch.shared.util.isDefaultHomeApp
@@ -153,12 +152,9 @@ internal fun SearchScreenContent(
         onContactActionTrigger: (Long, com.tk.quicksearch.search.contacts.models.ContactCardAction) -> Unit = { _, _ -> },
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val density = LocalDensity.current
-    val isPhysicalKeyboardConnected =
-            configuration.keyboard != Configuration.KEYBOARD_NOKEYS &&
-                    configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO
+    val isPhysicalKeyboardConnected = rememberPhysicalKeyboardConnected()
     val openKeyboardOnLaunchOnStartup = remember { state.openKeyboardOnLaunch }
     var canShowOpenKeyboardPill by
             remember(isOverlayPresentation) { mutableStateOf(!isOverlayPresentation && !openKeyboardOnLaunchOnStartup) }
@@ -556,6 +552,50 @@ internal fun SearchScreenContent(
                     !isSearchHistoryExpanded &&
                     !deferTopMatchSubmitUntilAppsReady &&
                     topMatchesForSubmit.isNotEmpty()
+    val keyboardNavigableTopMatches =
+            if (state.oneHandedMode) {
+                topMatchesForSubmit.asReversed()
+            } else {
+                topMatchesForSubmit
+            }
+    var selectedTopMatchIndex by remember { mutableStateOf<Int?>(null) }
+    var previousTopMatchQuery by remember { mutableStateOf(state.query) }
+
+    LaunchedEffect(state.query, shouldSubmitTopMatch, topMatchesForSubmit) {
+        if (!shouldSubmitTopMatch) {
+            selectedTopMatchIndex = null
+            previousTopMatchQuery = state.query
+            return@LaunchedEffect
+        }
+
+        val queryChanged = state.query != previousTopMatchQuery
+        selectedTopMatchIndex =
+                when {
+                    queryChanged -> 0
+                    selectedTopMatchIndex in topMatchesForSubmit.indices -> selectedTopMatchIndex
+                    else -> 0
+                }
+        previousTopMatchQuery = state.query
+    }
+
+    fun moveSelectedTopMatch(delta: Int): Boolean {
+        if (!shouldSubmitTopMatch || keyboardNavigableTopMatches.isEmpty()) return false
+        val displayedIndexByActualIndex =
+                keyboardNavigableTopMatches
+                        .mapIndexed { displayedIndex, item ->
+                            topMatchesForSubmit.indexOf(item) to displayedIndex
+                        }
+                        .toMap()
+        val currentDisplayedIndex =
+                selectedTopMatchIndex
+                        ?.let(displayedIndexByActualIndex::get)
+                        ?: 0
+        val nextDisplayedIndex =
+                (currentDisplayedIndex + delta).coerceIn(0, keyboardNavigableTopMatches.lastIndex)
+        val selectedItem = keyboardNavigableTopMatches[nextDisplayedIndex]
+        selectedTopMatchIndex = topMatchesForSubmit.indexOf(selectedItem).takeIf { it >= 0 }
+        return true
+    }
     val activeToolCardConfig =
             if (isSearchHistoryExpanded) {
                 null
@@ -797,6 +837,8 @@ internal fun SearchScreenContent(
                 focusRequester = searchFocusRequester,
                 forceRestingOutline = showBottomSearchBar,
                 modifier = searchFieldModifier,
+                onMoveTopResultSelectionUp = { moveSelectedTopMatch(-1) },
+                onMoveTopResultSelectionDown = { moveSelectedTopMatch(1) },
                 onSearchAction = {
                     // Tool prompt cards take priority: Done triggers the card action.
                     // When no card is visible, fall through to the search engine.
@@ -819,7 +861,7 @@ internal fun SearchScreenContent(
 
                     if (shouldSubmitTopMatch) {
                         openTopMatch(
-                                item = topMatchesForSubmit.first(),
+                                item = topMatchesForSubmit.getOrNull(selectedTopMatchIndex ?: 0) ?: topMatchesForSubmit.first(),
                                 params = topMatchSubmitParams,
                         )?.let { keepKeyboardOpen ->
                             return@PersistentSearchBar keepKeyboardOpen
@@ -1021,6 +1063,7 @@ internal fun SearchScreenContent(
                 onLauncherOverscrollDown = {
                     context.openNotificationShade()
                 },
+                selectedTopMatchIndex = selectedTopMatchIndex,
         )
 
         // Fixed search engines section at the bottom (above keyboard, not scrollable)

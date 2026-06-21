@@ -2,6 +2,7 @@ package com.tk.quicksearch.overlay
 
 import android.content.ComponentCallbacks2
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -113,6 +114,14 @@ class OverlayActivity : ComponentActivity() {
         WallpaperUtils.clearMemoryCaches()
         invalidateAppIconCache()
         IconPackManager.clearAllCaches()
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.keyCode == KeyEvent.KEYCODE_ESCAPE && event.action == KeyEvent.ACTION_UP) {
+            finish()
+            return true
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     override fun finish() {

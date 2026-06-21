@@ -147,6 +147,7 @@ fun SearchContentArea(
     isDefaultLauncher: Boolean = false,
     onBottomOneHandedOverscrollUp: () -> Unit = {},
     onLauncherOverscrollDown: () -> Unit = {},
+    selectedTopMatchIndex: Int? = null,
 ) {
     val useOneHandedMode =
         state.oneHandedMode &&
@@ -547,6 +548,7 @@ fun SearchContentArea(
                                 searchHistorySelectedTab = searchHistorySelectedTab,
                                 onSearchHistorySelectedTabChange = { searchHistorySelectedTab = it },
                                 onOpenPermissionsSettings = onOpenPermissionsSettings,
+                                selectedTopMatchIndex = selectedTopMatchIndex,
                             )
                         }
                     }

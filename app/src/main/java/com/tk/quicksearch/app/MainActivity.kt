@@ -7,6 +7,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.os.Bundle
 import android.os.Trace
+import android.view.KeyEvent
 import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -180,6 +181,14 @@ open class MainActivity : ComponentActivity() {
         WallpaperUtils.clearMemoryCaches()
         invalidateAppIconCache()
         IconPackManager.clearAllCaches()
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.keyCode == KeyEvent.KEYCODE_ESCAPE && event.action == KeyEvent.ACTION_UP) {
+            finish()
+            return true
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     private fun initializePreferences() {

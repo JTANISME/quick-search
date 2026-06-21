@@ -309,11 +309,12 @@ internal fun TopMatchesSection(
     params: SectionRenderParams,
     showWallpaperBackground: Boolean,
     showTopResultIndicator: Boolean,
+    selectedMatchIndex: Int? = null,
     reverseOrder: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     if (matches.isEmpty()) return
-    val bestMatch = matches.firstOrNull()
+    val highlightedMatch = selectedMatchIndex?.let(matches::getOrNull) ?: matches.firstOrNull()
     val titleRes = if (matches.size == 1) R.string.top_match_title else R.string.top_matches_title
     val displayedMatches = if (reverseOrder) matches.asReversed() else matches
 
@@ -346,7 +347,7 @@ internal fun TopMatchesSection(
         }
 
         displayedMatches.forEach { item ->
-            val isTopPredicted = showTopResultIndicator && item == bestMatch
+            val isTopPredicted = showTopResultIndicator && item == highlightedMatch
             SearchResultCard(
                 modifier =
                     Modifier
