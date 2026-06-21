@@ -1004,7 +1004,7 @@ internal class SearchPreferencesDelegate(
         scope.launch(Dispatchers.IO) {
             val trimmedName = name.trim()
             if (trimmedName.isBlank()) return@launch
-            val resolvedModelId = resolveCustomToolModelId(modelId)
+            val resolvedModelId = resolveCustomToolModelId(providerId, modelId)
             val id = "custom_tool:${java.util.UUID.randomUUID()}"
             val newTool = CustomTool(
                 id = id,
@@ -1047,7 +1047,7 @@ internal class SearchPreferencesDelegate(
         scope.launch(Dispatchers.IO) {
             val trimmedName = name.trim()
             if (trimmedName.isBlank()) return@launch
-            val resolvedModelId = resolveCustomToolModelId(modelId)
+            val resolvedModelId = resolveCustomToolModelId(providerId, modelId)
             val existing = userPreferences.getCustomTools()
             val updated =
                 existing.map { tool ->
@@ -1103,10 +1103,15 @@ internal class SearchPreferencesDelegate(
         }
     }
 
-    private fun resolveCustomToolModelId(modelId: String): String {
-        val availableModelIds = aiSearchHandler.getAvailableGeminiModels().map { it.id }
-        val firstAvailableModelId = availableModelIds.firstOrNull() ?: GeminiModelCatalog.DEFAULT_MODEL_ID
+    private fun resolveCustomToolModelId(
+        providerId: AiSearchLlmProviderId,
+        modelId: String,
+    ): String {
         val normalizedModelId = modelId.trim()
-        return normalizedModelId.takeIf { it.isNotBlank() && it in availableModelIds } ?: firstAvailableModelId
+        if (normalizedModelId.isNotBlank()) return normalizedModelId
+
+        return AiSearchLlmProviderRegistry
+            .get(providerId, applicationProvider())
+            .defaultModelId
     }
 }

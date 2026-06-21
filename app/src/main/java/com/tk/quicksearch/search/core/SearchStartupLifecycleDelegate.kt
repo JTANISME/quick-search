@@ -899,16 +899,17 @@ internal class SearchStartupLifecycleDelegate(
     }
 
     private fun normalizeCustomToolModels(tools: List<CustomTool>): List<CustomTool> {
-        val availableModelIds = handlersProvider().aiSearchHandler.getAvailableGeminiModels().map { it.id }
-        val firstAvailableModelId = availableModelIds.firstOrNull() ?: return tools
-        val availableModelIdSet = availableModelIds.toSet()
-
         val normalizedTools =
             tools.map { tool ->
-                if (tool.providerId != AiSearchLlmProviderId.GEMINI || tool.modelId in availableModelIdSet) {
+                if (tool.modelId.isNotBlank()) {
                     tool
                 } else {
-                    tool.copy(modelId = firstAvailableModelId)
+                    tool.copy(
+                        modelId =
+                            AiSearchLlmProviderRegistry
+                                .get(tool.providerId, applicationProvider())
+                                .defaultModelId,
+                    )
                 }
             }
 
