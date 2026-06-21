@@ -135,7 +135,6 @@
                 <data
                     android:scheme="file"
                     android:pathSuffix=".quicksearch" />
-                <data android:mimeType="*/*" />
             </intent-filter>
             <meta-data
                 android:name="android.app.shortcuts"
