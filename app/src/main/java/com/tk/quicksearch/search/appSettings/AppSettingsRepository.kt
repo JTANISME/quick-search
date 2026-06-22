@@ -379,6 +379,20 @@ class AppSettingsRepository(
                 toggleKey = AppSettingsToggleKey.APP_SUGGESTIONS,
             )
             addToggle(
+                id = "app_toggle_show_all_apps_button",
+                titleRes = R.string.show_all_apps_button_toggle_title,
+                descriptionRes = R.string.show_all_apps_button_toggle_desc,
+                toggleKey = AppSettingsToggleKey.SHOW_ALL_APPS_BUTTON,
+                keywords = listOf("all apps", "app drawer"),
+            )
+            addToggle(
+                id = "app_toggle_include_non_launchable_apps",
+                titleRes = R.string.include_non_launchable_apps_toggle_title,
+                descriptionRes = R.string.include_non_launchable_apps_toggle_desc,
+                toggleKey = AppSettingsToggleKey.INCLUDE_NON_LAUNCHABLE_APPS_IN_SEARCH,
+                keywords = listOf("app info", "launch activity", "hidden apps"),
+            )
+            addToggle(
                 id = "app_toggle_web_suggestions",
                 titleRes = R.string.web_search_suggestions_title,
                 toggleKey = AppSettingsToggleKey.WEB_SUGGESTIONS,

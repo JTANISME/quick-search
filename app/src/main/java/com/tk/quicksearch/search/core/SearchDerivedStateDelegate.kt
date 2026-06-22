@@ -90,7 +90,12 @@ internal class SearchDerivedStateDelegate(
             userPreferences.setRecentAppLaunches(initialRecents)
         }
 
-        val pinnedAppsForSuggestions = appSearchManager.computePinnedApps(emptySet())
+        val pinnedAppsForSuggestions =
+            if (suggestionsEnabled) {
+                appSearchManager.computePinnedApps(emptySet())
+            } else {
+                emptyList()
+            }
         val pinnedAppsForResults =
             computePinnedApps(
                 apps = apps,
