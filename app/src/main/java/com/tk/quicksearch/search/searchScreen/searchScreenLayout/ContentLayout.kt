@@ -342,6 +342,17 @@ fun ContentLayout(
         }
     }
 
+    val standaloneTodayEventIds =
+        sectionContextForRecentHistoryExpansion.todayCalendarEventsList
+            .map { it.eventId }
+            .toSet()
+    val hasStandaloneTodayCalendarSection = standaloneTodayEventIds.isNotEmpty()
+    val pinnedCalendarEventsForPinnedBlock =
+        if (!hasQuery && standaloneTodayEventIds.isNotEmpty()) {
+            renderingState.pinnedCalendarEvents.filterNot { it.eventId in standaloneTodayEventIds }
+        } else {
+            renderingState.pinnedCalendarEvents
+        }
     val showPinnedNonAppItems =
         !hasQuery &&
             state.unifiedPinnedItemsEnabled &&
@@ -353,14 +364,12 @@ fun ContentLayout(
                     renderingState.hasPinnedContacts ||
                     renderingState.hasPinnedFiles ||
                     renderingState.hasPinnedSettings ||
-                    renderingState.hasPinnedCalendarEvents ||
+                    pinnedCalendarEventsForPinnedBlock.isNotEmpty() ||
                     renderingState.hasPinnedNotes
             )
     var pinnedNonAppItemsRendered = false
     var standaloneTodayCalendarRendered = false
     var deferredSearchHistoryRendered = false
-    val hasStandaloneTodayCalendarSection =
-        sectionContextForRecentHistoryExpansion.todayCalendarEventsList.isNotEmpty()
     val shouldDeferSearchHistoryUntilTodayEvents =
         showRecentItems && hasStandaloneTodayCalendarSection
     val showSectionedPinnedHeaders =
@@ -554,7 +563,7 @@ fun ContentLayout(
                         files = renderingState.pinnedFiles,
                         appShortcuts = renderingState.pinnedAppShortcuts,
                         settings = renderingState.pinnedSettings,
-                        calendarEvents = renderingState.pinnedCalendarEvents,
+                        calendarEvents = pinnedCalendarEventsForPinnedBlock,
                         notes = renderingState.pinnedNotes,
                         contactsParams = effectiveContactsParams,
                         filesParams = effectiveFilesParams,
@@ -629,7 +638,7 @@ fun ContentLayout(
                                 files = renderingState.pinnedFiles,
                                 appShortcuts = renderingState.pinnedAppShortcuts,
                                 settings = renderingState.pinnedSettings,
-                                calendarEvents = renderingState.pinnedCalendarEvents,
+                                calendarEvents = pinnedCalendarEventsForPinnedBlock,
                                 notes = renderingState.pinnedNotes,
                                 contactsParams = effectiveContactsParams,
                                 filesParams = effectiveFilesParams,
@@ -683,7 +692,20 @@ fun ContentLayout(
                 }
 
                 renderHomePinnedSection(section) {
-                    renderSection(section, regularSectionParams, sectionContextForRecentHistoryExpansion)
+                    val sectionContext =
+                        if (
+                            section == SearchSection.CALENDAR &&
+                            !hasQuery &&
+                            !state.unifiedPinnedItemsEnabled &&
+                            hasStandaloneTodayCalendarSection
+                        ) {
+                            sectionContextForRecentHistoryExpansion.copy(
+                                todayCalendarEventsList = emptyList(),
+                            )
+                        } else {
+                            sectionContextForRecentHistoryExpansion
+                        }
+                    renderSection(section, regularSectionParams, sectionContext)
                 }
                 if (
                     section == SearchSection.APPS &&

@@ -496,7 +496,8 @@ fun rememberSectionRenderContext(
             } else if (isSearching || state.detectedAliasSearchSection == SearchSection.CALENDAR) {
                 renderingState.calendarEvents
             } else {
-                renderingState.pinnedCalendarEvents
+                val todayEventIds = state.todayCalendarEvents.map { it.eventId }.toSet()
+                renderingState.pinnedCalendarEvents.filterNot { it.eventId in todayEventIds }
             },
         todayCalendarEventsList =
             if (isSearching || state.detectedAliasSearchSection == SearchSection.CALENDAR) {
