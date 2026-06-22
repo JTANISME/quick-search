@@ -185,6 +185,10 @@
     <string name="app_suggestions_tab_new_updated">కొత్తవి/నవీకరించబడినవి</string>
     <string name="app_suggestions_tab_pinned">పిన్ చేసినవి</string>
     <string name="app_suggestions_tab_recent">ఇటీవలివి</string>
+    <string name="app_suggestions_tabs_dialog_message">హోమ్ స్క్రీన్‌పై ఏ యాప్ సూచన ట్యాబ్‌లు కనిపించాలో ఎంచుకోండి.</string>
+    <string name="app_suggestions_tabs_dialog_title">యాప్ సూచన ట్యాబ్‌లు</string>
+    <string name="app_suggestions_enabled_tabs_picker_hint">ట్యాబ్‌లను ఎంచుకోండి</string>
+    <string name="app_suggestions_enabled_tabs_summary">ప్రస్తుత: %1$s</string>
     <string name="app_suggestions_tab_required_toast">కనీసం ఒక యాప్ సూచన ట్యాబ్‌నైనా ప్రారంభించి ఉంచండి</string>
     <string name="app_suggestions_toggle_desc">హోమ్ స్క్రీన్‌పై సూచించిన యాప్‌లను చూపించు లేదా దాచు</string>
     <string name="app_suggestions_toggle_title">యాప్ సూచనలు</string>

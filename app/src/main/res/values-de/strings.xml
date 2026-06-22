@@ -185,6 +185,10 @@
     <string name="app_suggestions_tab_new_updated">Neu/Aktualisiert</string>
     <string name="app_suggestions_tab_pinned">Angeheftet</string>
     <string name="app_suggestions_tab_recent">Zuletzt verwendet</string>
+    <string name="app_suggestions_tabs_dialog_message">Wählen Sie aus, welche App-Vorschlagstabs auf dem Startbildschirm angezeigt werden.</string>
+    <string name="app_suggestions_tabs_dialog_title">App-Vorschlagstabs</string>
+    <string name="app_suggestions_enabled_tabs_picker_hint">Tabs auswählen</string>
+    <string name="app_suggestions_enabled_tabs_summary">Aktuell: %1$s</string>
     <string name="app_suggestions_tab_required_toast">Mindestens ein App-Vorschlagstab muss aktiviert bleiben</string>
     <string name="app_suggestions_toggle_desc">Vorgeschlagene Apps auf dem Startbildschirm ein- oder ausblenden</string>
     <string name="app_suggestions_toggle_title">App-Vorschläge</string>

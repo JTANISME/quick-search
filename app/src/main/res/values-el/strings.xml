@@ -185,6 +185,10 @@
     <string name="app_suggestions_tab_new_updated">Νέες/Ενημερωμένες</string>
     <string name="app_suggestions_tab_pinned">Καρφιτσωμένες</string>
     <string name="app_suggestions_tab_recent">Πρόσφατες</string>
+    <string name="app_suggestions_tabs_dialog_message">Επιλέξτε ποιες καρτέλες προτάσεων εφαρμογών θα εμφανίζονται στην αρχική οθόνη.</string>
+    <string name="app_suggestions_tabs_dialog_title">Καρτέλες προτάσεων εφαρμογών</string>
+    <string name="app_suggestions_enabled_tabs_picker_hint">Επιλογή καρτελών</string>
+    <string name="app_suggestions_enabled_tabs_summary">Τρέχον: %1$s</string>
     <string name="app_suggestions_tab_required_toast">Διατηρήστε τουλάχιστον μία καρτέλα προτάσεων εφαρμογών ενεργοποιημένη</string>
     <string name="app_suggestions_toggle_desc">Εμφάνιση ή απόκρυψη προτεινόμενων εφαρμογών στην αρχική οθόνη</string>
     <string name="app_suggestions_toggle_title">Προτάσεις εφαρμογών</string>

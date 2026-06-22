@@ -185,6 +185,10 @@
 <string name="app_suggestions_tab_new_updated">Новые/Обновленные</string>
 <string name="app_suggestions_tab_pinned">Закрепленные</string>
 <string name="app_suggestions_tab_recent">Недавние</string>
+<string name="app_suggestions_tabs_dialog_message">Выберите, какие вкладки с подсказками приложений отображать на главном экране.</string>
+<string name="app_suggestions_tabs_dialog_title">Вкладки с подсказками приложений</string>
+<string name="app_suggestions_enabled_tabs_picker_hint">Выбрать вкладки</string>
+<string name="app_suggestions_enabled_tabs_summary">Текущий: %1$s</string>
 <string name="app_suggestions_tab_required_toast">Должна быть включена хотя бы одна вкладка с подсказками приложений</string>
 <string name="app_suggestions_toggle_desc">Показывать или скрывать рекомендуемые приложения на главном экране</string>
 <string name="app_suggestions_toggle_title">Подсказки приложений</string>

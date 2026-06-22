@@ -185,6 +185,10 @@
     <string name="app_suggestions_tab_new_updated">नए/अपडेटेड</string>
     <string name="app_suggestions_tab_pinned">पिन किए गए</string>
     <string name="app_suggestions_tab_recent">हाल के</string>
+    <string name="app_suggestions_tabs_dialog_message">चुनें कि होम स्क्रीन पर कौन से ऐप सुझाव टैब दिखाई दें।</string>
+    <string name="app_suggestions_tabs_dialog_title">ऐप सुझाव टैब</string>
+    <string name="app_suggestions_enabled_tabs_picker_hint">टैब चुनें</string>
+    <string name="app_suggestions_enabled_tabs_summary">वर्तमान: %1$s</string>
     <string name="app_suggestions_tab_required_toast">कम से कम एक ऐप सुझाव टैब सक्षम रखें</string>
     <string name="app_suggestions_toggle_desc">होम स्क्रीन पर सुझाए गए ऐप दिखाएं या छिपाएं</string>
     <string name="app_suggestions_toggle_title">ऐप सुझाव</string>

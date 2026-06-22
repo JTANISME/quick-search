@@ -185,6 +185,10 @@
     <string name="app_suggestions_tab_new_updated">Novos/Atualizados</string>
     <string name="app_suggestions_tab_pinned">Fixados</string>
     <string name="app_suggestions_tab_recent">Recentes</string>
+    <string name="app_suggestions_tabs_dialog_message">Escolha quais guias de sugestões de apps aparecem na tela inicial.</string>
+    <string name="app_suggestions_tabs_dialog_title">Guias de sugestões de apps</string>
+    <string name="app_suggestions_enabled_tabs_picker_hint">Escolher guias</string>
+    <string name="app_suggestions_enabled_tabs_summary">Atual: %1$s</string>
     <string name="app_suggestions_tab_required_toast">Mantenha pelo menos uma guia de sugestões de apps ativada</string>
     <string name="app_suggestions_toggle_desc">Mostrar ou ocultar apps sugeridos na tela inicial</string>
     <string name="app_suggestions_toggle_title">Sugestões de apps</string>

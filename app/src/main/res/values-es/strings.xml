@@ -185,6 +185,10 @@
     <string name="app_suggestions_tab_new_updated">Nuevas/Actualizadas</string>
     <string name="app_suggestions_tab_pinned">Fijadas</string>
     <string name="app_suggestions_tab_recent">Recientes</string>
+    <string name="app_suggestions_tabs_dialog_message">Elige qué pestañas de sugerencias de apps aparecen en la pantalla de inicio.</string>
+    <string name="app_suggestions_tabs_dialog_title">Pestañas de sugerencias de apps</string>
+    <string name="app_suggestions_enabled_tabs_picker_hint">Elegir pestañas</string>
+    <string name="app_suggestions_enabled_tabs_summary">Actual: %1$s</string>
     <string name="app_suggestions_tab_required_toast">Mantén activada al menos una pestaña de sugerencias de apps</string>
     <string name="app_suggestions_toggle_desc">Muestra u oculta las apps sugeridas en la pantalla de inicio</string>
     <string name="app_suggestions_toggle_title">Sugerencias de apps</string>

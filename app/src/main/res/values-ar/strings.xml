@@ -186,6 +186,10 @@
     <string name="app_suggestions_tab_new_updated">جديد/محدث</string>
     <string name="app_suggestions_tab_pinned">مثبت</string>
     <string name="app_suggestions_tab_recent">الأخيرة</string>
+    <string name="app_suggestions_tabs_dialog_message">اختر تبويبات اقتراحات التطبيقات التي تظهر على الشاشة الرئيسية.</string>
+    <string name="app_suggestions_tabs_dialog_title">تبويبات اقتراحات التطبيقات</string>
+    <string name="app_suggestions_enabled_tabs_picker_hint">اختر التبويبات</string>
+    <string name="app_suggestions_enabled_tabs_summary">الحالي: %1$s</string>
     <string name="app_suggestions_tab_required_toast">يجب إبقاء تبويب واحد على الأقل مفعل لاقتراحات التطبيقات</string>
     <string name="app_suggestions_toggle_desc">إظهار أو إخفاء التطبيقات المقترحة على الشاشة الرئيسية</string>
     <string name="app_suggestions_toggle_title">اقتراحات التطبيقات</string>

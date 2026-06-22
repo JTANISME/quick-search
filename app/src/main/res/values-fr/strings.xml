@@ -185,6 +185,10 @@
 <string name="app_suggestions_tab_new_updated">Nouveautés/Mises à jour</string>
 <string name="app_suggestions_tab_pinned">Épinglées</string>
 <string name="app_suggestions_tab_recent">Récents</string>
+<string name="app_suggestions_tabs_dialog_message">Choisissez les onglets de suggestions d\'applications à afficher sur l\'écran d\'accueil.</string>
+<string name="app_suggestions_tabs_dialog_title">Onglets de suggestions d\'applications</string>
+<string name="app_suggestions_enabled_tabs_picker_hint">Choisir les onglets</string>
+<string name="app_suggestions_enabled_tabs_summary">Actuel : %1$s</string>
 <string name="app_suggestions_tab_required_toast">Gardez au moins un onglet de suggestions d\'applications activé</string>
 <string name="app_suggestions_toggle_desc">Afficher ou masquer les applications suggérées sur l\'écran d\'accueil</string>
 <string name="app_suggestions_toggle_title">Suggestions d\'applications</string>
