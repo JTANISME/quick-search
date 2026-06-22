@@ -1,6 +1,7 @@
 package com.tk.quicksearch.overlay
 
 import android.content.ComponentCallbacks2
+import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,6 +31,7 @@ import com.tk.quicksearch.search.apps.invalidateAppIconCache
 import com.tk.quicksearch.search.data.UserAppPreferences
 import com.tk.quicksearch.search.managers.IconPackManager
 import com.tk.quicksearch.shared.ui.theme.QuickSearchTheme
+import com.tk.quicksearch.shared.util.AppLanguageManager
 import com.tk.quicksearch.shared.util.WallpaperUtils
 import com.tk.quicksearch.widgets.searchWidget.MicAction
 import com.tk.quicksearch.widgets.searchWidget.VoiceSearchHandler
@@ -45,7 +47,12 @@ class OverlayActivity : ComponentActivity() {
             voiceSearchHandler.processVoiceInputResult(result, searchViewModel::onQueryChange)
         }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLanguageManager.wrapContext(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppLanguageManager.applySavedAppLanguage(this)
         // Set transparent background for seamless overlay appearance
         window.setBackgroundDrawableResource(android.R.color.transparent)
 

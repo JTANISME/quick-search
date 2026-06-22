@@ -2,6 +2,7 @@ package com.tk.quicksearch.app
 
 import android.app.SearchManager
 import android.content.ComponentCallbacks2
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
@@ -44,6 +45,7 @@ import com.tk.quicksearch.overlay.OverlayModeController
 import com.tk.quicksearch.settings.settingsDetailScreen.SettingsDetailType
 import com.tk.quicksearch.settings.settingsDetailScreen.NotesNavigationMemory
 import com.tk.quicksearch.shared.ui.theme.QuickSearchTheme
+import com.tk.quicksearch.shared.util.AppLanguageManager
 import com.tk.quicksearch.shared.util.CrashLogManager
 import com.tk.quicksearch.shared.util.WallpaperUtils
 import com.tk.quicksearch.widgets.searchWidget.SearchWidget
@@ -99,10 +101,15 @@ open class MainActivity : ComponentActivity() {
     private var hasWallpaperPreviewReadyTraced = false
     private var hasSuggestionsReadyTraced = false
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLanguageManager.wrapContext(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         CrashLogManager.install(this)
         Trace.beginSection(TRACE_ON_CREATE_ENTRY)
         try {
+            AppLanguageManager.applySavedAppLanguage(this)
             // Must be called before super.onCreate for edge-to-edge to work correctly on all versions
             val statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
             val navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)

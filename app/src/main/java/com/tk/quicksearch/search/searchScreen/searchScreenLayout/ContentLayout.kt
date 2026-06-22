@@ -479,6 +479,22 @@ fun ContentLayout(
         }
     }
 
+    fun homePinnedSectionHasItems(
+        section: SearchSection,
+        sectionContext: SectionRenderContext,
+    ): Boolean =
+        when (section) {
+            SearchSection.APP_SHORTCUTS -> sectionContext.appShortcutsList.isNotEmpty()
+            SearchSection.CONTACTS -> sectionContext.contactsList.isNotEmpty()
+            SearchSection.FILES -> sectionContext.filesList.isNotEmpty()
+            SearchSection.SETTINGS ->
+                sectionContext.settingsList.isNotEmpty() || sectionContext.appSettingsList.isNotEmpty()
+            SearchSection.CALENDAR ->
+                sectionContext.calendarEventsList.isNotEmpty() || sectionContext.todayCalendarEventsList.isNotEmpty()
+            SearchSection.NOTES -> sectionContext.notesList.isNotEmpty()
+            SearchSection.APPS, SearchSection.APP_SETTINGS -> true
+        }
+
     @Composable
     fun renderSearchHistoryBlock() {
         Column(
@@ -691,20 +707,28 @@ fun ContentLayout(
                     return@forEach
                 }
 
+                val sectionContext =
+                    if (
+                        section == SearchSection.CALENDAR &&
+                        !hasQuery &&
+                        !state.unifiedPinnedItemsEnabled &&
+                        hasStandaloneTodayCalendarSection
+                    ) {
+                        sectionContextForRecentHistoryExpansion.copy(
+                            todayCalendarEventsList = emptyList(),
+                        )
+                    } else {
+                        sectionContextForRecentHistoryExpansion
+                    }
+                if (
+                    !hasQuery &&
+                    showSectionedPinnedHeaders &&
+                    section.supportsPinnedHomeCollapse() &&
+                    !homePinnedSectionHasItems(section, sectionContext)
+                ) {
+                    return@forEach
+                }
                 renderHomePinnedSection(section) {
-                    val sectionContext =
-                        if (
-                            section == SearchSection.CALENDAR &&
-                            !hasQuery &&
-                            !state.unifiedPinnedItemsEnabled &&
-                            hasStandaloneTodayCalendarSection
-                        ) {
-                            sectionContextForRecentHistoryExpansion.copy(
-                                todayCalendarEventsList = emptyList(),
-                            )
-                        } else {
-                            sectionContextForRecentHistoryExpansion
-                        }
                     renderSection(section, regularSectionParams, sectionContext)
                 }
                 if (

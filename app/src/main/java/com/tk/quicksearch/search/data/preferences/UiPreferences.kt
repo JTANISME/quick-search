@@ -373,6 +373,12 @@ class UiPreferences(
         setBooleanPref(UiPreferences.KEY_USE_SYSTEM_FONT, enabled)
     }
 
+    fun getAppLanguageTag(): String? = prefs.getString(BasePreferences.KEY_APP_LANGUAGE_TAG, null)?.takeIf { it.isNotBlank() }
+
+    fun setAppLanguageTag(languageTag: String?) {
+        prefs.edit().putString(BasePreferences.KEY_APP_LANGUAGE_TAG, languageTag?.takeIf { it.isNotBlank() }).apply()
+    }
+
     fun getBackgroundSource(): BackgroundSource {
         val saved = prefs.getString(KEY_BACKGROUND_SOURCE, null)
         if (saved != null) {

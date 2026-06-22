@@ -514,6 +514,9 @@ abstract class BasePreferences(
         const val KEY_CUSTOM_TOOLS = "custom_tools"
         const val KEY_DISABLED_CUSTOM_TOOLS = "disabled_custom_tools"
 
+        // App language preference keys
+        const val KEY_APP_LANGUAGE_TAG = "app_language_tag"
+
         // Alias preferences keys
         const val KEY_ALIASES_ENABLED = "aliases_enabled"
         const val KEY_ALIAS_CODE_PREFIX = "alias_code_"

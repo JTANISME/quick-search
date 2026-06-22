@@ -1078,6 +1078,10 @@ class UserAppPreferences(
 
     fun setUseSystemFont(enabled: Boolean) = uiPreferences.setUseSystemFont(enabled)
 
+    fun getAppLanguageTag(): String? = uiPreferences.getAppLanguageTag()
+
+    fun setAppLanguageTag(languageTag: String?) = uiPreferences.setAppLanguageTag(languageTag)
+
     fun getBackgroundSource(): BackgroundSource = uiPreferences.getBackgroundSource()
 
     fun setBackgroundSource(source: BackgroundSource) =
