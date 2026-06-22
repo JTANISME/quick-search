@@ -90,7 +90,7 @@ internal object WidgetDefaults {
 
 private object WidgetRanges {
     const val BORDER_RADIUS_MIN = 0f
-    const val BORDER_RADIUS_MAX = 30f
+    const val BORDER_RADIUS_MAX = 40f
     const val BORDER_WIDTH_MIN = 0f
     const val BORDER_WIDTH_MAX = 4f
     const val BACKGROUND_ALPHA_MIN = 0f
