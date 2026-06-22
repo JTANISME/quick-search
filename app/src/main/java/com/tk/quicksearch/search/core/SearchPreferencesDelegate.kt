@@ -691,6 +691,9 @@ internal class SearchPreferencesDelegate(
     }
 
     fun setTopResultIndicatorEnabled(enabled: Boolean) {
+        if (!enabled && userPreferences.isPhysicalKeyboardConnected()) {
+            return
+        }
         updateBooleanPreference(
             value = enabled,
             preferenceSetter = userPreferences::setTopResultIndicatorEnabled,

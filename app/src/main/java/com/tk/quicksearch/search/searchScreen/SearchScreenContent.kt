@@ -480,8 +480,9 @@ internal fun SearchScreenContent(
                 }
             }
     val hasSuffixAliasKeywordAtQueryEnd = suffixAliasMatchIgnoringTrailingSpace != null
+    val shouldShowTopResultIndicator = state.topResultIndicatorEnabled || isPhysicalKeyboardConnected
     val predictedTargetForIndicator =
-            if (state.topResultIndicatorEnabled &&
+            if (shouldShowTopResultIndicator &&
                     !showCurrencyConverterSearchCard &&
                     !showDictionarySearchCard &&
                     !showWordClockSearchCard &&
@@ -1024,6 +1025,7 @@ internal fun SearchScreenContent(
                 notesParams = notesParams,
                 appsParams = appsParams,
                 predictedTarget = predictedTargetForIndicator,
+                isPhysicalKeyboardConnected = isPhysicalKeyboardConnected,
                 onRequestUsagePermission = onRequestUsagePermission,
                 scrollState = scrollState,
                 onPhoneNumberClick = onPhoneNumberClick,

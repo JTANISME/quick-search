@@ -18,6 +18,7 @@ import com.tk.quicksearch.settings.shared.SettingsCard
 import com.tk.quicksearch.settings.shared.SettingsCommand
 import com.tk.quicksearch.settings.shared.SettingsToggleRow
 import com.tk.quicksearch.shared.util.isDefaultHomeApp
+import com.tk.quicksearch.shared.util.rememberPhysicalKeyboardConnected
 
 @Composable
 fun MoreOptionsSettings(
@@ -27,6 +28,7 @@ fun MoreOptionsSettings(
 ) {
     val context = LocalContext.current
     val isDefaultLauncher = context.isDefaultHomeApp()
+    val isPhysicalKeyboardConnected = rememberPhysicalKeyboardConnected()
 
     val toggleItems =
         listOf(
@@ -61,6 +63,10 @@ fun MoreOptionsSettings(
                 leadingIcon = Icons.Rounded.Close,
             ),
         )
+            .filterNot {
+                isPhysicalKeyboardConnected &&
+                    it.key == AppSettingsToggleKey.TOP_RESULT_INDICATOR
+            }
 
     SettingsCard(
         modifier = modifier.fillMaxWidth(),

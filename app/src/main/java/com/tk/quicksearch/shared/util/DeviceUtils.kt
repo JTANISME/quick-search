@@ -67,7 +67,7 @@ fun rememberPhysicalKeyboardConnected(): Boolean {
     }
 
     return remember(configuration, inputDeviceChangeVersion) {
-        configuration.hasAvailablePhysicalKeyboard() || hasAlphabeticPhysicalKeyboardInputDevice()
+        context.isPhysicalKeyboardConnected()
     }
 }
 
@@ -100,6 +100,9 @@ fun isLandscape(context: Context): Boolean {
     val configuration = context.resources.configuration
     return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 }
+
+fun Context.isPhysicalKeyboardConnected(): Boolean =
+    resources.configuration.hasAvailablePhysicalKeyboard() || hasAlphabeticPhysicalKeyboardInputDevice()
 
 private fun Configuration.hasAvailablePhysicalKeyboard(): Boolean =
     keyboard != Configuration.KEYBOARD_NOKEYS &&

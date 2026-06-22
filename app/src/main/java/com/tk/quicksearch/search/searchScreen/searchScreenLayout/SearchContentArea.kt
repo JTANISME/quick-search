@@ -113,6 +113,7 @@ fun SearchContentArea(
     notesParams: NotesSectionParams,
     appsParams: AppsSectionParams,
     predictedTarget: PredictedSubmitTarget? = null,
+    isPhysicalKeyboardConnected: Boolean,
     onRequestUsagePermission: () -> Unit,
     scrollState: androidx.compose.foundation.ScrollState,
     onPhoneNumberClick: (String) -> Unit = {},
@@ -496,6 +497,7 @@ fun SearchContentArea(
                                 notesParams = notesParams,
                                 appsParams = appsParams,
                                 predictedTarget = predictedTarget,
+                                isPhysicalKeyboardConnected = isPhysicalKeyboardConnected,
                                 onRequestUsagePermission = onRequestUsagePermission,
                                 minContentHeight =
                                     if (isOverlayPresentation) {

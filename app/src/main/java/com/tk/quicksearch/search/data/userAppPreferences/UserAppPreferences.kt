@@ -15,6 +15,7 @@ import com.tk.quicksearch.search.models.FileType
 import com.tk.quicksearch.search.searchHistory.SearchHistoryPreferences
 import com.tk.quicksearch.searchEngines.AliasValidator.isValidGeneralAliasCode
 import com.tk.quicksearch.searchEngines.AliasValidator.normalizeShortcutCodeInput
+import com.tk.quicksearch.shared.util.isPhysicalKeyboardConnected
 import com.tk.quicksearch.tools.aiSearch.AiSearchLlmProviderId
 import com.tk.quicksearch.tools.aiSearch.CustomLlmProviderConfig
 import com.tk.quicksearch.tools.aiSearch.OpenAiModelCatalog
@@ -997,6 +998,8 @@ class UserAppPreferences(
 
     fun setTopResultIndicatorEnabled(enabled: Boolean) =
             uiPreferences.setTopResultIndicatorEnabled(enabled)
+
+    fun isPhysicalKeyboardConnected(): Boolean = context.isPhysicalKeyboardConnected()
 
     fun isTopMatchesEnabled(): Boolean = uiPreferences.isTopMatchesEnabled()
 
