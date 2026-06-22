@@ -426,7 +426,7 @@ fun AppGridView(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(AppGridRowSpacing),
             ) {
-                if (suggestionTabs.isNotEmpty()) {
+                if (suggestionTabs.size > 1) {
                     AppSuggestionTabStrip(
                             tabs = suggestionTabs,
                             selectedIndex = selectedSuggestionTabIndex,
