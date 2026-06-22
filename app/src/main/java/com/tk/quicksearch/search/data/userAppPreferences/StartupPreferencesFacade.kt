@@ -31,6 +31,7 @@ class StartupPreferencesFacade(
             val excludedFileExtensions: Set<String>,
             val oneHandedMode: Boolean,
             val bottomSearchBarEnabled: Boolean,
+            val unifiedPinnedItemsEnabled: Boolean,
             val searchHintsEnabled: Boolean,
             val settingsIconEnabled: Boolean,
             val topResultIndicatorEnabled: Boolean,
@@ -187,6 +188,13 @@ class StartupPreferencesFacade(
                         allPrefs[
                                 com.tk.quicksearch.search.data.preferences.UiPreferences
                                         .KEY_BOTTOM_SEARCH_BAR_ENABLED,
+                        ] as?
+                                Boolean
+                                ?: false,
+                unifiedPinnedItemsEnabled =
+                        allPrefs[
+                                com.tk.quicksearch.search.data.preferences.UiPreferences
+                                        .KEY_UNIFIED_PINNED_ITEMS_ENABLED,
                         ] as?
                                 Boolean
                                 ?: false,
@@ -605,6 +613,13 @@ class StartupPreferencesFacade(
                                 allPrefs[
                                         com.tk.quicksearch.search.data.preferences.UiPreferences
                                                 .KEY_BOTTOM_SEARCH_BAR_ENABLED,
+                                ] as?
+                                        Boolean
+                                        ?: false,
+                        unifiedPinnedItemsEnabled =
+                                allPrefs[
+                                        com.tk.quicksearch.search.data.preferences.UiPreferences
+                                                .KEY_UNIFIED_PINNED_ITEMS_ENABLED,
                                 ] as?
                                         Boolean
                                         ?: false,

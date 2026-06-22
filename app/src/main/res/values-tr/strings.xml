@@ -219,6 +219,7 @@
 <string name="section_app_shortcuts">Uygulama kısayolları</string>
 <string name="section_apps">Uygulamalar</string>
 <string name="section_calendar">Takvim etkinlikleri</string>
+<string name="section_contacts">Kişiler</string>
 <string name="section_files">Dosyalar</string>
 <string name="section_notes">Notlar</string>
 <string name="section_settings">Cihaz ayarları</string>
@@ -621,6 +622,8 @@
 <string name="settings_launcher_icon_title">Başlatıcı uygulama simgesi</string>
 <string name="settings_layout_option_bottom_desc">Kolay erişim için en ilgili öğeler altta görünür</string>
 <string name="settings_layout_option_bottom_title">Tek el modu</string>
+<string name="settings_unified_pinned_items_title">Birleştirilmiş Sabitlenen Öğeler</string>
+<string name="settings_unified_pinned_items_desc">Sabitlenen öğeleri ana ekranda tek bir birleştirilmiş liste olarak göster.</string>
 <string name="settings_more_options_desc">Çeşitli özelleştirme seçenekleri</string>
 <string name="settings_more_options_title">Daha fazla seçenek</string>
 <string name="settings_overlay_assistant_setup_now">Şimdi kur</string>

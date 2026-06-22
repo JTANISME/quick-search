@@ -220,6 +220,7 @@
 <string name="section_app_shortcuts">Ярлыки приложений</string>
 <string name="section_apps">Приложения</string>
 <string name="section_calendar">События календаря</string>
+<string name="section_contacts">Контакты</string>
 <string name="section_files">Файлы</string>
 <string name="section_notes">Заметки</string>
 <string name="section_settings">Настройки устройства</string>
@@ -638,6 +639,8 @@
 <string name="settings_launcher_icon_title">Значок приложения в лаунчере</string>
 <string name="settings_layout_option_bottom_desc">Наиболее важные элементы отображаются внизу для удобного доступа</string>
 <string name="settings_layout_option_bottom_title">Режим управления одной рукой</string>
+<string name="settings_unified_pinned_items_title">Объединенные закрепленные элементы</string>
+<string name="settings_unified_pinned_items_desc">Показывать закрепленные элементы единым списком на главном экране.</string>
 <string name="settings_more_options_desc">Различные дополнительные параметры кастомизации</string>
 <string name="settings_more_options_title">Дополнительные параметры</string>
 <string name="settings_overlay_assistant_setup_now">Настроить сейчас</string>

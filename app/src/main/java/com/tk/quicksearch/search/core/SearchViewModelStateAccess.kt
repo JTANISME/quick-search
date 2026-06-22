@@ -59,6 +59,12 @@ internal class SearchViewModelPreferencesStateAccess(
             state.bottomSearchBarEnabled = value
         }
 
+    override var unifiedPinnedItemsEnabled: Boolean
+        get() = state.unifiedPinnedItemsEnabled
+        set(value) {
+            state.unifiedPinnedItemsEnabled = value
+        }
+
     override var settingsIconEnabled: Boolean
         get() = state.settingsIconEnabled
         set(value) {

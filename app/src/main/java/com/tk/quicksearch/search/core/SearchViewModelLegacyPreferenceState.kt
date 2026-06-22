@@ -14,6 +14,7 @@ internal class SearchViewModelLegacyPreferenceState(
     var excludedFileExtensions: Set<String> = emptySet()
     var oneHandedMode: Boolean = false
     var bottomSearchBarEnabled: Boolean = false
+    var unifiedPinnedItemsEnabled: Boolean = false
     var searchHintsEnabled: Boolean = true
     var settingsIconEnabled: Boolean = true
     var topResultIndicatorEnabled: Boolean = true
@@ -60,6 +61,7 @@ internal class SearchViewModelLegacyPreferenceState(
         excludedFileExtensions = prefCache.excludedFileExtensions
         oneHandedMode = prefCache.oneHandedMode
         bottomSearchBarEnabled = prefCache.bottomSearchBarEnabled
+        unifiedPinnedItemsEnabled = prefCache.unifiedPinnedItemsEnabled
         searchHintsEnabled = prefCache.searchHintsEnabled
         settingsIconEnabled = prefCache.settingsIconEnabled
         topResultIndicatorEnabled = prefCache.topResultIndicatorEnabled

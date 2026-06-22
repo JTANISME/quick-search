@@ -160,6 +160,9 @@ internal interface SearchViewModelPreferencesApi {
     fun setBottomSearchBarEnabled(enabled: Boolean) =
         preferencesApiDelegate.setBottomSearchBarEnabled(enabled)
 
+    fun setUnifiedPinnedItemsEnabled(enabled: Boolean) =
+        preferencesApiDelegate.setUnifiedPinnedItemsEnabled(enabled)
+
     fun setSearchHintsEnabled(enabled: Boolean) =
         preferencesApiDelegate.setSearchHintsEnabled(enabled)
 
@@ -382,6 +385,9 @@ class SearchViewModelPreferencesApiDelegate internal constructor(
 
     fun setBottomSearchBarEnabled(enabled: Boolean) =
         preferencesDelegate.setBottomSearchBarEnabled(enabled)
+
+    fun setUnifiedPinnedItemsEnabled(enabled: Boolean) =
+        preferencesDelegate.setUnifiedPinnedItemsEnabled(enabled)
 
     fun setSearchHintsEnabled(enabled: Boolean) =
         preferencesDelegate.setSearchHintsEnabled(enabled)

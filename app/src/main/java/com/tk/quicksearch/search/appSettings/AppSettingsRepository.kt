@@ -295,6 +295,13 @@ class AppSettingsRepository(
                 toggleKey = AppSettingsToggleKey.BOTTOM_SEARCHBAR,
             )
             addToggle(
+                id = "app_toggle_unified_pinned_items",
+                titleRes = R.string.settings_unified_pinned_items_title,
+                descriptionRes = R.string.settings_unified_pinned_items_desc,
+                toggleKey = AppSettingsToggleKey.UNIFIED_PINNED_ITEMS,
+                keywords = listOf("pinned", "home", "sections", "list"),
+            )
+            addToggle(
                 id = "app_toggle_search_hints",
                 titleRes = R.string.settings_search_hints_title,
                 descriptionRes = R.string.settings_search_hints_desc,

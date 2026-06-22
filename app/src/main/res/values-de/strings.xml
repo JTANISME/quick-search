@@ -220,6 +220,7 @@
     <string name="section_app_shortcuts">App-Verknüpfungen</string>
     <string name="section_apps">Apps</string>
     <string name="section_calendar">Kalendertermine</string>
+    <string name="section_contacts">Kontakte</string>
     <string name="section_files">Dateien</string>
     <string name="section_notes">Notizen</string>
     <string name="section_settings">Geräteeinstellungen</string>
@@ -622,6 +623,8 @@
     <string name="settings_launcher_icon_title">Launcher-App-Symbol</string>
     <string name="settings_layout_option_bottom_desc">Relevanteste Elemente erscheinen unten für einfachen Zugriff</string>
     <string name="settings_layout_option_bottom_title">Einhand-Modus</string>
+    <string name="settings_unified_pinned_items_title">Vereinheitlichte angeheftete Elemente</string>
+    <string name="settings_unified_pinned_items_desc">Angeheftete Elemente als eine vereinheitlichte Liste auf dem Startbildschirm anzeigen.</string>
     <string name="settings_more_options_desc">Verschiedene Anpassungsoptionen</string>
     <string name="settings_more_options_title">Weitere Optionen</string>
     <string name="settings_overlay_assistant_setup_now">Jetzt einrichten</string>

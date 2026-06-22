@@ -220,6 +220,7 @@
     <string name="section_app_shortcuts">Accesos directos</string>
     <string name="section_apps">Aplicaciones</string>
     <string name="section_calendar">Eventos del calendario</string>
+    <string name="section_contacts">Contactos</string>
     <string name="section_files">Archivos</string>
     <string name="section_notes">Notas</string>
     <string name="section_settings">Ajustes del dispositivo</string>
@@ -622,6 +623,8 @@
     <string name="settings_launcher_icon_title">Icono de la app en el lanzador</string>
     <string name="settings_layout_option_bottom_desc">Los elementos más relevantes aparecen abajo para facilitar el acceso</string>
     <string name="settings_layout_option_bottom_title">Modo a una mano</string>
+    <string name="settings_unified_pinned_items_title">Elementos fijados unificados</string>
+    <string name="settings_unified_pinned_items_desc">Muestra los elementos fijados como una lista unificada en la pantalla de inicio.</string>
     <string name="settings_more_options_desc">Opciones de personalización misceláneas</string>
     <string name="settings_more_options_title">Más opciones</string>
     <string name="settings_overlay_assistant_setup_now">Configurar ahora</string>

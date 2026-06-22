@@ -33,6 +33,13 @@ class UiPreferences(
         setBooleanPref(UiPreferences.KEY_BOTTOM_SEARCH_BAR_ENABLED, enabled)
     }
 
+    fun isUnifiedPinnedItemsEnabled(): Boolean =
+            getBooleanPref(UiPreferences.KEY_UNIFIED_PINNED_ITEMS_ENABLED, false)
+
+    fun setUnifiedPinnedItemsEnabled(enabled: Boolean) {
+        setBooleanPref(UiPreferences.KEY_UNIFIED_PINNED_ITEMS_ENABLED, enabled)
+    }
+
     fun isSearchHintsEnabled(): Boolean =
             getBooleanPref(UiPreferences.KEY_SEARCH_HINTS_ENABLED, true)
 
@@ -499,6 +506,29 @@ class UiPreferences(
         setBooleanPref(UiPreferences.KEY_DISABLED_SEARCH_ENGINES_EXPANDED, expanded)
     }
 
+    fun isHomePinnedSectionExpanded(section: SearchSection): Boolean =
+            getBooleanPref(
+                    "${UiPreferences.KEY_HOME_PINNED_SECTION_EXPANDED_PREFIX}${section.name}",
+                    true,
+            )
+
+    fun setHomePinnedSectionExpanded(
+            section: SearchSection,
+            expanded: Boolean,
+    ) {
+        setBooleanPref(
+                "${UiPreferences.KEY_HOME_PINNED_SECTION_EXPANDED_PREFIX}${section.name}",
+                expanded,
+        )
+    }
+
+    fun isUnifiedPinnedItemsExpanded(): Boolean =
+            getBooleanPref(UiPreferences.KEY_UNIFIED_PINNED_ITEMS_EXPANDED, true)
+
+    fun setUnifiedPinnedItemsExpanded(expanded: Boolean) {
+        setBooleanPref(UiPreferences.KEY_UNIFIED_PINNED_ITEMS_EXPANDED, expanded)
+    }
+
     fun isInstantStartupSurfaceEnabled(): Boolean =
             getBooleanPref(UiPreferences.KEY_INSTANT_STARTUP_SURFACE_ENABLED, true)
 
@@ -956,6 +986,7 @@ class UiPreferences(
         // UI preferences keys
         const val KEY_ONE_HANDED_MODE = "one_handed_mode"
         const val KEY_BOTTOM_SEARCH_BAR_ENABLED = "bottom_search_bar_enabled"
+        const val KEY_UNIFIED_PINNED_ITEMS_ENABLED = "unified_pinned_items_enabled"
         const val KEY_SEARCH_HINTS_ENABLED = "search_hints_enabled"
         const val KEY_SETTINGS_ICON_ENABLED = "settings_icon_enabled"
         const val KEY_OPEN_KEYBOARD_ON_LAUNCH = "open_keyboard_on_launch"
@@ -1020,6 +1051,8 @@ class UiPreferences(
         const val KEY_LAST_SEEN_VERSION_CODE = "last_seen_version_code"
         const val KEY_AI_SEARCH_SETUP_EXPANDED = "direct_search_setup_expanded"
         const val KEY_DISABLED_SEARCH_ENGINES_EXPANDED = "disabled_search_engines_expanded"
+        const val KEY_HOME_PINNED_SECTION_EXPANDED_PREFIX = "home_pinned_section_expanded_"
+        const val KEY_UNIFIED_PINNED_ITEMS_EXPANDED = "unified_pinned_items_expanded"
         const val KEY_INSTANT_STARTUP_SURFACE_ENABLED = "instant_startup_surface_v1"
         const val KEY_HAS_SEEN_SEARCH_BAR_WELCOME = "has_seen_search_bar_welcome"
         const val KEY_FORCE_SEARCH_BAR_WELCOME_ON_NEXT_OPEN =

@@ -45,6 +45,7 @@ data class SettingsScreenState(
     val excludedFileExtensions: Set<String>,
     val oneHandedMode: Boolean,
     val bottomSearchBarEnabled: Boolean = false,
+    val unifiedPinnedItemsEnabled: Boolean = false,
     val searchHintsEnabled: Boolean = true,
     val settingsIconEnabled: Boolean = true,
     val overlayModeEnabled: Boolean,
@@ -190,6 +191,7 @@ data class SettingsScreenState(
             AppearanceSettingsState(
                 oneHandedMode = oneHandedMode,
                 bottomSearchBarEnabled = bottomSearchBarEnabled,
+                unifiedPinnedItemsEnabled = unifiedPinnedItemsEnabled,
                 searchHintsEnabled = searchHintsEnabled,
                 settingsIconEnabled = settingsIconEnabled,
                 overlayModeEnabled = overlayModeEnabled,
@@ -528,6 +530,7 @@ data class FileSearchSettingsState(
 data class AppearanceSettingsState(
     val oneHandedMode: Boolean,
     val bottomSearchBarEnabled: Boolean,
+    val unifiedPinnedItemsEnabled: Boolean,
     val searchHintsEnabled: Boolean,
     val settingsIconEnabled: Boolean,
     val overlayModeEnabled: Boolean,

@@ -492,6 +492,7 @@ data class SearchUiState(
         // Layout preferences
         val oneHandedMode: Boolean = false,
         val bottomSearchBarEnabled: Boolean = false,
+        val unifiedPinnedItemsEnabled: Boolean = false,
         val searchHintsEnabled: Boolean = true,
         val settingsIconEnabled: Boolean = true,
         val topResultIndicatorEnabled: Boolean = true,
@@ -773,6 +774,7 @@ fun SearchUiState(
                 overlayModeEnabled = config.overlayModeEnabled,
                 oneHandedMode = config.oneHandedMode,
                 bottomSearchBarEnabled = config.bottomSearchBarEnabled,
+                unifiedPinnedItemsEnabled = config.unifiedPinnedItemsEnabled,
                 searchHintsEnabled = config.searchHintsEnabled,
                 settingsIconEnabled = config.settingsIconEnabled,
                 topResultIndicatorEnabled = config.topResultIndicatorEnabled,

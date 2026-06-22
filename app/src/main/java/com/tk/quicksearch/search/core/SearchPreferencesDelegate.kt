@@ -23,6 +23,7 @@ internal interface SearchPreferencesStateAccess {
     var folderBlacklistPatterns: Set<String>
     var oneHandedMode: Boolean
     var bottomSearchBarEnabled: Boolean
+    var unifiedPinnedItemsEnabled: Boolean
     var settingsIconEnabled: Boolean
     var topResultIndicatorEnabled: Boolean
     var wallpaperAccentEnabled: Boolean
@@ -641,6 +642,17 @@ internal class SearchPreferencesDelegate(
                 stateAccess.bottomSearchBarEnabled = it
                 updateUiState { state -> state.copy(bottomSearchBarEnabled = it) }
                 stateAccess.saveStartupSurfaceSnapshotAsync(allowDuringQuery = true)
+            },
+        )
+    }
+
+    fun setUnifiedPinnedItemsEnabled(enabled: Boolean) {
+        updateBooleanPreference(
+            value = enabled,
+            preferenceSetter = userPreferences::setUnifiedPinnedItemsEnabled,
+            stateUpdater = {
+                stateAccess.unifiedPinnedItemsEnabled = it
+                updateUiState { state -> state.copy(unifiedPinnedItemsEnabled = it) }
             },
         )
     }

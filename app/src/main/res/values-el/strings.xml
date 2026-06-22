@@ -220,6 +220,7 @@
     <string name="section_app_shortcuts">Συντομεύσεις εφαρμογών</string>
     <string name="section_apps">Εφαρμογές</string>
     <string name="section_calendar">Συμβάντα ημερολογίου</string>
+    <string name="section_contacts">Επαφές</string>
     <string name="section_files">Αρχεία</string>
     <string name="section_notes">Σημειώσεις</string>
     <string name="section_settings">Ρυθμίσεις συσκευής</string>
@@ -622,6 +623,8 @@
     <string name="settings_launcher_icon_title">Εικονίδιο εφαρμογής Launcher</string>
     <string name="settings_layout_option_bottom_desc">Τα πιο σχετικά στοιχεία εμφανίζονται στο κάτω μέρος για εύκολη πρόσβαση</string>
     <string name="settings_layout_option_bottom_title">Λειτουργία ενός χεριού</string>
+    <string name="settings_unified_pinned_items_title">Ενοποιημένα καρφιτσωμένα στοιχεία</string>
+    <string name="settings_unified_pinned_items_desc">Εμφάνιση καρφιτσωμένων στοιχείων ως μία ενοποιημένη λίστα στην αρχική οθόνη.</string>
     <string name="settings_more_options_desc">Διάφορες επιλογές προσαρμογής</string>
     <string name="settings_more_options_title">Περισσότερες επιλογές</string>
     <string name="settings_overlay_assistant_setup_now">Ρύθμιση τώρα</string>

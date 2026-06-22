@@ -52,6 +52,7 @@ enum class AppSettingsToggleKey {
     OVERLAY_MODE,
     ONE_HANDED_MODE,
     BOTTOM_SEARCHBAR,
+    UNIFIED_PINNED_ITEMS,
     SEARCH_HINTS,
     SETTINGS_ICON,
     APP_LABELS,

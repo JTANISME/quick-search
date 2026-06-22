@@ -972,6 +972,11 @@ class UserAppPreferences(
     fun setBottomSearchBarEnabled(enabled: Boolean) =
             uiPreferences.setBottomSearchBarEnabled(enabled)
 
+    fun isUnifiedPinnedItemsEnabled(): Boolean = uiPreferences.isUnifiedPinnedItemsEnabled()
+
+    fun setUnifiedPinnedItemsEnabled(enabled: Boolean) =
+            uiPreferences.setUnifiedPinnedItemsEnabled(enabled)
+
     fun isSearchHintsEnabled(): Boolean = uiPreferences.isSearchHintsEnabled()
 
     fun setSearchHintsEnabled(enabled: Boolean) = uiPreferences.setSearchHintsEnabled(enabled)
@@ -1126,6 +1131,19 @@ class UserAppPreferences(
 
     fun setDisabledSearchEnginesExpanded(expanded: Boolean) =
             uiPreferences.setDisabledSearchEnginesExpanded(expanded)
+
+    fun isHomePinnedSectionExpanded(section: SearchSection): Boolean =
+            uiPreferences.isHomePinnedSectionExpanded(section)
+
+    fun setHomePinnedSectionExpanded(
+            section: SearchSection,
+            expanded: Boolean,
+    ) = uiPreferences.setHomePinnedSectionExpanded(section, expanded)
+
+    fun isUnifiedPinnedItemsExpanded(): Boolean = uiPreferences.isUnifiedPinnedItemsExpanded()
+
+    fun setUnifiedPinnedItemsExpanded(expanded: Boolean) =
+            uiPreferences.setUnifiedPinnedItemsExpanded(expanded)
 
     fun isInstantStartupSurfaceEnabled(): Boolean = uiPreferences.isInstantStartupSurfaceEnabled()
 

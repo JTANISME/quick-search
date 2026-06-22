@@ -153,6 +153,7 @@ internal object SearchStateExtractor {
             overlayModeEnabled = s.overlayModeEnabled,
             oneHandedMode = s.oneHandedMode,
             bottomSearchBarEnabled = s.bottomSearchBarEnabled,
+            unifiedPinnedItemsEnabled = s.unifiedPinnedItemsEnabled,
             searchHintsEnabled = s.searchHintsEnabled,
             settingsIconEnabled = s.settingsIconEnabled,
             topResultIndicatorEnabled = s.topResultIndicatorEnabled,

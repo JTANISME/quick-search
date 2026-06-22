@@ -220,6 +220,7 @@
     <string name="section_app_shortcuts">Atalhos de apps</string>
     <string name="section_apps">Apps</string>
     <string name="section_calendar">Eventos do calendário</string>
+    <string name="section_contacts">Contatos</string>
     <string name="section_files">Arquivos</string>
     <string name="section_notes">Notas</string>
     <string name="section_settings">Configurações do dispositivo</string>
@@ -622,6 +623,8 @@
     <string name="settings_launcher_icon_title">Ícone do app no Launcher</string>
     <string name="settings_layout_option_bottom_desc">Os itens mais relevantes aparecem na parte inferior para facilitar o acesso</string>
     <string name="settings_layout_option_bottom_title">Modo de uma mão</string>
+    <string name="settings_unified_pinned_items_title">Itens fixados unificados</string>
+    <string name="settings_unified_pinned_items_desc">Mostrar itens fixados como uma lista unificada na tela inicial.</string>
     <string name="settings_more_options_desc">Opções diversas de personalização</string>
     <string name="settings_more_options_title">Mais opções</string>
     <string name="settings_overlay_assistant_setup_now">Configurar agora</string>
