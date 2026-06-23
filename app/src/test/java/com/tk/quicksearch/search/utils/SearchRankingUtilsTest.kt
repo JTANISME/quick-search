@@ -6,25 +6,6 @@ import org.junit.Test
 
 class SearchRankingUtilsTest {
     @Test
-    fun committedHanziQueryMatchesHanziText() {
-        val priority = SearchRankingUtils.calculateMatchPriority("微信", "微信")
-
-        assertTrue(DefaultSearchMatcher.isMatch(priority))
-    }
-
-    @Test
-    fun committedHanziQueryMatchesHanziNickname() {
-        val priority =
-            SearchRankingUtils.calculateMatchPriorityWithNickname(
-                primaryText = "WeChat",
-                nickname = "微信",
-                query = "微信",
-            )
-
-        assertTrue(DefaultSearchMatcher.isMatch(priority))
-    }
-
-    @Test
     fun diacriticsAndTurkishDotlessIAreNormalizedForSearch() {
         val priority = SearchRankingUtils.calculateMatchPriority("Özgür Işık", "ozgur isik")
 

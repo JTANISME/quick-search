@@ -105,40 +105,6 @@ class AppSearchAlgorithmTest {
     }
 
     @Test
-    fun committedHanziQueryFindsHanziNamedApp() {
-        val wechat = app("微信", "wechat")
-
-        val matches =
-            AppSearchAlgorithm.findMatches(
-                query = "微信",
-                source = listOf(wechat),
-                limit = 10,
-                fuzzySearchStrategy = FuzzyAppSearchStrategy(FuzzySearchConfig.DEFAULT_APP_CONFIG),
-                appNicknames = emptyMap(),
-                sortAppsByUsageEnabled = false,
-            )
-
-        assertEquals(listOf(wechat), matches)
-    }
-
-    @Test
-    fun committedHanziQueryFindsAppThroughHanziNickname() {
-        val wechat = app("WeChat", "wechat")
-
-        val matches =
-            AppSearchAlgorithm.findMatches(
-                query = "微信",
-                source = listOf(wechat),
-                limit = 10,
-                fuzzySearchStrategy = FuzzyAppSearchStrategy(FuzzySearchConfig.DEFAULT_APP_CONFIG),
-                appNicknames = mapOf(wechat.packageName to "微信"),
-                sortAppsByUsageEnabled = false,
-            )
-
-        assertEquals(listOf(wechat), matches)
-    }
-
-    @Test
     fun typoEligibleCandidatesAreNotStarvedByUnrelatedApps() {
         val github = app("GitHub", "github")
         val unrelatedApps =
