@@ -67,6 +67,11 @@ import com.tk.quicksearch.search.searchScreen.components.SectionPermissionResult
 import com.tk.quicksearch.search.searchScreen.shared.SearchResultCard
 import com.tk.quicksearch.R
 
+internal fun shouldRenderStandaloneTodayCalendarSection(
+    section: SearchSection,
+    todayCalendarEventsCount: Int,
+): Boolean = section == SearchSection.CALENDAR && todayCalendarEventsCount > 0
+
 /** Unified content layout that handles both one-handed mode and top-aligned layouts. */
 @Composable
 fun ContentLayout(
