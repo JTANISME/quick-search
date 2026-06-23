@@ -609,6 +609,7 @@ abstract class BasePreferences(
         const val KEY_FIRST_APP_OPEN_TIME = "first_app_open_time"
         const val KEY_APP_OPEN_COUNT = "app_open_count"
         const val KEY_RATE_QUICK_SEARCH_LAST_DISMISSED_AT = "rate_quick_search_last_dismissed_at"
+        const val KEY_RATE_QUICK_SEARCH_DISMISS_COUNT = "rate_quick_search_dismiss_count"
         const val KEY_RATE_QUICK_SEARCH_COMPLETED = "rate_quick_search_completed"
 
         // In-app update session tracking keys

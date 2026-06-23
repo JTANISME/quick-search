@@ -1025,18 +1025,25 @@ class UiPreferences(
     fun getRateQuickSearchLastDismissedAt(): Long =
         timingPrefs.getLong(UiPreferences.KEY_RATE_QUICK_SEARCH_LAST_DISMISSED_AT, 0L)
 
+    fun getRateQuickSearchDismissCount(): Int =
+        timingPrefs.getInt(UiPreferences.KEY_RATE_QUICK_SEARCH_DISMISS_COUNT, 0)
+
     fun recordRateQuickSearchDismissed() {
         timingPrefs
             .edit()
             .putLong(
                 UiPreferences.KEY_RATE_QUICK_SEARCH_LAST_DISMISSED_AT,
                 System.currentTimeMillis(),
+            ).putInt(
+                UiPreferences.KEY_RATE_QUICK_SEARCH_DISMISS_COUNT,
+                getRateQuickSearchDismissCount() + 1,
             ).apply()
     }
 
     fun shouldShowRateQuickSearchCard(): Boolean {
         if (!RATE_QUICK_SEARCH_ENABLED) return false
         if (hasCompletedRateQuickSearch()) return false
+        if (getRateQuickSearchDismissCount() >= RATE_QUICK_SEARCH_MAX_DISMISS_COUNT) return false
 
         val firstOpenTime = getFirstAppOpenTime()
         if (firstOpenTime == 0L) return false
@@ -1240,6 +1247,7 @@ class UiPreferences(
         const val KEY_APP_OPEN_COUNT = "app_open_count"
         const val KEY_RATE_QUICK_SEARCH_LAST_DISMISSED_AT =
             "rate_quick_search_last_dismissed_at"
+        const val KEY_RATE_QUICK_SEARCH_DISMISS_COUNT = "rate_quick_search_dismiss_count"
         const val KEY_RATE_QUICK_SEARCH_COMPLETED = "rate_quick_search_completed"
 
         // In-app update session tracking keys
@@ -1248,7 +1256,8 @@ class UiPreferences(
         private const val DAY_IN_MILLIS = 24 * 60 * 60 * 1000L
         private const val RATE_QUICK_SEARCH_MIN_DAYS_USED = 3L
         private const val RATE_QUICK_SEARCH_MIN_OPEN_COUNT = 6
-        private const val RATE_QUICK_SEARCH_DISMISS_COOLDOWN_MS = 7 * DAY_IN_MILLIS
+        private const val RATE_QUICK_SEARCH_DISMISS_COOLDOWN_MS = 14 * DAY_IN_MILLIS
+        private const val RATE_QUICK_SEARCH_MAX_DISMISS_COUNT = 2
 
         fun appIconSizeScale(step: Int): Float {
             val normalized = step.coerceIn(MIN_APP_ICON_SIZE_STEP, MAX_APP_ICON_SIZE_STEP)
