@@ -8,6 +8,8 @@ import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.system.exitProcess
 
 object CrashLogManager {
     private const val LOG_DIR = "crash_logs"
@@ -16,6 +18,7 @@ object CrashLogManager {
     private const val MAX_CRASH_SIZE_BYTES = 256 * 1024 // 256 KB
     @Volatile
     private var isInstalled = false
+    private val isHandlingCrash = AtomicBoolean(false)
 
     @Synchronized
     fun install(context: Context) {
@@ -24,12 +27,20 @@ object CrashLogManager {
         val appContext = context.applicationContext
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            try {
-                writeCrashEntry(appContext, thread, throwable)
-            } catch (_: Throwable) {
-                // Never let the crash handler itself crash
+            if (isHandlingCrash.compareAndSet(false, true)) {
+                try {
+                    writeCrashEntry(appContext, thread, throwable)
+                } catch (_: Throwable) {
+                    // Never let the crash handler itself crash, especially while handling OOM.
+                }
             }
-            defaultHandler?.uncaughtException(thread, throwable)
+
+            if (defaultHandler != null) {
+                defaultHandler.uncaughtException(thread, throwable)
+            } else {
+                android.os.Process.killProcess(android.os.Process.myPid())
+                exitProcess(10)
+            }
         }
         isInstalled = true
     }
