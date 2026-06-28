@@ -69,6 +69,17 @@ internal class WidgetPanelHost(
     fun cancelAllPendingLongPresses() {
         liveViews.forEach { it.cancelPendingLongPress() }
     }
+
+    fun release() {
+        liveViews.toList().forEach { it.releaseCallbacks() }
+        liveViews.clear()
+        onWidgetLongPress = null
+        onWidgetDragMove = null
+        onWidgetDragEnd = null
+        isScrollInProgressProvider = { false }
+        stopListening()
+        clearViews()
+    }
 }
 
 /**
@@ -90,6 +101,15 @@ private class WidgetPanelHostView(
 
     fun cancelPendingLongPress() {
         removeCallbacks(longPressRunnable)
+    }
+
+    fun releaseCallbacks() {
+        removeCallbacks(longPressRunnable)
+        onLongPress = null
+        onDragMove = null
+        onDragEnd = null
+        onDetached = null
+        isScrollInProgressProvider = { false }
     }
 
     override fun setAppWidget(
