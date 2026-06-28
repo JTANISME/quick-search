@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.ViewConfiguration
+import com.tk.quicksearch.shared.util.MemoryDiagnostics
 import kotlin.math.abs
 
 /**
@@ -20,6 +21,10 @@ internal class WidgetPanelHost(
     context: Context,
     hostId: Int,
 ) : AppWidgetHost(context, hostId) {
+    init {
+        MemoryDiagnostics.widgetHostCreated()
+    }
+
     var onWidgetLongPress: ((appWidgetId: Int) -> Unit)? = null
     var onWidgetDragMove: ((appWidgetId: Int, totalDeltaX: Float, totalDeltaY: Float) -> Unit)? =
         null
@@ -44,8 +49,11 @@ internal class WidgetPanelHost(
             view.onDragMove = { dx, dy -> onWidgetDragMove?.invoke(appWidgetId, dx, dy) }
             view.onDragEnd = { onWidgetDragEnd?.invoke(appWidgetId) }
             view.isScrollInProgressProvider = { isScrollInProgressProvider() }
-            view.onDetached = { liveViews.remove(view) }
+            view.onDetached = {
+                if (liveViews.remove(view)) MemoryDiagnostics.widgetViewsReleased(1)
+            }
             liveViews.add(view)
+            MemoryDiagnostics.widgetViewCreated()
         }
 
     override fun onProviderChanged(
@@ -71,6 +79,7 @@ internal class WidgetPanelHost(
     }
 
     fun release() {
+        val releasedViewCount = liveViews.size
         liveViews.toList().forEach { it.releaseCallbacks() }
         liveViews.clear()
         onWidgetLongPress = null
@@ -79,6 +88,8 @@ internal class WidgetPanelHost(
         isScrollInProgressProvider = { false }
         stopListening()
         clearViews()
+        MemoryDiagnostics.widgetViewsReleased(releasedViewCount)
+        MemoryDiagnostics.widgetHostReleased()
     }
 }
 
