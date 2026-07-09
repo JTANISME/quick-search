@@ -93,6 +93,7 @@ dependencies {
     "standardImplementation"(libs.play.review.ktx)
     "standardImplementation"(libs.play.app.update.ktx)
     implementation(libs.libphonenumber)
+    implementation(libs.tinypinyin)
     implementation(libs.reorderable)
     implementation(libs.androidx.browser)
     testImplementation(libs.junit)

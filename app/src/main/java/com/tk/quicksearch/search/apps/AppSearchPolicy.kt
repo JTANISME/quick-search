@@ -7,7 +7,6 @@ import com.tk.quicksearch.search.utils.SearchQueryContext
 object AppSearchPolicy {
     // Keep in sync with SearchRankingUtils priority semantics:
     // 1 = startsWith, 2 = wordStartsWith, 3 = contains, 4 = no match.
-    private const val INITIALS_MATCH_PRIORITY = 3
 
     fun matchPriority(
         appName: String,
@@ -21,7 +20,7 @@ object AppSearchPolicy {
 
         val initialsPriority = matcher.matchAny(query, *initials.toTypedArray())
         if (!matcher.isMatch(initialsPriority)) return basePriority
-        return INITIALS_MATCH_PRIORITY
+        return initialsPriority
     }
 
     fun hasMatch(

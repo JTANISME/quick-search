@@ -25,6 +25,7 @@ reorderable = "2.4.3"
 androidxBrowser = "1.8.0"
 appcompat = "1.7.1"
 desugarJdkLibs = "2.1.4"
+tinypinyin = "2.0.3.RELEASE"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,6 +61,7 @@ reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reo
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+tinypinyin = { group = "io.github.biezhi", name = "TinyPinyin", version.ref = "tinypinyin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

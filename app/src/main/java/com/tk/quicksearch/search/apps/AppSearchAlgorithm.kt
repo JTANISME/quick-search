@@ -94,15 +94,15 @@ object AppSearchAlgorithm {
         canScoreFuzzyCandidate: () -> Boolean,
     ): AppMatch? {
         val nickname = appNicknames[app.packageName]
-        val initials = AppSearchInitials.initialsFor(app)
-        val priority = AppSearchPolicy.matchPriority(app.appName, nickname, queryContext, initials)
+        val aliases = searchAliasesFor(app.appName, nickname)
+        val priority = AppSearchPolicy.matchPriority(app.appName, nickname, queryContext, aliases)
         if (AppSearchPolicy.hasMatch(priority)) {
             if (
                 !AppSearchPolicy.areAllQueryTokensCovered(
                     queryContext,
                     app.appName,
                     nickname,
-                    initials,
+                    aliases,
                     fuzzySearchStrategy,
                 )
             ) {
@@ -116,7 +116,7 @@ object AppSearchAlgorithm {
                 query = queryContext.normalizedQuery,
                 appName = app.appName,
                 nickname = nickname,
-                initials = initials,
+                initials = aliases,
             )
         ) {
             return null
@@ -129,7 +129,7 @@ object AppSearchAlgorithm {
                 query = queryContext.normalizedQuery,
                 app = app,
                 nickname = appNicknames[app.packageName],
-                initials = initials,
+                initials = aliases,
             )
 
         return match?.let {
@@ -138,7 +138,7 @@ object AppSearchAlgorithm {
                     queryContext,
                     app.appName,
                     nickname,
-                    initials,
+                    aliases,
                     fuzzySearchStrategy,
                 )
             ) {
@@ -191,3 +191,12 @@ object AppSearchAlgorithm {
                 .compareTo(second.appName.lowercase(Locale.getDefault()))
         }
 }
+
+private fun searchAliasesFor(
+    appName: String,
+    nickname: String?,
+): List<String> =
+    buildList {
+        addAll(AppSearchInitials.aliasesFor(appName))
+        nickname?.let { addAll(AppSearchInitials.aliasesFor(it)) }
+    }.distinct()

@@ -125,6 +125,85 @@ class AppSearchAlgorithmTest {
         assertTrue(matches.contains(github))
     }
 
+    @Test
+    fun chineseAppMatchesPinyinFullPrefix() {
+        val wechat = app("微信", "wechat")
+
+        val matches =
+            AppSearchAlgorithm.findMatches(
+                query = "wei",
+                source = listOf(wechat),
+                limit = 10,
+                fuzzySearchStrategy = FuzzyAppSearchStrategy(FuzzySearchConfig.DEFAULT_APP_CONFIG),
+                appNicknames = emptyMap(),
+                sortAppsByUsageEnabled = false,
+            )
+
+        assertEquals(listOf(wechat), matches)
+    }
+
+    @Test
+    fun chineseAppMatchesPinyinInitials() {
+        val wechat = app("微信", "wechat")
+
+        val matches =
+            AppSearchAlgorithm.findMatches(
+                query = "wx",
+                source = listOf(wechat),
+                limit = 10,
+                fuzzySearchStrategy = FuzzyAppSearchStrategy(FuzzySearchConfig.DEFAULT_APP_CONFIG),
+                appNicknames = emptyMap(),
+                sortAppsByUsageEnabled = false,
+            )
+
+        assertEquals(listOf(wechat), matches)
+    }
+
+    @Test
+    fun mixedChineseAndLatinAppMatchesPinyinQueries() {
+        val qqMusic = app("QQ音乐", "qqmusic")
+
+        val initialsMatches =
+            AppSearchAlgorithm.findMatches(
+                query = "qqyy",
+                source = listOf(qqMusic),
+                limit = 10,
+                fuzzySearchStrategy = FuzzyAppSearchStrategy(FuzzySearchConfig.DEFAULT_APP_CONFIG),
+                appNicknames = emptyMap(),
+                sortAppsByUsageEnabled = false,
+            )
+        val fullPinyinMatches =
+            AppSearchAlgorithm.findMatches(
+                query = "yinyue",
+                source = listOf(qqMusic),
+                limit = 10,
+                fuzzySearchStrategy = FuzzyAppSearchStrategy(FuzzySearchConfig.DEFAULT_APP_CONFIG),
+                appNicknames = emptyMap(),
+                sortAppsByUsageEnabled = false,
+            )
+
+        assertEquals(listOf(qqMusic), initialsMatches)
+        assertEquals(listOf(qqMusic), fullPinyinMatches)
+    }
+
+    @Test
+    fun chineseNicknameAlsoMatchesPinyin() {
+        val browser = app("Browser", "browser")
+        val nicknames = mapOf(browser.packageName to "浏览器")
+
+        val matches =
+            AppSearchAlgorithm.findMatches(
+                query = "llq",
+                source = listOf(browser),
+                limit = 10,
+                fuzzySearchStrategy = FuzzyAppSearchStrategy(FuzzySearchConfig.DEFAULT_APP_CONFIG),
+                appNicknames = nicknames,
+                sortAppsByUsageEnabled = false,
+            )
+
+        assertEquals(listOf(browser), matches)
+    }
+
     private fun app(
         appName: String,
         packageSuffix: String,
